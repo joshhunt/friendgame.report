@@ -55,7 +55,7 @@ export default function getData(player, cb) {
   console.log('player:', player);
   const params = querystring.stringify({
     mode: 'None',
-    count: 100,
+    count: 200,
     page: 0,
   });
 
@@ -69,8 +69,11 @@ export default function getData(player, cb) {
 
   getProfile(player).then(profile => {
     // TODO: check privacy!
-
     const characters = Object.values(profile.characters.data);
+
+    if (characters.length > 2) {
+      params.count = 100;
+    }
 
     cb({ characters });
 
