@@ -9,6 +9,7 @@
   justify-content: center;
   margin-right: 10px;
   width: 2ch;
+  /* color: #5d5d5d; */
 }
 
 .playerIcon {
@@ -28,5 +29,5 @@
 
 .playerSub {
   font-size: 0.8em;
-  opacity: 0.7;
+  color: #5d5d5d;
 }

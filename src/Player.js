@@ -9,7 +9,11 @@ export default function Player(props) {
   return (
     <div className="player">
       <div className="playerIndex">{index}</div>
-      <img className="playerIcon" src={`https://bungie.net${iconPath}`} />
+      <img
+        className="playerIcon"
+        src={`https://bungie.net${iconPath}`}
+        alt=""
+      />
 
       <div className="playerInfo">
         <div className="playerName">{displayName}</div>

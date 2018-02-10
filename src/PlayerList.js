@@ -1,105 +1,56 @@
 import React, { Component } from 'react';
-
-import { format as fmtDate } from 'date-fns';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import Player from './Player';
-import getData from './getPGCRs.js';
 
 import './PlayerList.css';
 
-const INITIAL_STATE = {
-  activities: [],
-  players: [],
-  matchmadePlayers: [],
-  pgcrsLoaded: 0,
-  totalActivities: 0,
-  characters: [],
-};
+function List({ players }) {
+  return players.map((player, index) => (
+    <Player
+      index={index + 1}
+      player={player}
+      key={player.destinyUserInfo.membershipId}
+    />
+  ));
+}
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { ...INITIAL_STATE };
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount');
-    this.getStats();
-  }
-
-  componentWillUpdate(props) {
-    if (props !== this.props) {
-      console.log('componentWillUpdate');
-      this.getStats(props);
-    }
-  }
-
-  getStats = (props = this.props) => {
-    this.setState({ ...INITIAL_STATE });
-    const { membershipType, membershipId } = props.match.params;
-    getData({ membershipType, membershipId }, ({ ...rest }) =>
-      this.setState({ ...rest }),
-    );
-  };
+export default class PlayerList extends Component {
+  hello() {}
 
   render() {
-    const {
-      pgcrsLoaded,
-      totalActivities,
-      matchmadePlayers,
-      lastPgcrDate,
-      characters,
-      players,
-    } = this.state;
+    const { data: { fireteamPlayers, matchmadePlayers }, title } = this.props;
 
     return (
-      <div className="playerListRoot">
-        <div className="split">
-          <div className="playerCount">
-            <h2 className="playerListSectionTitle">All players</h2>
-            {players &&
-              players.map((player, index) => (
-                <Player
-                  index={index + 1}
-                  player={player}
-                  key={player.destinyUserInfo.membershipId}
-                />
-              ))}
-          </div>
+      <div className="playerCount">
+        <div className="playerListContent">
+          <Tabs selectedTabClassName="playerListTabActive">
+            <div className="playerListHeader">
+              <h2 className="playerListTitle playerListSectionTitle">
+                {title}
+              </h2>
+              <TabList className="playerListTabList">
+                <Tab className="playerListTab">Fireteam</Tab>
+                <Tab
+                  className="playerListTab"
+                  selectedTabClassName="playerListTabActive"
+                >
+                  Matchmade
+                </Tab>
+              </TabList>
+            </div>
 
-          <div className="playerCount">
-            <h2 className="playerListSectionTitle">Matchmade players</h2>
-            {matchmadePlayers &&
-              matchmadePlayers.map((player, index) => (
-                <Player
-                  index={index + 1}
-                  player={player}
-                  key={player.destinyUserInfo.membershipId}
-                />
-              ))}
-          </div>
-
-          {/* <div className="appStats">
-            <p>
-              Characters: {characters.length}
-              <br />
-              Activities: {totalActivities}
-              <br />
-              PGCRs loaded:{' '}
-              {pgcrsLoaded
-                ? Math.floor(pgcrsLoaded / totalActivities * 100)
-                : 0}% ({pgcrsLoaded})
-              <br />
-              Last activity:{' '}
-              {lastPgcrDate &&
-                fmtDate(new Date(lastPgcrDate), 'ddd Do MMM, h:mma')}
-            </p>
-          </div> */}
+            <TabPanel>
+              <h3 className="playerListTitle">Fireteam</h3>
+              <List players={fireteamPlayers} />
+            </TabPanel>
+            <TabPanel>
+              <h3 className="playerListTitle">Matchmade</h3>
+              <List players={matchmadePlayers} />
+            </TabPanel>
+          </Tabs>
         </div>
       </div>
     );
   }
 }
-
-export default App;

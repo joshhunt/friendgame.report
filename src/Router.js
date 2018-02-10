@@ -1,11 +1,10 @@
 import React from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 import './App.css';
 
-import { BrowserRouter, Route } from 'react-router-dom';
-
 import FrontPage from './FrontPage';
-import PlayerList from './PlayerList';
+import Details from './Details';
 import App from './App';
 
 export default function Router() {
@@ -16,7 +15,7 @@ export default function Router() {
         <Route
           exact
           path="/:membershipType/:membershipId"
-          component={PlayerList}
+          component={Details}
         />
       </App>
     </BrowserRouter>

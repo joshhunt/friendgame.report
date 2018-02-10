@@ -3,12 +3,12 @@ import { debounce } from 'lodash';
 import Autosuggest from 'react-autosuggest';
 import { withRouter } from 'react-router-dom';
 
-import fontawesome from '@fortawesome/fontawesome';
+import '@fortawesome/fontawesome';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 
 import { searchForPlayer } from './getPGCRs.js';
 
-import styles from './Header.css';
+import './Header.css';
 
 const DEFAULT_MEMBERSHIP_TYPE = 2;
 const PLATFORM_ICON = {
@@ -74,10 +74,8 @@ class Header extends Component {
   render() {
     const {
       membershipType,
-
       playerSearchValue,
       playerSearchSuggestions,
-      characters,
     } = this.state;
 
     // Autosuggest will pass through all these props to the input.

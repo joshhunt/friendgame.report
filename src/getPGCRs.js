@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import async from 'async';
 import querystring from 'querystring';
@@ -6,7 +7,9 @@ import { get, getDestiny, getProfile } from './destiny';
 import * as db from './db';
 
 export function searchForPlayer(name, membershipType) {
-  const url = `https://elastic.destinytrialsreport.com/players/${membershipType}/${name}`;
+  const url = `https://elastic.destinytrialsreport.com/players/${
+    membershipType
+  }/${name}`;
   return get(url);
 }
 
@@ -14,11 +17,8 @@ window.searchForPlayer = searchForPlayer;
 
 const pgcrConcurrency = 15;
 
-const pgcrWorker = async.queue((job, cb) => {
-  getPGCR(job)
-    .then(data => cb(null, data))
-    .catch(err => cb(err));
-}, pgcrConcurrency);
+const PVP = 5;
+// const PVE = 7;
 
 function fetchPGCR(id) {
   const url = `/Platform/Destiny2/Stats/PostGameCarnageReport/${id}/`;
@@ -34,25 +34,31 @@ export function getPGCR(id) {
   });
 }
 
+const pgcrWorker = async.queue((job, cb) => {
+  getPGCR(job)
+    .then(data => cb(null, data))
+    .catch(err => cb(err));
+}, pgcrConcurrency);
+
 function fmtPlayers(players, membershipId) {
   return _(players)
     .groupBy(player => player.destinyUserInfo.membershipId)
     .toPairs()
-    .filter(([blah, players]) => blah !== membershipId && players.length > 1)
-    .map(([blah, players]) => {
+    .filter(([blah, p]) => blah !== membershipId && p.length > 1)
+    .map(args => {
+      const p = args[1];
       return {
-        ...players[0],
-        $players: players,
-        $count: players.length,
+        ...p[0],
+        $players: p,
+        $count: p.length,
       };
     })
-    .sortBy(players => players.$count)
+    .sortBy(p => p.$count)
     .reverse()
     .value();
 }
 
 export default function getData(player, cb) {
-  console.log('player:', player);
   const params = {
     mode: 'None',
     count: 200,
@@ -60,10 +66,18 @@ export default function getData(player, cb) {
   };
 
   let allActivities = [];
-  let players = [];
-  let matchmadePlayers = [];
   let pgcrsLoaded = 0;
   let lastPgcrDate = new Date();
+
+  const pvpData = {
+    fireteamPlayers: [],
+    matchmadePlayers: [],
+  };
+
+  const pveData = {
+    fireteamPlayers: [],
+    matchmadePlayers: [],
+  };
 
   const { membershipType, membershipId } = player;
 
@@ -80,10 +94,13 @@ export default function getData(player, cb) {
     Object.values(characters).forEach(character => {
       const { characterId } = character;
       const paramsString = querystring.stringify(params);
-      const url = `/Platform/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?${paramsString}`;
+      const url = `/Platform/Destiny2/${membershipType}/Account/${
+        membershipId
+      }/Character/${characterId}/Stats/Activities/?${paramsString}`;
 
       getDestiny(url).then(data => {
-        let { activities } = data;
+        const { activities } = data;
+
         allActivities = allActivities.concat(activities);
 
         cb({
@@ -92,6 +109,7 @@ export default function getData(player, cb) {
         });
 
         activities.forEach(activity => {
+          const isPvP = activity.activityDetails.modes.includes(PVP);
           const date = new Date(activity.period);
 
           pgcrWorker.push(activity.activityDetails.instanceId, (err, pgcr) => {
@@ -109,12 +127,16 @@ export default function getData(player, cb) {
             activity.$myEntry = myEntry;
 
             pgcr.entries.forEach(entry => {
-              players.push(entry.player);
+              isPvP
+                ? pvpData.fireteamPlayers.push(entry.player)
+                : pveData.fireteamPlayers.push(entry.player);
 
               if (
                 activity.$myFireteamId !== entry.values.fireteamId.basic.value
               ) {
-                matchmadePlayers.push(entry.player);
+                isPvP
+                  ? pvpData.matchmadePlayers.push(entry.player)
+                  : pveData.matchmadePlayers.push(entry.player);
               }
             });
 
@@ -123,8 +145,12 @@ export default function getData(player, cb) {
             cb({
               pgcrsLoaded,
               lastPgcrDate,
-              players: fmtPlayers(players, membershipId),
-              matchmadePlayers: fmtPlayers(matchmadePlayers, membershipId),
+              pvpData: _.mapValues(pvpData, list =>
+                fmtPlayers(list, membershipId),
+              ),
+              pveData: _.mapValues(pveData, list =>
+                fmtPlayers(list, membershipId),
+              ),
             });
           });
         });
