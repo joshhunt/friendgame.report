@@ -53,11 +53,11 @@ function fmtPlayers(players, membershipId) {
 
 export default function getData(player, cb) {
   console.log('player:', player);
-  const params = querystring.stringify({
+  const params = {
     mode: 'None',
     count: 200,
     page: 0,
-  });
+  };
 
   let allActivities = [];
   let players = [];
@@ -79,7 +79,8 @@ export default function getData(player, cb) {
 
     Object.values(characters).forEach(character => {
       const { characterId } = character;
-      const url = `/Platform/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?${params}`;
+      const paramsString = querystring.stringify(params);
+      const url = `/Platform/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?${paramsString}`;
 
       getDestiny(url).then(data => {
         let { activities } = data;

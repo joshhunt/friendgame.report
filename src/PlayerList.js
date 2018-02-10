@@ -7,26 +7,41 @@ import getData from './getPGCRs.js';
 
 import './PlayerList.css';
 
+const INITIAL_STATE = {
+  activities: [],
+  players: [],
+  matchmadePlayers: [],
+  pgcrsLoaded: 0,
+  totalActivities: 0,
+  characters: [],
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      activities: [],
-      players: [],
-      matchmadePlayers: [],
-      pgcrsLoaded: 0,
-      totalActivities: 0,
-      characters: [],
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   componentDidMount() {
-    const { membershipType, membershipId } = this.props.match.params;
+    console.log('componentDidMount');
+    this.getStats();
+  }
+
+  componentWillUpdate(props) {
+    if (props !== this.props) {
+      console.log('componentWillUpdate');
+      this.getStats(props);
+    }
+  }
+
+  getStats = (props = this.props) => {
+    this.setState({ ...INITIAL_STATE });
+    const { membershipType, membershipId } = props.match.params;
     getData({ membershipType, membershipId }, ({ ...rest }) =>
       this.setState({ ...rest }),
     );
-  }
+  };
 
   render() {
     const {

@@ -13,7 +13,7 @@ export default function Player(props) {
 
       <div className="playerInfo">
         <div className="playerName">{displayName}</div>
-        <div className="playerSub">{player.$count} players</div>
+        <div className="playerSub">{player.$count} matches</div>
       </div>
     </div>
   );

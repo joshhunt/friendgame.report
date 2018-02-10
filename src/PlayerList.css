@@ -18,3 +18,7 @@
   margin: 0;
   margin-bottom: 15px;
 }
+
+.split {
+  align-items: flex-start;
+}
