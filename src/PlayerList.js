@@ -4,6 +4,8 @@ import { format as fmtDate } from 'date-fns';
 
 import getData from './getPGCRs.js';
 
+import './PlayerList.css';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -35,10 +37,10 @@ class App extends Component {
     } = this.state;
 
     return (
-      <div className="App">
+      <div className="playerListRoot">
         <div className="split">
           <div className="playerCount">
-            <h2>All players</h2>
+            <h2 className="playerListSectionTitle">All players</h2>
             <ol>
               {this.state.players &&
                 this.state.players.map(player => (
@@ -67,7 +69,7 @@ class App extends Component {
             </ol>
           </div>
 
-          <div className="appStats">
+          {/* <div className="appStats">
             <p>
               Characters: {characters.length}
               <br />
@@ -82,7 +84,7 @@ class App extends Component {
               {lastPgcrDate &&
                 fmtDate(new Date(lastPgcrDate), 'ddd Do MMM, h:mma')}
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     );

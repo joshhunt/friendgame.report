@@ -1,0 +1,19 @@
+.playerListRoot {
+  width: 100%;
+  padding: 0 15px;
+  max-width: 1000px;
+  margin: auto;
+  padding-bottom: 30px;
+}
+
+.playerCount {
+  background: white;
+  margin: 0 30px;
+  border-radius: 3px;
+  padding: 10px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+.playerListSectionTitle {
+  margin: 0;
+}

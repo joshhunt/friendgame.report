@@ -1,18 +1,19 @@
 .header {
   background: #111e24;
   color: white;
+  padding-bottom: 100px;
+  margin-bottom: -50px;
 }
 
 .headerContent {
   max-width: 1200px;
   margin: auto;
-  padding-bottom: 150px;
 }
 
 .headerTop {
   font-size: 22px;
   line-height: 1.2;
-  padding: 20px 0;
+  padding-top: 20px;
   display: flex;
   align-items: center;
 }
