@@ -1,0 +1,45 @@
+.App {
+  padding: 15px;
+}
+
+.playerSearch {
+  display: flex;
+}
+
+.pgcrEntry {
+  font-size: 0.9em;
+  margin-left: 15px;
+}
+
+.playersTable {
+  font-size: 0.9em;
+  margin-left: 15px;
+}
+
+.split {
+  display: flex;
+  text-align: left;
+  justify-content: space-between;
+}
+
+.split > * {
+  flex: 1;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.activities {
+  text-align: left;
+  padding: 15px;
+}
+
+.activity {
+  margin-bottom: 15px;
+}
