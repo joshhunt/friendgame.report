@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import React from 'react';
 
 import './App.css';
 
-class App extends Component {
-  render() {
-    return <div className="App" />;
-  }
+export default function FrontPage() {
+  return (
+    <div className="App">
+      <p style={{ textAlign: 'center', color: 'white' }}>
+        Search for a player to see who they&apos;ve played with the most
+      </p>
+    </div>
+  );
 }
-
-export default withRouter(App);
