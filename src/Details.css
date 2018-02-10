@@ -9,3 +9,13 @@
 .split {
   align-items: flex-start;
 }
+
+.playerListLoading {
+  background: #f5f5f5;
+  border-radius: 3px;
+  padding: 60px 10px;
+  margin: 0 30px 30px;
+  text-align: center;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  font-size: 20px;
+}

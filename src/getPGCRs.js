@@ -65,6 +65,7 @@ export default function getData(player, cb) {
     page: 0,
   };
 
+  let loadedCharactersActivity = 0;
   let allActivities = [];
   let pgcrsLoaded = 0;
   let lastPgcrDate = new Date();
@@ -100,10 +101,12 @@ export default function getData(player, cb) {
 
       getDestiny(url).then(data => {
         const { activities } = data;
+        loadedCharactersActivity += 1;
 
         allActivities = allActivities.concat(activities);
 
         cb({
+          loadedCharactersActivity,
           activities: allActivities,
           totalActivities: allActivities.length,
         });

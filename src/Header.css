@@ -2,11 +2,12 @@
   background: #111e24;
   color: white;
   padding-bottom: 120px;
-  margin-bottom: -77px;
+  margin-bottom: -76px;
 }
 
 .headerContent {
   max-width: 1200px;
+  padding: 0 15px;
   margin: auto;
 }
 
@@ -92,10 +93,11 @@
 
   border-radius: 3px;
   padding-left: 5px;
-  width: 600px;
+  width: 100%;
 }
 
 .headerInputContainer {
+  width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin: -5px 0;
   position: relative;

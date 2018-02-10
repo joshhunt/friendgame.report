@@ -46,10 +46,29 @@ class Details extends Component {
   };
 
   render() {
-    const { pvpData, pveData } = this.state;
+    const {
+      pvpData,
+      pveData,
+      pgcrsLoaded,
+      totalActivities,
+      characters,
+      loadedCharactersActivity,
+    } = this.state;
+    const percentLoaded = Math.floor(pgcrsLoaded / totalActivities * 100);
+
+    let loading;
+
+    if (!characters) {
+      loading = 'Loading profile...';
+    } else if (loadedCharactersActivity !== characters.length) {
+      loading = 'Loading characters...';
+    } else if (percentLoaded !== 100)
+      loading = `Loading matches... ${percentLoaded}% complete`;
 
     return (
       <div className="playerListRoot">
+        {loading && <p className="playerListLoading">{loading}</p>}
+
         <div className="split">
           <PlayerList title="PvP" data={pvpData} />
 
