@@ -6,6 +6,14 @@ import Player from './Player';
 import './PlayerList.css';
 
 function List({ players }) {
+  if (!players.length) {
+    return (
+      <p style={{ textAlign: 'center' }}>
+        <em>No players to show</em>
+      </p>
+    );
+  }
+
   return players.map((player, index) => (
     <Player
       index={index + 1}
@@ -31,12 +39,7 @@ export default class PlayerList extends Component {
               </h2>
               <TabList className="playerListTabList">
                 <Tab className="playerListTab">Fireteam</Tab>
-                <Tab
-                  className="playerListTab"
-                  selectedTabClassName="playerListTabActive"
-                >
-                  Matchmade
-                </Tab>
+                <Tab className="playerListTab">Matchmade</Tab>
               </TabList>
             </div>
 

@@ -1,8 +1,8 @@
 .header {
   background: #111e24;
   color: white;
-  padding-bottom: 100px;
-  margin-bottom: -50px;
+  padding-bottom: 120px;
+  margin-bottom: -77px;
 }
 
 .headerContent {
@@ -32,11 +32,11 @@
 }
 
 .siteName span {
-  color: #9ca4a7;
+  color: #a6aeb0;
 }
 
 .headerIcon {
-  color: #737e82;
+  color: #a6aeb0;
   margin-right: 0.5em;
 }
 
@@ -93,7 +93,6 @@
   border-radius: 3px;
   padding-left: 5px;
   width: 600px;
-  /* background: rgba(255, 255, 255, 0.02); */
 }
 
 .headerInputContainer {
