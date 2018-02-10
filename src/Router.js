@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import './App.css';
 
@@ -6,18 +6,19 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import FrontPage from './FrontPage';
 import PlayerList from './PlayerList';
+import App from './App';
 
 export default function Router() {
   return (
     <BrowserRouter>
-      <div>
+      <App>
         <Route exact path="/" component={FrontPage} />
         <Route
           exact
           path="/:membershipType/:membershipId"
           component={PlayerList}
         />
-      </div>
+      </App>
     </BrowserRouter>
   );
 }

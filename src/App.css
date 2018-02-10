@@ -1,5 +1,10 @@
 .App {
-  padding: 15px;
+  width: 100%;
+}
+
+.indexContent {
+  max-width: 1200px;
+  margin: auto;
 }
 
 .playerSearch {

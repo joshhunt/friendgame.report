@@ -7,9 +7,8 @@ export function get(url, opts) {
   return fetch(url, opts).then(res => res.json());
 }
 
-export function getDestiny(_pathname, opts = {}, postBody) {
-  const url = `https://www.bungie.net${_pathname}`;
-  const { pathname } = new URL(url);
+export function getDestiny(pathname, opts = {}, postBody) {
+  const url = `https://www.bungie.net${pathname}`;
 
   const apiKey = process.env.REACT_APP_API_KEY;
 
