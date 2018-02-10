@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { format as fmtDate } from 'date-fns';
 
+import Player from './Player';
 import getData from './getPGCRs.js';
 
 import './PlayerList.css';
@@ -34,6 +35,7 @@ class App extends Component {
       matchmadePlayers,
       lastPgcrDate,
       characters,
+      players,
     } = this.state;
 
     return (
@@ -41,32 +43,26 @@ class App extends Component {
         <div className="split">
           <div className="playerCount">
             <h2 className="playerListSectionTitle">All players</h2>
-            <ol>
-              {this.state.players &&
-                this.state.players.map(player => (
-                  <li
-                    key={player.destinyUserInfo.membershipId}
-                    style={{ opacity: player.$count > 1 ? 1 : 0.5 }}
-                  >
-                    {player.destinyUserInfo.displayName} - {player.$count}
-                  </li>
-                ))}
-            </ol>
+            {players &&
+              players.map((player, index) => (
+                <Player
+                  index={index + 1}
+                  player={player}
+                  key={player.destinyUserInfo.membershipId}
+                />
+              ))}
           </div>
 
           <div className="playerCount">
-            <h2>Match made players</h2>
-            <ol>
-              {matchmadePlayers &&
-                matchmadePlayers.map(player => (
-                  <li
-                    key={player.destinyUserInfo.membershipId}
-                    style={{ opacity: player.$count > 1 ? 1 : 0.5 }}
-                  >
-                    {player.destinyUserInfo.displayName} - {player.$count}
-                  </li>
-                ))}
-            </ol>
+            <h2 className="playerListSectionTitle">Matchmade players</h2>
+            {matchmadePlayers &&
+              matchmadePlayers.map((player, index) => (
+                <Player
+                  index={index + 1}
+                  player={player}
+                  key={player.destinyUserInfo.membershipId}
+                />
+              ))}
           </div>
 
           {/* <div className="appStats">

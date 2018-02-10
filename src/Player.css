@@ -1,0 +1,32 @@
+.player {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.playerIndex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  width: 2ch;
+}
+
+.playerIcon {
+  display: block;
+  width: 45px;
+  height: 45px;
+}
+
+.playerInfo {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.playerName {
+  margin-bottom: 5px;
+}
+
+.playerSub {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
