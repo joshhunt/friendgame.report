@@ -12,7 +12,7 @@
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89978211-2"></script>
     <script>
-      if (window.location.href.indexOf('localhost') !== -1) {
+      if (window.location.href.indexOf('localhost') === -1) {
         console.log('ga active');
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
