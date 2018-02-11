@@ -3,6 +3,8 @@ import { format, formatDistanceStrict, formatRelative } from 'date-fns';
 
 import './PlayerModal.css';
 
+const DEBUG = window.location.search.includes('debug');
+
 export default function PlayerModal(props) {
   const { player, activities, activityModeDefs, activityDefs } = props;
   const { displayName, iconPath } = player.destinyUserInfo;
@@ -56,33 +58,75 @@ export default function PlayerModal(props) {
           const activityDef =
             activityDefs[activity.activityDetails.referenceId];
           return (
-            <div className="activity" key={activity.activityDetails.instanceId}>
-              <a
-                href={`https://destinytracker.com/d2/pgcr/${
-                  activity.activityDetails.instanceId
-                }`}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div>
+              <div
+                className="activity"
+                key={activity.activityDetails.instanceId}
               >
-                <div className="activityIconWrapper">
-                  <img
-                    alt=""
-                    className="activityIcon"
-                    src={`https://bungie.net${mode.displayProperties.icon}`}
-                  />
-                </div>
-                <div className="activityInfo">
-                  <div className="activityName">
-                    {mode.displayProperties.name}
+                <a
+                  href={`https://destinytracker.com/d2/pgcr/${
+                    activity.activityDetails.instanceId
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className="activityIconWrapper">
+                    <img
+                      alt=""
+                      className="activityIcon"
+                      src={`https://bungie.net${mode.displayProperties.icon}`}
+                    />
                   </div>
-                  <div className="activityLocation">
-                    {activityDef.displayProperties.name}
+                  <div className="activityInfo">
+                    <div className="activityName">
+                      {mode.displayProperties.name}
+                    </div>
+                    <div className="activityLocation">
+                      {activityDef.displayProperties.name}
+                    </div>
                   </div>
-                </div>
-                <div className="activityExtra">
-                  {formatRelative(new Date(activity.period), new Date())}
-                </div>
-              </a>
+                  <div className="activityExtra">
+                    {formatRelative(new Date(activity.period), new Date())}
+                  </div>
+                </a>
+              </div>
+
+              {DEBUG && (
+                <table style={{ marginBottom: 30 }}>
+                  <thead>
+                    <tr>
+                      <td>Name</td>
+                      <td>Fireteam ID</td>
+                      <td>Same Fireteam?</td>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {activity.$pgcr.entries.map(entry => {
+                      return (
+                        <tr
+                          style={{
+                            fontWeight:
+                              activity.$myFireteamId ===
+                              entry.values.fireteamId.basic.value
+                                ? 600
+                                : 400,
+                          }}
+                        >
+                          <td>{entry.player.destinyUserInfo.displayName}</td>
+                          <td>{entry.values.fireteamId.basic.value}</td>
+                          <td>
+                            {activity.$myFireteamId ===
+                            entry.values.fireteamId.basic.value
+                              ? 'Yes'
+                              : 'No'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
           );
         })}
