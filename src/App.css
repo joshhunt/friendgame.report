@@ -48,3 +48,13 @@
 .activity {
   margin-bottom: 15px;
 }
+
+.footer {
+  text-align: center;
+  font-size: 0.9em;
+  color: #525252;
+}
+
+.footer a {
+  color: black;
+}

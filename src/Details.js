@@ -13,10 +13,12 @@ const INITIAL_STATE = {
   pvpData: {
     fireteamPlayers: [],
     matchmadePlayers: [],
+    activities: [],
   },
   pveData: {
     fireteamPlayers: [],
     matchmadePlayers: [],
+    activities: [],
   },
 };
 
@@ -73,22 +75,6 @@ class Details extends Component {
           <PlayerList title="PvP" data={pvpData} />
 
           <PlayerList title="PvE" data={pveData} />
-          {/* <div className="appStats">
-            <p>
-              Characters: {characters.length}
-              <br />
-              Activities: {totalActivities}
-              <br />
-              PGCRs loaded:{' '}
-              {pgcrsLoaded
-                ? Math.floor(pgcrsLoaded / totalActivities * 100)
-                : 0}% ({pgcrsLoaded})
-              <br />
-              Last activity:{' '}
-              {lastPgcrDate &&
-                fmtDate(new Date(lastPgcrDate), 'ddd Do MMM, h:mma')}
-            </p>
-          </div> */}
         </div>
       </div>
     );

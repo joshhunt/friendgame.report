@@ -71,11 +71,13 @@ export default function getData(player, cb) {
   let lastPgcrDate = new Date();
 
   const pvpData = {
+    activities: [],
     fireteamPlayers: [],
     matchmadePlayers: [],
   };
 
   const pveData = {
+    activities: [],
     fireteamPlayers: [],
     matchmadePlayers: [],
   };
@@ -83,7 +85,6 @@ export default function getData(player, cb) {
   const { membershipType, membershipId } = player;
 
   getProfile(player).then(profile => {
-    // TODO: check privacy!
     const characters = Object.values(profile.characters.data);
 
     if (characters.length > 2) {
@@ -114,6 +115,10 @@ export default function getData(player, cb) {
         activities.forEach(activity => {
           const isPvP = activity.activityDetails.modes.includes(PVP);
           const date = new Date(activity.period);
+
+          isPvP
+            ? pvpData.activities.push(activity)
+            : pveData.activities.push(activity);
 
           pgcrWorker.push(activity.activityDetails.instanceId, (err, pgcr) => {
             if (date.getTime() < lastPgcrDate.getTime()) {
@@ -148,12 +153,34 @@ export default function getData(player, cb) {
             cb({
               pgcrsLoaded,
               lastPgcrDate,
-              pvpData: _.mapValues(pvpData, list =>
-                fmtPlayers(list, membershipId),
-              ),
-              pveData: _.mapValues(pveData, list =>
-                fmtPlayers(list, membershipId),
-              ),
+              pvpData: {
+                activities: _.sortBy(
+                  pvpData.activities,
+                  a => new Date(a.period),
+                ).reverse(),
+                fireteamPlayers: fmtPlayers(
+                  pvpData.fireteamPlayers,
+                  membershipId,
+                ),
+                matchmadePlayers: fmtPlayers(
+                  pvpData.matchmadePlayers,
+                  membershipId,
+                ),
+              },
+              pveData: {
+                activities: _.sortBy(
+                  pveData.activities,
+                  a => new Date(a.period),
+                ).reverse(),
+                fireteamPlayers: fmtPlayers(
+                  pveData.fireteamPlayers,
+                  membershipId,
+                ),
+                matchmadePlayers: fmtPlayers(
+                  pveData.matchmadePlayers,
+                  membershipId,
+                ),
+              },
             });
           });
         });

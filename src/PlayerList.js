@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { format as fmtDate } from 'date-fns';
 
 import Player from './Player';
 
@@ -23,37 +24,45 @@ function List({ players }) {
   ));
 }
 
-export default class PlayerList extends Component {
-  hello() {}
+export default function PlayerList(props) {
+  const {
+    data: { fireteamPlayers, matchmadePlayers, activities },
+    title,
+  } = props;
 
-  render() {
-    const { data: { fireteamPlayers, matchmadePlayers }, title } = this.props;
+  const first = activities[activities.length - 1];
+  const last = activities[0];
 
-    return (
-      <div className="playerCount">
-        <div className="playerListContent">
-          <Tabs selectedTabClassName="playerListTabActive">
-            <div className="playerListHeader">
-              <h2 className="playerListTitle playerListSectionTitle">
-                {title}
-              </h2>
-              <TabList className="playerListTabList">
-                <Tab className="playerListTab">Fireteam</Tab>
-                <Tab className="playerListTab">Matchmade</Tab>
-              </TabList>
-            </div>
+  return (
+    <div className="playerCount">
+      <div className="playerListContent">
+        <Tabs selectedTabClassName="playerListTabActive">
+          <div className="playerListHeader">
+            <h2 className="playerListTitle playerListSectionTitle">{title}</h2>
+            {first &&
+              last && (
+                <div className="playerListSectionInfo">
+                  {activities.length} <span>activities from </span>{' '}
+                  {fmtDate(new Date(first.period), 'Do MMM')} <span>to</span>{' '}
+                  {fmtDate(new Date(last.period), 'Do MMM')}
+                </div>
+              )}
+            <TabList className="playerListTabList">
+              <Tab className="playerListTab">Fireteam</Tab>
+              <Tab className="playerListTab">Matchmade</Tab>
+            </TabList>
+          </div>
 
-            <TabPanel>
-              <h3 className="playerListTitle">Fireteam</h3>
-              <List players={fireteamPlayers} />
-            </TabPanel>
-            <TabPanel>
-              <h3 className="playerListTitle">Matchmade</h3>
-              <List players={matchmadePlayers} />
-            </TabPanel>
-          </Tabs>
-        </div>
+          <TabPanel>
+            <h3 className="playerListTitle">Fireteam</h3>
+            <List players={fireteamPlayers} />
+          </TabPanel>
+          <TabPanel>
+            <h3 className="playerListTitle">Matchmade</h3>
+            <List players={matchmadePlayers} />
+          </TabPanel>
+        </Tabs>
       </div>
-    );
-  }
+    </div>
+  );
 }

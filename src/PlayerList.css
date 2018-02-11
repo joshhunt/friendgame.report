@@ -12,6 +12,16 @@
   padding: 15px 10px;
 }
 
+.playerListSectionInfo {
+  padding: 15px 10px;
+  padding-top: 0;
+  opacity: 0.8;
+}
+
+.playerListSectionInfo span {
+  opacity: 0.8;
+}
+
 .playerListTitle {
   opacity: 0.8;
 }
