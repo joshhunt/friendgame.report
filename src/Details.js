@@ -79,6 +79,7 @@ class Details extends Component {
   };
 
   closeModal = () => {
+    this.modalPlayer = null;
     this.setState({ modal: null });
   };
 
