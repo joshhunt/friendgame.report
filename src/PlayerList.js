@@ -42,7 +42,7 @@ export default function PlayerList(props) {
             {first &&
               last && (
                 <div className="playerListSectionInfo">
-                  {activities.length} <span>activities from </span>{' '}
+                  {activities.length} activities <span>from</span>{' '}
                   {fmtDate(new Date(first.period), 'Do MMM')} <span>to</span>{' '}
                   {fmtDate(new Date(last.period), 'Do MMM')}
                 </div>
