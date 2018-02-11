@@ -13,8 +13,6 @@ export function searchForPlayer(name, membershipType) {
   return get(url);
 }
 
-window.searchForPlayer = searchForPlayer;
-
 const pgcrConcurrency = 15;
 
 const PVP = 5;
@@ -58,17 +56,44 @@ function fmtPlayers(players, membershipId) {
     .value();
 }
 
-export default function getData(player, cb) {
+function getActivities(
+  { membershipType, membershipId, characterId },
+  page = 0,
+  acc = [],
+) {
   const params = {
     mode: 'None',
     count: 200,
-    page: 0,
+    page,
   };
 
+  const paramsString = querystring.stringify(params);
+  const url = `/Platform/Destiny2/${membershipType}/Account/${
+    membershipId
+  }/Character/${characterId}/Stats/Activities/?${paramsString}`;
+
+  return getDestiny(url).then(data => {
+    if (data.activities) {
+      const newAcc = [...acc, ...data.activities];
+      const newPage = page + 1;
+      return getActivities(
+        { membershipType, membershipId, characterId },
+        newPage,
+        newAcc,
+      );
+    }
+
+    return acc;
+  });
+}
+
+export default function getData(player, cb) {
   let loadedCharactersActivity = 0;
   let allActivities = [];
   let pgcrsLoaded = 0;
   let lastPgcrDate = new Date();
+
+  pgcrWorker.remove(() => true);
 
   const pvpData = {
     activities: [],
@@ -87,104 +112,101 @@ export default function getData(player, cb) {
   getProfile(player).then(profile => {
     const characters = Object.values(profile.characters.data);
 
-    if (characters.length > 2) {
-      params.count = 100;
-    }
-
     cb({ characters });
 
     Object.values(characters).forEach(character => {
       const { characterId } = character;
-      const paramsString = querystring.stringify(params);
-      const url = `/Platform/Destiny2/${membershipType}/Account/${
-        membershipId
-      }/Character/${characterId}/Stats/Activities/?${paramsString}`;
 
-      getDestiny(url).then(data => {
-        const { activities } = data;
-        loadedCharactersActivity += 1;
+      getActivities({ membershipType, membershipId, characterId }).then(
+        activities => {
+          loadedCharactersActivity += 1;
 
-        allActivities = allActivities.concat(activities);
+          allActivities = allActivities.concat(activities);
 
-        cb({
-          loadedCharactersActivity,
-          activities: allActivities,
-          totalActivities: allActivities.length,
-        });
-
-        activities.forEach(activity => {
-          const isPvP = activity.activityDetails.modes.includes(PVP);
-          const date = new Date(activity.period);
-
-          pgcrWorker.push(activity.activityDetails.instanceId, (err, pgcr) => {
-            if (date.getTime() < lastPgcrDate.getTime()) {
-              lastPgcrDate = date;
-            }
-
-            isPvP
-              ? pvpData.activities.push(activity)
-              : pveData.activities.push(activity);
-
-            const myEntry = pgcr.entries.find(
-              e => e.characterId === characterId,
-            );
-
-            activity.$character = character;
-            activity.$pgcr = pgcr;
-            activity.$myFireteamId = myEntry.values.fireteamId.basic.value;
-            activity.$myEntry = myEntry;
-
-            pgcr.entries.forEach(entry => {
-              isPvP
-                ? pvpData.fireteamPlayers.push(entry.player)
-                : pveData.fireteamPlayers.push(entry.player);
-
-              if (
-                activity.$myFireteamId !== entry.values.fireteamId.basic.value
-              ) {
-                isPvP
-                  ? pvpData.matchmadePlayers.push(entry.player)
-                  : pveData.matchmadePlayers.push(entry.player);
-              }
-            });
-
-            pgcrsLoaded += 1;
-
-            cb({
-              pgcrsLoaded,
-              lastPgcrDate,
-              pvpData: {
-                activities: _.sortBy(
-                  pvpData.activities,
-                  a => new Date(a.period),
-                ).reverse(),
-                fireteamPlayers: fmtPlayers(
-                  pvpData.fireteamPlayers,
-                  membershipId,
-                ),
-                matchmadePlayers: fmtPlayers(
-                  pvpData.matchmadePlayers,
-                  membershipId,
-                ),
-              },
-              pveData: {
-                activities: _.sortBy(
-                  pveData.activities,
-                  a => new Date(a.period),
-                ).reverse(),
-                fireteamPlayers: fmtPlayers(
-                  pveData.fireteamPlayers,
-                  membershipId,
-                ),
-                matchmadePlayers: fmtPlayers(
-                  pveData.matchmadePlayers,
-                  membershipId,
-                ),
-              },
-            });
+          cb({
+            loadedCharactersActivity,
+            activities: allActivities,
+            totalActivities: allActivities.length,
           });
-        });
-      });
+
+          activities.forEach(activity => {
+            const isPvP = activity.activityDetails.modes.includes(PVP);
+            const date = new Date(activity.period);
+
+            pgcrWorker.push(
+              activity.activityDetails.instanceId,
+              (err, pgcr) => {
+                if (date.getTime() < lastPgcrDate.getTime()) {
+                  lastPgcrDate = date;
+                }
+
+                isPvP
+                  ? pvpData.activities.push(activity)
+                  : pveData.activities.push(activity);
+
+                const myEntry = pgcr.entries.find(
+                  e => e.characterId === characterId,
+                );
+
+                activity.$character = character;
+                activity.$pgcr = pgcr;
+                activity.$myFireteamId = myEntry.values.fireteamId.basic.value;
+                activity.$myEntry = myEntry;
+
+                pgcr.entries.forEach(entry => {
+                  isPvP
+                    ? pvpData.fireteamPlayers.push(entry.player)
+                    : pveData.fireteamPlayers.push(entry.player);
+
+                  if (
+                    activity.$myFireteamId !==
+                    entry.values.fireteamId.basic.value
+                  ) {
+                    isPvP
+                      ? pvpData.matchmadePlayers.push(entry.player)
+                      : pveData.matchmadePlayers.push(entry.player);
+                  }
+                });
+
+                pgcrsLoaded += 1;
+
+                cb({
+                  pgcrsLoaded,
+                  lastPgcrDate,
+                  pvpData: {
+                    activities: _.sortBy(
+                      pvpData.activities,
+                      a => new Date(a.period),
+                    ).reverse(),
+                    fireteamPlayers: fmtPlayers(
+                      pvpData.fireteamPlayers,
+                      membershipId,
+                    ),
+                    matchmadePlayers: fmtPlayers(
+                      pvpData.matchmadePlayers,
+                      membershipId,
+                    ),
+                  },
+                  pveData: {
+                    activities: _.sortBy(
+                      pveData.activities,
+                      a => new Date(a.period),
+                    ).reverse(),
+                    fireteamPlayers: fmtPlayers(
+                      pveData.fireteamPlayers,
+                      membershipId,
+                    ),
+                    matchmadePlayers: fmtPlayers(
+                      pveData.matchmadePlayers,
+                      membershipId,
+                    ),
+                  },
+                });
+              },
+            );
+          });
+        },
+      );
     });
   });
 }

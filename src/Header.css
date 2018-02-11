@@ -1,14 +1,19 @@
 .header {
   background: #111e24;
   color: white;
-  padding-bottom: 120px;
-  margin-bottom: -76px;
+  padding-bottom: 130px;
+  margin-bottom: -86px;
 }
 
 .headerContent {
   max-width: 1200px;
   padding: 0 15px;
   margin: auto;
+}
+
+.headerMain {
+  display: flex;
+  flex: 1;
 }
 
 .headerTop {
@@ -153,7 +158,6 @@
 
   .headerMain {
     flex: 1 0 100%;
-    display: flex;
   }
 
   .headerPlatform {

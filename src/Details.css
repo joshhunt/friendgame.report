@@ -27,6 +27,17 @@
   font-size: 20px;
 }
 
+.info {
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 30px;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.info a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
 @media screen and (max-width: 679px) {
   .split {
     display: block;

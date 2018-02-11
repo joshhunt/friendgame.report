@@ -42,9 +42,8 @@ class Details extends Component {
   getStats = (props = this.props) => {
     this.setState({ ...INITIAL_STATE });
     const { membershipType, membershipId } = props.match.params;
-    getData({ membershipType, membershipId }, ({ ...rest }) =>
-      this.setState({ ...rest }),
-    );
+    const cb = ({ ...rest }) => this.setState({ ...rest });
+    getData({ membershipType, membershipId }, cb);
   };
 
   render() {
