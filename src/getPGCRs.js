@@ -116,14 +116,14 @@ export default function getData(player, cb) {
           const isPvP = activity.activityDetails.modes.includes(PVP);
           const date = new Date(activity.period);
 
-          isPvP
-            ? pvpData.activities.push(activity)
-            : pveData.activities.push(activity);
-
           pgcrWorker.push(activity.activityDetails.instanceId, (err, pgcr) => {
             if (date.getTime() < lastPgcrDate.getTime()) {
               lastPgcrDate = date;
             }
+
+            isPvP
+              ? pvpData.activities.push(activity)
+              : pveData.activities.push(activity);
 
             const myEntry = pgcr.entries.find(
               e => e.characterId === characterId,
