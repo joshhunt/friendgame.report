@@ -89,46 +89,50 @@ class Header extends Component {
       <div className="header">
         <div className="headerContent">
           <div className="headerTop">
-            <i className="fal fa-users headerIcon" />
-            <h1 className="siteName">
-              fri<span>endgame</span>.report
-            </h1>
-
-            <div className="headerPlatform">
-              <div className="headerPlatformIcon">
-                <FontAwesomeIcon icon={PLATFORM_ICON[membershipType]} />
-              </div>
-
-              <div className="headerPlatformDropdown">
-                <i className="fas fa-chevron-down" />
-              </div>
-
-              <select
-                className="headerPlatformSelect"
-                value={membershipType}
-                onChange={this.onMembershipTypeChange}
-              >
-                <option value={2}>Playstation</option>
-                <option value={1}>Xbox</option>
-                <option value={4}>Battle.net</option>
-              </select>
+            <div className="headerLogoish">
+              <i className="fal fa-users headerIcon" />
+              <h1 className="siteName">
+                fri<span>endgame</span>.report
+              </h1>
             </div>
 
-            <Autosuggest
-              theme={{
-                container: 'headerInputContainer',
-                input: 'headerInput',
-                suggestionsContainer: 'headerSuggestions',
-              }}
-              suggestions={playerSearchSuggestions}
-              onSuggestionsFetchRequested={this.loadSuggestions}
-              onSuggestionsClearRequested={this.clearSuggestions}
-              getSuggestionValue={getSuggestionValue}
-              renderSuggestion={renderSuggestion}
-              onSuggestionSelected={this.onSuggestionSelected}
-              inputProps={inputProps}
-              alwaysRenderSuggestions={true}
-            />
+            <div className="headerMain">
+              <div className="headerPlatform">
+                <div className="headerPlatformIcon">
+                  <FontAwesomeIcon icon={PLATFORM_ICON[membershipType]} />
+                </div>
+
+                <div className="headerPlatformDropdown">
+                  <i className="fas fa-chevron-down" />
+                </div>
+
+                <select
+                  className="headerPlatformSelect"
+                  value={membershipType}
+                  onChange={this.onMembershipTypeChange}
+                >
+                  <option value={2}>Playstation</option>
+                  <option value={1}>Xbox</option>
+                  <option value={4}>Battle.net</option>
+                </select>
+              </div>
+
+              <Autosuggest
+                theme={{
+                  container: 'headerInputContainer',
+                  input: 'headerInput',
+                  suggestionsContainer: 'headerSuggestions',
+                }}
+                suggestions={playerSearchSuggestions}
+                onSuggestionsFetchRequested={this.loadSuggestions}
+                onSuggestionsClearRequested={this.clearSuggestions}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                onSuggestionSelected={this.onSuggestionSelected}
+                inputProps={inputProps}
+                alwaysRenderSuggestions={true}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@
   padding-top: 20px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .siteName {
@@ -137,4 +138,27 @@
 .headerSuggestions li:hover {
   color: rgba(255, 255, 255, 1);
   background: rgba(255, 255, 255, 0.05);
+}
+
+@media screen and (max-width: 679px) {
+  .headerLogoish {
+    flex: 1 0 100%;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .siteName {
+    border: none;
+  }
+
+  .headerMain {
+    flex: 1 0 100%;
+    display: flex;
+  }
+
+  .headerPlatform {
+    margin: 0;
+    padding: 0;
+    margin-right: 15px;
+  }
 }

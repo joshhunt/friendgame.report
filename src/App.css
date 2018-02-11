@@ -21,25 +21,6 @@
   margin-left: 15px;
 }
 
-.split {
-  display: flex;
-  text-align: left;
-  justify-content: space-between;
-}
-
-.split > * {
-  flex: 1;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .activities {
   text-align: left;
   padding: 15px;

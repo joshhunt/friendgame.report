@@ -7,7 +7,14 @@
 }
 
 .split {
+  display: flex;
+  text-align: left;
+  justify-content: space-between;
   align-items: flex-start;
+}
+
+.split > * {
+  flex: 1;
 }
 
 .playerListLoading {
@@ -18,4 +25,18 @@
   text-align: center;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
   font-size: 20px;
+}
+
+@media screen and (max-width: 679px) {
+  .split {
+    display: block;
+  }
+
+  .split > * {
+    margin-bottom: 30px;
+  }
+
+  .playerListLoading {
+    margin: 0 15px 15px;
+  }
 }
