@@ -47,11 +47,11 @@ export function getDestiny(pathname, opts = {}, postBody) {
 }
 
 export function searchBungiePlayer(name) {
-  return getDestiny(`/Platform/Destiny2/SearchDestinyPlayer/-1/${name}/`).then(
-    results => {
-      return results.map(r => ({ ...r, bungieResult: true }));
-    },
-  );
+  return getDestiny(
+    `/Platform/Destiny2/SearchDestinyPlayer/-1/${encodeURIComponent(name)}/`,
+  ).then(results => {
+    return results.map(r => ({ ...r, bungieResult: true }));
+  });
 }
 
 window.searchBungiePlayer = searchBungiePlayer;
