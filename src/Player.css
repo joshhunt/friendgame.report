@@ -1,6 +1,7 @@
 .player {
   display: flex;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .playerIndex {

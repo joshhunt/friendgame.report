@@ -57,24 +57,32 @@ export default function PlayerModal(props) {
             activityDefs[activity.activityDetails.referenceId];
           return (
             <div className="activity" key={activity.activityDetails.instanceId}>
-              <div className="activityIconWrapper">
-                <img
-                  alt=""
-                  className="activityIcon"
-                  src={`https://bungie.net${mode.displayProperties.icon}`}
-                />
-              </div>
-              <div className="activityInfo">
-                <div className="activityName">
-                  {mode.displayProperties.name}
+              <a
+                href={`https://destinytracker.com/d2/pgcr/${
+                  activity.activityDetails.instanceId
+                }`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="activityIconWrapper">
+                  <img
+                    alt=""
+                    className="activityIcon"
+                    src={`https://bungie.net${mode.displayProperties.icon}`}
+                  />
                 </div>
-                <div className="activityLocation">
-                  {activityDef.displayProperties.name}
+                <div className="activityInfo">
+                  <div className="activityName">
+                    {mode.displayProperties.name}
+                  </div>
+                  <div className="activityLocation">
+                    {activityDef.displayProperties.name}
+                  </div>
                 </div>
-              </div>
-              <div className="activityExtra">
-                {formatRelative(new Date(activity.period), new Date())}
-              </div>
+                <div className="activityExtra">
+                  {formatRelative(new Date(activity.period), new Date())}
+                </div>
+              </a>
             </div>
           );
         })}
