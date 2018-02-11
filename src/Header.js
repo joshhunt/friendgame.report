@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import '@fortawesome/fontawesome';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 
+import { searchBungiePlayer } from './destiny';
 import { searchForPlayer } from './getPGCRs.js';
 
 import './Header.css';
@@ -22,7 +23,12 @@ function getSuggestionValue(player) {
 }
 
 function renderSuggestion(player) {
-  return <div>{player.displayName}</div>;
+  return (
+    <div style={{ fontWeight: player.bungieResult ? 600 : 400 }}>
+      <FontAwesomeIcon icon={PLATFORM_ICON[player.membershipType]} />{' '}
+      {player.displayName}
+    </div>
+  );
 }
 
 class Header extends Component {
@@ -35,7 +41,7 @@ class Header extends Component {
       playerSearchValue: '',
     };
 
-    this.loadSuggestions = debounce(this.loadSuggestions, 200, {
+    this.loadSuggestions = debounce(this.loadSuggestions, 500, {
       leading: true,
     });
   }
@@ -51,9 +57,20 @@ class Header extends Component {
       return;
     }
 
+    let trialsReportResults = [];
+    let bungieResults = [];
+
     searchForPlayer(value, this.state.membershipType).then(results => {
+      trialsReportResults = results;
       this.setState({
-        playerSearchSuggestions: results,
+        playerSearchSuggestions: [...bungieResults, ...trialsReportResults],
+      });
+    });
+
+    searchBungiePlayer(value).then(results => {
+      bungieResults = results;
+      this.setState({
+        playerSearchSuggestions: [...bungieResults, ...trialsReportResults],
       });
     });
   };
@@ -130,7 +147,6 @@ class Header extends Component {
                 renderSuggestion={renderSuggestion}
                 onSuggestionSelected={this.onSuggestionSelected}
                 inputProps={inputProps}
-                alwaysRenderSuggestions={true}
               />
             </div>
           </div>
