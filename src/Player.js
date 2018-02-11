@@ -3,11 +3,15 @@ import React from 'react';
 import './Player.css';
 
 export default function Player(props) {
-  const { player, index } = props;
+  const { player, onClick, index } = props;
   const { displayName, iconPath } = player.destinyUserInfo;
 
   return (
-    <div className="player">
+    <div
+      className="player"
+      onClick={ev => onClick && onClick(ev, player)}
+      role="button"
+    >
       <div className="playerIndex">{index}</div>
       <img
         className="playerIcon"

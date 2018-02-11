@@ -1,3 +1,5 @@
+import { keyBy } from 'lodash';
+
 const componentProfiles = 100;
 const componentCharacters = 200;
 
@@ -44,13 +46,37 @@ export function getDestiny(pathname, opts = {}, postBody) {
   });
 }
 
+let getActivityModeDefinitionsPromise;
+export function getActivityModeDefinitions() {
+  if (!getActivityModeDefinitionsPromise) {
+    getActivityModeDefinitionsPromise = get(
+      'https://destiny.plumbing/en/raw/DestinyActivityModeDefinition.json',
+    ).then(data => {
+      return keyBy(Object.values(data), 'modeType');
+    });
+  }
+
+  return getActivityModeDefinitionsPromise;
+}
+
+let getActivityDefinitionsPromise;
+export function getActivityDefinitions() {
+  if (!getActivityDefinitionsPromise) {
+    getActivityDefinitionsPromise = get(
+      'https://destiny.plumbing/en/reducedActivities.json',
+    );
+  }
+
+  return getActivityDefinitionsPromise;
+}
+
 export function getProfile(
   { membershipType, membershipId },
   components = COMPONENTS,
 ) {
   return getDestiny(
-    `/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=${components.join(
-      ',',
-    )}`,
+    `/Platform/Destiny2/${membershipType}/Profile/${
+      membershipId
+    }/?components=${components.join(',')}`,
   );
 }

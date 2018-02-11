@@ -6,7 +6,7 @@ import Player from './Player';
 
 import './PlayerList.css';
 
-function List({ players }) {
+function List({ players, onPlayerClick }) {
   if (!players.length) {
     return (
       <p style={{ textAlign: 'center' }}>
@@ -17,6 +17,7 @@ function List({ players }) {
 
   return players.map((player, index) => (
     <Player
+      onClick={onPlayerClick}
       index={index + 1}
       player={player}
       key={player.destinyUserInfo.membershipId}
@@ -26,8 +27,9 @@ function List({ players }) {
 
 export default function PlayerList(props) {
   const {
-    data: { fireteamPlayers, matchmadePlayers, activities },
     title,
+    onPlayerClick,
+    data: { fireteamPlayers, matchmadePlayers, activities },
   } = props;
 
   const first = activities[activities.length - 1];
@@ -55,11 +57,12 @@ export default function PlayerList(props) {
 
           <TabPanel>
             <h3 className="playerListTitle">Fireteam</h3>
-            <List players={fireteamPlayers} />
+            <List players={fireteamPlayers} onPlayerClick={onPlayerClick} />
           </TabPanel>
+
           <TabPanel>
             <h3 className="playerListTitle">Matchmade</h3>
-            <List players={matchmadePlayers} />
+            <List players={matchmadePlayers} onPlayerClick={onPlayerClick} />
           </TabPanel>
         </Tabs>
       </div>
