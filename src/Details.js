@@ -26,6 +26,11 @@ const INITIAL_STATE = {
     matchmadePlayers: [],
     activities: [],
   },
+  doublesData: {
+    fireteamPlayers: [],
+    matchmadePlayers: [],
+    activities: [],
+  },
 };
 
 const MODAL_STYLES = {
@@ -130,6 +135,7 @@ class Details extends Component {
     const {
       pvpData,
       pveData,
+      doublesData,
       pgcrsLoaded,
       totalActivities,
       characters,
@@ -151,7 +157,7 @@ class Details extends Component {
       <div className="playerListRoot">
         {loading && <p className="playerListLoading">{loading}</p>}
 
-        <CrimsonDays />
+        <CrimsonDays data={doublesData} />
 
         <div className="split">
           <PlayerList
