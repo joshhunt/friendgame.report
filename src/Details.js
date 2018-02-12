@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 
 import PlayerList from './PlayerList';
 import PlayerModal from './PlayerModal';
+import CrimsonDays from './CrimsonDays';
 import getData from './getPGCRs.js';
 
 import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
@@ -149,6 +150,8 @@ class Details extends Component {
     return (
       <div className="playerListRoot">
         {loading && <p className="playerListLoading">{loading}</p>}
+
+        <CrimsonDays />
 
         <div className="split">
           <PlayerList
