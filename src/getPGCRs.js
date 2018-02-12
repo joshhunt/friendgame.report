@@ -17,6 +17,7 @@ const pgcrConcurrency = 15;
 
 const PVP = 5;
 // const PVE = 7;
+const DOUBLES = 19; // actually, this is trials
 
 function fetchPGCR(id) {
   const url = `/Platform/Destiny2/Stats/PostGameCarnageReport/${id}/`;
@@ -107,6 +108,12 @@ export default function getData(player, cb) {
     matchmadePlayers: [],
   };
 
+  const doublesData = {
+    activities: [],
+    fireteamPlayers: [],
+    matchmadePlayers: [],
+  };
+
   const { membershipType, membershipId } = player;
 
   getProfile(player).then(profile => {
@@ -131,6 +138,7 @@ export default function getData(player, cb) {
 
           activities.forEach(activity => {
             const isPvP = activity.activityDetails.modes.includes(PVP);
+            const isDoubles = activity.activityDetails.modes.includes(DOUBLES);
             const date = new Date(activity.period);
 
             pgcrWorker.push(
@@ -144,6 +152,8 @@ export default function getData(player, cb) {
                   ? pvpData.activities.push(activity)
                   : pveData.activities.push(activity);
 
+                isDoubles && doublesData.activities.push(activity);
+
                 const myEntry = pgcr.entries.find(
                   e => e.characterId === characterId,
                 );
@@ -154,17 +164,21 @@ export default function getData(player, cb) {
                 activity.$myEntry = myEntry;
 
                 pgcr.entries.forEach(entry => {
-                  isPvP
-                    ? pvpData.fireteamPlayers.push(entry.player)
-                    : pveData.fireteamPlayers.push(entry.player);
-
                   if (
                     activity.$myFireteamId !==
                     entry.values.fireteamId.basic.value
                   ) {
+                    isDoubles &&
+                      doublesData.matchmadePlayers.push(entry.player);
                     isPvP
                       ? pvpData.matchmadePlayers.push(entry.player)
                       : pveData.matchmadePlayers.push(entry.player);
+                  } else {
+                    isDoubles && doublesData.fireteamPlayers.push(entry.player);
+
+                    isPvP
+                      ? pvpData.fireteamPlayers.push(entry.player)
+                      : pveData.fireteamPlayers.push(entry.player);
                   }
                 });
 
@@ -198,6 +212,20 @@ export default function getData(player, cb) {
                     ),
                     matchmadePlayers: fmtPlayers(
                       pveData.matchmadePlayers,
+                      membershipId,
+                    ),
+                  },
+                  doublesData: {
+                    activities: _.sortBy(
+                      doublesData.activities,
+                      a => new Date(a.period),
+                    ).reverse(),
+                    fireteamPlayers: fmtPlayers(
+                      doublesData.fireteamPlayers,
+                      membershipId,
+                    ),
+                    matchmadePlayers: fmtPlayers(
+                      doublesData.matchmadePlayers,
                       membershipId,
                     ),
                   },
