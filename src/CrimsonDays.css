@@ -1,7 +1,7 @@
 .crimsonDays {
   width: 100%;
-  max-width: calc(1200px - 60px);
-  margin: 0 30px 30px 30px;
+  max-width: 1200px;
+  margin-bottom: 30px;
   border-radius: 3px;
   box-shadow: 0 2px 10px 1px rgba(86, 24, 21, 0.5);
   padding: 15px;

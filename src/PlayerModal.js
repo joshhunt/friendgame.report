@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, formatDistanceStrict, formatRelative } from 'date-fns';
+import { formatDistanceStrict, formatRelative } from 'date-fns';
 
 import './PlayerModal.css';
 
