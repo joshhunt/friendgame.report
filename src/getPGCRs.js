@@ -17,7 +17,7 @@ const pgcrConcurrency = 15;
 
 const PVP = 5;
 // const PVE = 7;
-const DOUBLES = 19; // actually, this is trials
+const DOUBLES = 15; // actually, this is trials
 
 function fetchPGCR(id) {
   const url = `/Platform/Destiny2/Stats/PostGameCarnageReport/${id}/`;
