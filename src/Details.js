@@ -10,6 +10,8 @@ import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
 
 import './Details.css';
 
+const DISPLAY_CRIMSON = window.location.search.includes('crimson');
+
 const INITIAL_STATE = {
   activities: [],
   pgcrsLoaded: 0,
@@ -157,7 +159,7 @@ class Details extends Component {
       <div className="playerListRoot">
         {loading && <p className="playerListLoading">{loading}</p>}
 
-        <CrimsonDays data={doublesData} />
+        {DISPLAY_CRIMSON && <CrimsonDays data={doublesData} />}
 
         <div className="split">
           <PlayerList

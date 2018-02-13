@@ -8,7 +8,7 @@
   background: #752a26;
   color: white;
   padding-bottom: 75px;
-  background: linear-gradient(to bottom right, #752a26, #561815);
+  background: radial-gradient(circle at center, #82201c, #6f1919);
   overflow: hidden;
   position: relative;
 }
