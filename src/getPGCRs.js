@@ -130,7 +130,9 @@ export default function getData(player, cb) {
           });
 
           activities.forEach(activity => {
-            const isPvP = activity.activityDetails.modes.includes(PVP);
+            const isPvP =
+              activity.activityDetails.modes.includes(PVP) ||
+              activity.activityDetails.modes.includes(15);
             const date = new Date(activity.period);
 
             pgcrWorker.push(
@@ -154,10 +156,6 @@ export default function getData(player, cb) {
                 activity.$myEntry = myEntry;
 
                 pgcr.entries.forEach(entry => {
-                  isPvP
-                    ? pvpData.fireteamPlayers.push(entry.player)
-                    : pveData.fireteamPlayers.push(entry.player);
-
                   if (
                     activity.$myFireteamId !==
                     entry.values.fireteamId.basic.value
@@ -165,6 +163,10 @@ export default function getData(player, cb) {
                     isPvP
                       ? pvpData.matchmadePlayers.push(entry.player)
                       : pveData.matchmadePlayers.push(entry.player);
+                  } else {
+                    isPvP
+                      ? pvpData.fireteamPlayers.push(entry.player)
+                      : pveData.fireteamPlayers.push(entry.player);
                   }
                 });
 

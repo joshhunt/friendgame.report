@@ -1,9 +1,17 @@
 import React from 'react';
-import { format, formatDistanceStrict, formatRelative } from 'date-fns';
+import { formatDistanceStrict, formatRelative } from 'date-fns';
 
 import './PlayerModal.css';
 
 const DEBUG = window.location.search.includes('debug');
+
+function name(n) {
+  if (n.includes('crimsonDoubles_NAME')) {
+    return 'Crimson Doubles';
+  }
+
+  return n;
+}
 
 export default function PlayerModal(props) {
   const { player, activities, activityModeDefs, activityDefs } = props;
@@ -46,7 +54,7 @@ export default function PlayerModal(props) {
               addSuffix: true,
             })}
           </span>{' '}
-          in <span>{firstMode.displayProperties.name}</span> -{' '}
+          in <span>{name(firstMode.displayProperties.name)}</span> -{' '}
           <span>{firstActivityDef.displayProperties.name}</span>
         </div>
       </div>
@@ -79,7 +87,7 @@ export default function PlayerModal(props) {
                   </div>
                   <div className="activityInfo">
                     <div className="activityName">
-                      {mode.displayProperties.name}
+                      {name(mode.displayProperties.name)}
                     </div>
                     <div className="activityLocation">
                       {activityDef.displayProperties.name}
@@ -102,9 +110,10 @@ export default function PlayerModal(props) {
                   </thead>
 
                   <tbody>
-                    {activity.$pgcr.entries.map(entry => {
+                    {activity.$pgcr.entries.map((entry, index) => {
                       return (
                         <tr
+                          key={index}
                           style={{
                             fontWeight:
                               activity.$myFireteamId ===
