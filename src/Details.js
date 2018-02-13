@@ -42,6 +42,7 @@ const MODAL_STYLES = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 9999,
   },
   content: {
     position: 'static',
