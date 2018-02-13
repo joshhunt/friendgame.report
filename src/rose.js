@@ -49,7 +49,7 @@ export default function roseEffect(el, _options) {
 
   const options = _.merge({}, defaults, _options);
 
-  el.style.overflowX = 'hidden';
+  el.style.overflowX = 'hidden'; // eslint-disable-line
 
   function petalCreator() {
     if (el.sakuraAnimId) {
@@ -68,19 +68,11 @@ export default function roseEffect(el, _options) {
 
     // Build animation
     const animations =
-      'fall ' +
-      fallTime +
-      's linear 0s 1' +
-      ', ' +
-      blowAnimation +
-      ' ' +
-      ((fallTime > 30 ? fallTime : 30) - 20 + randomInt(0, 20)) +
-      's linear 0s infinite' +
-      ', ' +
-      swayAnimation +
-      ' ' +
-      randomInt(2, 4) +
-      's linear 0s infinite';
+      `fall ${fallTime}s linear 0s 1` +
+      `, ${blowAnimation} ${(fallTime > 30 ? fallTime : 30) -
+        20 +
+        randomInt(0, 20)}s linear 0s infinite` +
+      `, ${swayAnimation} ${randomInt(2, 4)}s linear 0s infinite`;
 
     // Create petal and randomize size
     const petal = document.createElement('div');
@@ -94,10 +86,10 @@ export default function roseEffect(el, _options) {
       }
     });
 
-    petal.addEventListener('AnimationIteration', ev => {
+    petal.addEventListener('animationiteration', ev => {
       if (
         options.blowAnimations.includes(ev.animationName) ||
-        (options.blowAnimations.includes(ev.swayAnimations) &&
+        (options.swayAnimations.includes(ev.animationName) &&
           !elementInViewport(petal))
       ) {
         petal.parentNode.removeChild(petal);

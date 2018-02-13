@@ -6,7 +6,7 @@ import './CrimsonDays.css';
 import rose from './rose';
 import './rose.css';
 
-rose(document.body);
+// rose(document.body);
 
 export default function CrimsonDays({ data: { fireteamPlayers } }) {
   const topPlayer = fireteamPlayers[0];
