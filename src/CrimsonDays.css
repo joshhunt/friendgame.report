@@ -35,3 +35,7 @@
   z-index: 1 !important;
   transform: translateY(-50%);
 }
+
+.crimsonPlayer {
+  font-family: cursive;
+}
