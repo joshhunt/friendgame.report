@@ -5,7 +5,7 @@
   margin-bottom: 30px;
   border-radius: 3px;
   box-shadow: 0 2px 10px 1px rgba(86, 24, 21, 0.5);
-  padding: 15px;
+  padding: 15px 30px;
   background: #752a26;
   color: white;
   /* background: radial-gradient(circle at center, #82201c, #6f1919); */
@@ -42,11 +42,12 @@
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   margin-bottom: 10px;
-  line-height: 1.4;
+  line-height: 1.6;
 }
 
 .crimsonP span {
   color: rgba(255, 255, 255, 1);
+  white-space: nowrap;
 }
 
 .crimsonPlayer {

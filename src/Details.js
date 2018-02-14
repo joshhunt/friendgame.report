@@ -150,6 +150,7 @@ class Details extends Component {
       characters,
       loadedCharactersActivity,
       modal,
+      thisPlayer,
     } = this.state;
 
     const percentLoaded = Math.floor(pgcrsLoaded / totalActivities * 100);
@@ -166,7 +167,11 @@ class Details extends Component {
       <div className="playerListRoot">
         {loading && <p className="playerListLoading">{loading}</p>}
 
-        {DISPLAY_CRIMSON && !loading && <CrimsonDays data={doublesData} />}
+        {DISPLAY_CRIMSON &&
+          !loading &&
+          thisPlayer && (
+            <CrimsonDays thisPlayer={thisPlayer} data={doublesData} />
+          )}
 
         <div className="split">
           <PlayerList

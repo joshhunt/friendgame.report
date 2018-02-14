@@ -2,7 +2,7 @@ import React from 'react';
 
 import './CrimsonDays.css';
 
-export default function CrimsonDays({ data: { fireteamPlayers } }) {
+export default function CrimsonDays({ thisPlayer, data: { fireteamPlayers } }) {
   const topPlayer = fireteamPlayers[0];
 
   if (!topPlayer) {
@@ -25,11 +25,11 @@ export default function CrimsonDays({ data: { fireteamPlayers } }) {
       </div>
 
       <p className="crimsonP">
-        Looks like you only have eyes for one player during{' '}
-        <span>Crimson Days</span>, and it's <span>{displayName}</span>.
-        You&apos;ve played{' '}
-        <span>{topPlayer.$count} matches of Crimson Doubles</span> with them
-        this year!
+        Looks like <span>{thisPlayer.displayName}</span> only has eyes for one
+        player during <span>Crimson Days</span>, and it's{' '}
+        <span>{displayName}</span>! They&apos;ve played{' '}
+        <span>{topPlayer.$count} matches</span> of <span>Crimson Doubles</span>{' '}
+        with them this year.
       </p>
     </div>
   );
