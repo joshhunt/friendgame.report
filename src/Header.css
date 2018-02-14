@@ -122,6 +122,7 @@
   z-index: 10;
   background: #1a252b;
   border-radius: 0 0 3px 3px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
 }
 
 .headerSuggestions ul {
@@ -143,6 +144,40 @@
 .headerSuggestions li:hover {
   color: rgba(255, 255, 255, 1);
   background: rgba(255, 255, 255, 0.05);
+}
+
+.headerCrimson {
+  /* background: #ac3534; */
+  background: #82201c;
+}
+
+.headerCrimson .siteName {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.headerCrimson .siteName span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.headerCrimson .headerIcon {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.headerCrimson .headerInputContainer input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.headerCrimson .headerInputContainer input::input-placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.headerCrimson .headerInputContainer input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.headerCrimson .headerSuggestions {
+  background: #591e19;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 @media screen and (max-width: 679px) {

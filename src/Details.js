@@ -10,6 +10,9 @@ import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
 
 import './Details.css';
 
+import rose from './rose.js';
+import './rose.css';
+
 // const DISPLAY_CRIMSON = window.location.search.includes('crimson');
 const DISPLAY_CRIMSON = true;
 
@@ -70,6 +73,8 @@ class Details extends Component {
     getActivityModeDefinitions().then(activityModeDefs => {
       this.activityModeDefs = activityModeDefs;
     });
+
+    rose(document.body);
   }
 
   componentWillUpdate(props) {
@@ -161,7 +166,7 @@ class Details extends Component {
       <div className="playerListRoot">
         {loading && <p className="playerListLoading">{loading}</p>}
 
-        {DISPLAY_CRIMSON && <CrimsonDays data={doublesData} />}
+        {DISPLAY_CRIMSON && !loading && <CrimsonDays data={doublesData} />}
 
         <div className="split">
           <PlayerList

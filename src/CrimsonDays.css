@@ -1,6 +1,6 @@
 .crimsonDays {
   width: 100%;
-  max-width: 500px;
+  max-width: 738px;
   margin: auto;
   margin-bottom: 30px;
   border-radius: 3px;
@@ -8,7 +8,8 @@
   padding: 15px;
   background: #752a26;
   color: white;
-  background: radial-gradient(circle at center, #82201c, #6f1919);
+  /* background: radial-gradient(circle at center, #82201c, #6f1919); */
+  background: radial-gradient(circle at center, #ac3534, #9d302f);
   overflow: hidden;
   position: relative;
 }
