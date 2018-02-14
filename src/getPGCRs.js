@@ -119,7 +119,6 @@ export default function getData(player, cb) {
   getProfile(player).then(profile => {
     const characters = Object.values(profile.characters.data);
     const thisPlayer = profile.profile.data.userInfo;
-    console.log('profile:', thisPlayer);
 
     cb({ characters, thisPlayer });
 

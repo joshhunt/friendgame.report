@@ -26,7 +26,7 @@ export default function CrimsonDays({ thisPlayer, data: { fireteamPlayers } }) {
 
       <p className="crimsonP">
         Looks like <span>{thisPlayer.displayName}</span> only has eyes for one
-        player during <span>Crimson Days</span>, and it's{' '}
+        player during <span>Crimson Days</span>, and it&apos;s{' '}
         <span>{displayName}</span>! They&apos;ve played{' '}
         <span>{topPlayer.$count} matches</span> of <span>Crimson Doubles</span>{' '}
         with them this year.
