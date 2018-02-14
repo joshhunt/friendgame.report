@@ -37,7 +37,7 @@ export default function App({ children }) {
         </a>. Thanks!
       </p>
 
-      <p className="footer" style={{ paddingBottom: 15 }}>
+      <p className="footer" style={{ paddingBottom: 30 }}>
         If you like this site, you&apos;ll probably also like{' '}
         <a
           href="https://chrisfried.github.io/secret-scrublandeux/"
