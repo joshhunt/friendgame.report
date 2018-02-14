@@ -1,10 +1,6 @@
 import React from 'react';
 
-import Player from './Player';
 import './CrimsonDays.css';
-
-import rose from './rose';
-import './rose.css';
 
 // rose(document.body);
 
@@ -15,14 +11,27 @@ export default function CrimsonDays({ data: { fireteamPlayers } }) {
     return null;
   }
 
+  const { displayName, iconPath } = topPlayer.destinyUserInfo;
+
   return (
     <div className="crimsonDays">
-      <div className="crimsonHeader">Crimson Days</div>
-      <h3>its a match!</h3>
+      <h3 className="crimsonHeading">It&apos;s a match!</h3>
+
       <div className="crimsonPlayer">
-        <Player player={topPlayer} />
+        <img
+          className="crimsonIcon"
+          src={`https://bungie.net${iconPath}`}
+          alt=""
+        />
+        <div className="crimsonName">{displayName}</div>
       </div>
-      <p>lipsim text to fill this one out</p>
+
+      <p className="crimsonP">
+        Looks like you only have eyes for one player during Crimson Days, and
+        it's <span>{displayName}</span>. You&apos;ve played{' '}
+        <span>{topPlayer.$count} matches of Crimson Doubles</span> with them
+        this year!
+      </p>
     </div>
   );
 }

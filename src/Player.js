@@ -12,7 +12,7 @@ export default function Player(props) {
       onClick={ev => onClick && onClick(ev, player)}
       role="button"
     >
-      <div className="playerIndex">{index}</div>
+      {index && <div className="playerIndex">{index}</div>}
       <img
         className="playerIcon"
         src={`https://bungie.net${iconPath}`}

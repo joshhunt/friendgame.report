@@ -10,7 +10,8 @@ import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
 
 import './Details.css';
 
-const DISPLAY_CRIMSON = window.location.search.includes('crimson');
+// const DISPLAY_CRIMSON = window.location.search.includes('crimson');
+const DISPLAY_CRIMSON = true;
 
 const INITIAL_STATE = {
   activities: [],
