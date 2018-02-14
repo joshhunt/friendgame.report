@@ -6,6 +6,10 @@
   padding-bottom: 30px;
 }
 
+.marginContainer {
+  margin: 0 30px;
+}
+
 .split {
   display: flex;
   text-align: left;
@@ -49,5 +53,9 @@
 
   .playerListLoading {
     margin: 0 15px 15px;
+  }
+
+  .marginContainer {
+    margin: 0;
   }
 }

@@ -25,6 +25,7 @@ export default function App({ children }) {
           DestinySets.com
         </a>, a great site to track your gear collection.
       </p>
+
       <p className="footer">
         Player search is provided by the excellent{' '}
         <a
@@ -35,7 +36,8 @@ export default function App({ children }) {
           trials.report
         </a>. Thanks!
       </p>
-      <p className="footer">
+
+      <p className="footer" style={{ paddingBottom: 15 }}>
         If you like this site, you&apos;ll probably also like{' '}
         <a
           href="https://chrisfried.github.io/secret-scrublandeux/"

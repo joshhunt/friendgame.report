@@ -140,6 +140,12 @@
   cursor: pointer;
 }
 
+.suggestPlatformIcon {
+  min-width: 30px;
+  text-align: center;
+  display: inline-block;
+}
+
 .headerSuggestions li:focus,
 .headerSuggestions li:hover {
   color: rgba(255, 255, 255, 1);

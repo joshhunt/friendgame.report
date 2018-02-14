@@ -19,6 +19,8 @@ const PVP = 5;
 // const PVE = 7;
 const DOUBLES = 15; // actually, this is trials
 
+let dbCache = {};
+
 function fetchPGCR(id) {
   const url = `/Platform/Destiny2/Stats/PostGameCarnageReport/${id}/`;
   return getDestiny(url).then(pgcr => {

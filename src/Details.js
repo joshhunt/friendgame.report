@@ -173,6 +173,10 @@ class Details extends Component {
             <CrimsonDays thisPlayer={thisPlayer} data={doublesData} />
           )}
 
+        <div className="marginContainer">
+          {thisPlayer && <h3>{thisPlayer.displayName}</h3>}
+        </div>
+
         <div className="split">
           <PlayerList
             title="PvP"

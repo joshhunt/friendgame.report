@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { debounce } from 'lodash';
+import { uniqBy, debounce } from 'lodash';
 import Autosuggest from 'react-autosuggest';
 import { withRouter } from 'react-router-dom';
 
@@ -25,7 +25,10 @@ function getSuggestionValue(player) {
 function renderSuggestion(player) {
   return (
     <div style={{ fontWeight: player.bungieResult ? 600 : 400 }}>
-      <FontAwesomeIcon icon={PLATFORM_ICON[player.membershipType]} />{' '}
+      <FontAwesomeIcon
+        className="suggestPlatformIcon"
+        icon={PLATFORM_ICON[player.membershipType]}
+      />{' '}
       {player.displayName}
     </div>
   );
@@ -62,15 +65,27 @@ class Header extends Component {
 
     searchForPlayer(value, this.state.membershipType).then(results => {
       trialsReportResults = results;
+      const suggestions = uniqBy(
+        [...bungieResults, ...trialsReportResults],
+        player => {
+          return `${player.membershipType}:${player.membershipId}`;
+        },
+      );
       this.setState({
-        playerSearchSuggestions: [...bungieResults, ...trialsReportResults],
+        playerSearchSuggestions: suggestions,
       });
     });
 
     searchBungiePlayer(value).then(results => {
       bungieResults = results;
+      const suggestions = uniqBy(
+        [...bungieResults, ...trialsReportResults],
+        player => {
+          return `${player.membershipType}:${player.membershipId}`;
+        },
+      );
       this.setState({
-        playerSearchSuggestions: [...bungieResults, ...trialsReportResults],
+        playerSearchSuggestions: suggestions,
       });
     });
   };
