@@ -118,7 +118,7 @@ class Header extends Component {
     };
 
     return (
-      <div className="header headerCrimson">
+      <div className="header">
         <div className="headerContent">
           <div className="headerTop">
             <div className="headerLogoish">

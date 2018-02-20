@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './CrimsonDays.css';
-
 export default function CrimsonDays({ thisPlayer, data: { fireteamPlayers } }) {
   const topPlayer = fireteamPlayers[0];
 

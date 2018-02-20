@@ -10,9 +10,6 @@ import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
 
 import './Details.css';
 
-import rose from './rose.js';
-import './rose.css';
-
 // const DISPLAY_CRIMSON = window.location.search.includes('crimson');
 const DISPLAY_CRIMSON = true;
 
@@ -73,8 +70,6 @@ class Details extends Component {
     getActivityModeDefinitions().then(activityModeDefs => {
       this.activityModeDefs = activityModeDefs;
     });
-
-    rose(document.body);
   }
 
   componentWillUpdate(props) {
