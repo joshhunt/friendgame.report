@@ -10,8 +10,8 @@ import { getActivityModeDefinitions, getActivityDefinitions } from './destiny';
 
 import './Details.css';
 
-// const DISPLAY_CRIMSON = window.location.search.includes('crimson');
-const DISPLAY_CRIMSON = true;
+const DISPLAY_CRIMSON = window.location.search.includes('crimson');
+// const DISPLAY_CRIMSON = false;
 
 const INITIAL_STATE = {
   activities: [],
@@ -81,8 +81,9 @@ class Details extends Component {
   getStats = (props = this.props) => {
     this.setState({ ...INITIAL_STATE });
     const { membershipType, membershipId } = props.match.params;
-    const cb = ({ ...rest }) =>
-      this.setState({ ...rest }, () => {
+    const cb = ({ thisPlayer, ...rest }) =>
+      this.setState({ thisPlayer, ...rest }, () => {
+        window.__THIS_PLAYER = thisPlayer;
         this.setModal();
       });
     getData({ membershipType, membershipId }, cb);

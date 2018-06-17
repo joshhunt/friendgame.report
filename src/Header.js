@@ -49,6 +49,21 @@ class Header extends Component {
     });
   }
 
+  componentDidMount() {
+    this.mounted = true;
+
+    this.intervalId = setInterval(() => {
+      if (window.__THIS_PLAYER) {
+        this.setState({ thisPlayer: window.__THIS_PLAYER });
+      }
+    }, 500);
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+    window.clearInterval(this.intervalId);
+  }
+
   onChange = (event, { newValue }) => {
     this.setState({
       playerSearchValue: newValue,
@@ -108,12 +123,14 @@ class Header extends Component {
       membershipType,
       playerSearchValue,
       playerSearchSuggestions,
+      thisPlayer,
     } = this.state;
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
       placeholder: 'Search for player',
-      value: playerSearchValue,
+      value:
+        playerSearchValue || (thisPlayer ? thisPlayer.displayName : undefined),
       onChange: this.onChange,
     };
 
