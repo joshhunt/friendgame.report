@@ -129,8 +129,7 @@ class Header extends Component {
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
       placeholder: 'Search for player',
-      value:
-        playerSearchValue || (thisPlayer ? thisPlayer.displayName : undefined),
+      value: playerSearchValue || (thisPlayer ? thisPlayer.displayName : ''),
       onChange: this.onChange,
     };
 
