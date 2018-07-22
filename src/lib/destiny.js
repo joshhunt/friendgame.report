@@ -1,9 +1,27 @@
 import { has } from 'lodash';
+import { queue } from 'async';
 
 const log = require('src/lib/log')('http');
 
+const GET_CONCURRENCY = 20;
+
+function getWorker({ url, opts }, cb) {
+  fetch(url, opts)
+    .then(res => res.json())
+    .then(result => {
+      cb(null, result);
+    })
+    .catch(err => cb(err));
+}
+
+const getQueue = queue(getWorker, GET_CONCURRENCY);
+
 export function get(url, opts) {
-  return fetch(url, opts).then(res => res.json());
+  return new Promise((resolve, reject) => {
+    getQueue.push({ url, opts }, (err, result) => {
+      err ? reject(err) : resolve(result);
+    });
+  });
 }
 
 export function getDestiny(_pathname, opts = {}, postBody) {
@@ -77,4 +95,14 @@ export function getClan(groupId, accessToken) {
 
 export function getClanMembers(groupId, accessToken) {
   return getDestiny(`/GroupV2/${groupId}/Members/`, { accessToken });
+}
+
+// https://www.bungie.net/Platform/Destiny2/2/Profile/4611686018469271298/
+export function getProfile({ membershipType, membershipId }, accessToken) {
+  return getDestiny(
+    `/Destiny2/${membershipType}/Profile/${membershipId}/?components=100`,
+    {
+      accessToken
+    }
+  );
 }

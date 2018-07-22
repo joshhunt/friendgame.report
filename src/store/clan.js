@@ -3,15 +3,24 @@ import * as destiny from 'src/lib/destiny';
 
 export const CLANS_FOR_USER_SUCCESS = 'Clans for user - success';
 export const CLANS_FOR_USER_ERROR = 'Clans for user - error';
+
 export const GET_CLAN_DETAILS_SUCCESS = 'Clain details - success';
 export const GET_CLAN_DETAILS_ERROR = 'Clain details - error';
+
 export const GET_CLAN_MEMBERS_SUCCESS = 'Clain members - success';
 export const GET_CLAN_MEMBERS_ERROR = 'Clain members - error';
 
+export const GET_PROFILE_SUCCESS = 'Get profile - success';
+export const GET_PROFILE_ERROR = 'Get profile - error';
+
 const INITIAL_STATE = {
   clanDetails: {},
-  clanMembers: {}
+  clanMembers: {},
+  profiles: {}
 };
+
+const k = ({ membershipType, membershipId }) =>
+  [membershipType, membershipId].join(':');
 
 export default function clanReducer(state = INITIAL_STATE, { type, payload }) {
   switch (type) {
@@ -29,8 +38,18 @@ export default function clanReducer(state = INITIAL_STATE, { type, payload }) {
       return {
         ...state,
         clanMembers: {
-          ...state.clansMembers,
+          ...state.clanMembers,
           [payload.$groupId]: payload
+        }
+      };
+    }
+
+    case GET_PROFILE_SUCCESS: {
+      return {
+        ...state,
+        profiles: {
+          ...state.profiles,
+          [k(payload.profile.data.userInfo)]: payload.profile
         }
       };
     }
@@ -97,9 +116,29 @@ export function getClanMembers(groupId) {
 
     return destiny
       .getClanMembers(groupId, state.auth.accessToken)
-      .then(arg =>
-        dispatch(getClanMembersSuccess({ ...arg, $groupId: groupId }))
-      )
-      .catch(arg => dispatch(getClanMembersError(arg)));
+      .then(data => {
+        dispatch(getClanMembersSuccess({ ...data, $groupId: groupId }));
+        return data;
+      })
+      .catch(err => dispatch(getClanMembersError(err)));
+  };
+}
+
+export const getProfileSuccess = makePayloadAction(GET_PROFILE_SUCCESS);
+export const getProfileError = makePayloadAction(GET_PROFILE_ERROR);
+
+export function getProfile({ membershipType, membershipId }) {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    if (state.clan.profiles[k({ membershipType, membershipId })]) {
+      console.log('already have profile data');
+      return;
+    }
+
+    return destiny
+      .getProfile({ membershipType, membershipId }, state.auth.access)
+      .then(data => dispatch(getProfileSuccess(data)))
+      .catch(err => dispatch(getProfileError(err)));
   };
 }

@@ -2,17 +2,24 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
-import { getClansForUser } from 'src/store/clan';
+import { getClansForUser, getProfile } from 'src/store/clan';
 
 import s from './styles.styl';
+
+const k = ({ membershipType, membershipId }) =>
+  [membershipType, membershipId].join(':');
 
 class UserPage extends Component {
   componentDidMount() {
     this.props.getClansForUser(this.props.routeParams);
+    this.props.getProfile(this.props.routeParams);
   }
 
   renderName() {
-    return <span>{this.props.routeParams.membshipId}</span>;
+    const key = k(this.props.routeParams);
+    const profile = this.props.profiles[key];
+
+    return profile ? profile.data.userInfo.displayName : key;
   }
 
   render() {
@@ -35,10 +42,11 @@ class UserPage extends Component {
 function mapStateToProps(state) {
   return {
     isAuthenticated: state.auth.isAuthenticated,
-    clans: state.clan.clanResults
+    clans: state.clan.clanResults,
+    profiles: state.clan.profiles
   };
 }
 
-const mapDispatchToActions = { getClansForUser };
+const mapDispatchToActions = { getClansForUser, getProfile };
 
 export default connect(mapStateToProps, mapDispatchToActions)(UserPage);
