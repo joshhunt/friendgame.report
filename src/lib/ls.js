@@ -1,7 +1,6 @@
 // eslint-disable-next-line
 const keys = {
-  DESTINY_PROFILE: 'd2Profile',
-  DEBUG: 'debug'
+  AUTH: 'auth'
 };
 
 let LOCAL_STORAGE;
@@ -73,4 +72,16 @@ export function set(key, value) {
     LOCAL_STORAGE = localStoragePolyfill;
     LOCAL_STORAGE.setItem(key, jason);
   }
+}
+
+export function setAuth(authData) {
+  set(keys.AUTH, authData);
+}
+
+export function getAuth() {
+  return get(keys.AUTH);
+}
+
+export function removeAuth() {
+  localStorage.removeItem(keys.AUTH);
 }

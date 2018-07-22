@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5",
+    "date-fns": "^2.0.0-alpha.11",
     "dexie": "^2.0.1",
     "file-loader": "^1.1.11",
     "imports-loader": "^0.8.0",
@@ -34,6 +35,7 @@
     "react-toggled": "^1.2.7",
     "react-virtualized": "^9.19.1",
     "redux": "^3.7.2",
+    "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
     "sql.js": "github:DestinyItemManager/sql.js"
   },

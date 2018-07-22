@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import { getDestiny } from 'app/lib/destiny';
-import { saveAuth, getAuth } from 'app/lib/ls';
+import { setAuth, getAuth } from 'app/lib/ls';
 
 const CLIENT_ID = process.env.REACT_APP_BUNGIE_CLIENT_ID;
 const REAUTH_TIMEOUT = 5 * 1000;
@@ -30,7 +30,7 @@ export const authUrl = getTokenRequestUrl;
 
 export function requestNewAccessToken(authCode) {
   return getDestiny(
-    '/Platform/App/OAuth/Token/',
+    '/App/OAuth/Token/',
     { _noAuth: true },
     `client_id=${CLIENT_ID}&grant_type=authorization_code&code=${authCode}`
   );
@@ -120,7 +120,7 @@ function handleNewAuthData(authData) {
   };
 
   log('Expires on', expiry);
-  saveAuth(betterAuthData);
+  setAuth(betterAuthData);
 
   return authData;
 }
@@ -129,7 +129,12 @@ export default function destinyAuth(_cb) {
   const queryParams = queryString.parse(window.location.search);
   log('Starting auth', queryParams);
 
-  const cb = (err, result) => {
+  const cb = (err, _result) => {
+    const result = {
+      ..._result,
+      accessToken: getAccessToken()
+    };
+
     log('callback called with', { err, result });
     _cb(err, result);
   };
@@ -163,7 +168,9 @@ export default function destinyAuth(_cb) {
     return;
   }
 
-  if (getAuth()) {
+  const prevAuth = getAuth();
+
+  if (prevAuth) {
     // Okay so we have auth stuff, but it's stale. Lets use an iframe to request new deets
     let hasReturned = false;
     log('Have previous auth data, preemptively calling cb');
