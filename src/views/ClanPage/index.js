@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -12,8 +13,6 @@ import { bungieUrl } from 'src/lib/destinyUtils';
 import { setBulkDefinitions } from 'src/store/definitions';
 
 import PrettyDate from 'src/components/Date';
-import Icon from 'src/components/Icon';
-import BungieImage from 'src/components/BungieImage';
 
 import s from './styles.styl';
 
@@ -131,16 +130,6 @@ class ClanPage extends Component {
                         profile.data && (
                           <PrettyDate date={profile.data.dateLastPlayed} />
                         )}{' '}
-                      {/*lastActivity && (
-                        <a
-                          href={`https://destinytracker.com/d2/pgcr/${
-                            lastActivity.activityDetails.instanceId
-                          }`}
-                          target="_blank"
-                        >
-                          <Icon name="external-link-square-alt" />
-                        </a>
-                      )*/}
                       {lastActivityDef && (
                         <a
                           href={`https://destinytracker.com/d2/pgcr/${
