@@ -3,7 +3,7 @@ import { queue } from 'async';
 
 const log = require('src/lib/log')('http');
 
-const GET_CONCURRENCY = 20;
+const GET_CONCURRENCY = 50;
 
 function getWorker({ url, opts }, cb) {
   fetch(url, opts)
@@ -100,7 +100,20 @@ export function getClanMembers(groupId, accessToken) {
 // https://www.bungie.net/Platform/Destiny2/2/Profile/4611686018469271298/
 export function getProfile({ membershipType, membershipId }, accessToken) {
   return getDestiny(
-    `/Destiny2/${membershipType}/Profile/${membershipId}/?components=100`,
+    `/Destiny2/${membershipType}/Profile/${membershipId}/?components=100,200`,
+    {
+      accessToken
+    }
+  );
+}
+
+const ACTIVITY_LIMIT = 1;
+export function getRecentActivities(
+  { membershipType, membershipId, characterId },
+  accessToken
+) {
+  return getDestiny(
+    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=0&count=${ACTIVITY_LIMIT}`,
     {
       accessToken
     }

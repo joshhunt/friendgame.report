@@ -8,9 +8,8 @@ library.add(
   require('@fortawesome/pro-light-svg-icons/faShoppingBasket').faShoppingBasket,
   require('@fortawesome/pro-regular-svg-icons/faPlus').faPlus,
   require('@fortawesome/pro-regular-svg-icons/faSync').faSync,
-  require('@fortawesome/pro-regular-svg-icons/faSpinnerThird').faSpinnerThird,
-  require('@fortawesome/pro-regular-svg-icons/faQuestionCircle')
-    .faQuestionCircle
+  require('@fortawesome/pro-regular-svg-icons/faExternalLinkSquareAlt')
+    .faExternalLinkSquareAlt
 );
 
 export default function Icon({ icon, name, brand, light, solid, ...props }) {

@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getClanDetails, getClanMembers, getProfile } from 'src/store/clan';
+import {
+  getClanDetails,
+  getClanMembers,
+  getProfile,
+  getRecentActivitiesForAccount
+} from 'src/store/clan';
+import { bungieUrl } from 'src/lib/destinyUtils';
+
+import { setBulkDefinitions } from 'src/store/definitions';
+
 import PrettyDate from 'src/components/Date';
+import Icon from 'src/components/Icon';
+import BungieImage from 'src/components/BungieImage';
 
 import s from './styles.styl';
 
@@ -11,11 +22,17 @@ const k = ({ membershipType, membershipId }) =>
 
 class ClanPage extends Component {
   componentDidMount() {
+    fetch('https://destiny.plumbing/en/raw/DestinyActivityDefinition.json')
+      .then(r => r.json())
+      .then(defs => this.props.setBulkDefinitions({ activityDefs: defs }));
+
     this.props.getClanDetails(this.props.routeParams.groupId);
 
     this.props.getClanMembers(this.props.routeParams.groupId).then(data => {
       data.results.forEach(member => {
-        this.props.getProfile(member.destinyUserInfo);
+        this.props.getProfile(member.destinyUserInfo).then(profile => {
+          this.props.getRecentActivitiesForAccount(profile.profile);
+        });
       });
     });
   }
@@ -61,10 +78,20 @@ class ClanPage extends Component {
 
   render() {
     const members = this.getClanMembers();
+    const clan = this.getClanDetails();
+    const { profiles, recentActivities, activityDefs } = this.props;
 
     return (
       <div className={s.root}>
         <h2>Clan {this.renderName()}</h2>
+        {clan && (
+          <div className={s.details}>
+            <p>
+              <em>{clan.detail.motto}</em>
+            </p>
+            <p>{clan.detail.about}</p>
+          </div>
+        )}
 
         {members.length > 0 && (
           <table className={s.table}>
@@ -72,16 +99,28 @@ class ClanPage extends Component {
               <tr>
                 <td>#</td>
                 <td>gamertag</td>
-                <td>Date joined</td>
-                <td>Last played</td>
+                <td>date joined</td>
+                <td>last played</td>
+                {/*<td>Last activity</td>*/}
               </tr>
             </thead>
 
             <tbody>
               {members.map((member, index) => {
-                const profile = this.props.profiles[k(member.destinyUserInfo)];
+                const key = k(member.destinyUserInfo);
+                const profile = profiles[key];
+                const lastActivity =
+                  recentActivities[key] && recentActivities[key][0];
+
+                let lastActivityDef;
+
+                if (activityDefs && lastActivity) {
+                  lastActivityDef =
+                    activityDefs[lastActivity.activityDetails.referenceId];
+                }
+
                 return (
-                  <tr key={member.destinyUserInfo.membershipId}>
+                  <tr key={key}>
                     <td className={s.smallCell}>{index + 1}</td>
                     <td>{member.destinyUserInfo.displayName}</td>
                     <td>
@@ -91,8 +130,36 @@ class ClanPage extends Component {
                       {profile &&
                         profile.data && (
                           <PrettyDate date={profile.data.dateLastPlayed} />
-                        )}
+                        )}{' '}
+                      {/*lastActivity && (
+                        <a
+                          href={`https://destinytracker.com/d2/pgcr/${
+                            lastActivity.activityDetails.instanceId
+                          }`}
+                          target="_blank"
+                        >
+                          <Icon name="external-link-square-alt" />
+                        </a>
+                      )*/}
+                      {lastActivityDef && (
+                        <a
+                          href={`https://destinytracker.com/d2/pgcr/${
+                            lastActivity.activityDetails.instanceId
+                          }`}
+                          target="_blank"
+                          style={{
+                            webkitMask: `url(${bungieUrl(
+                              lastActivityDef.displayProperties.icon
+                            )}) center / cover`
+                          }}
+                          className={s.activityIcon}
+                        />
+                      )}
                     </td>
+                    {/*<td>
+                      {lastActivityDef &&
+                        lastActivityDef.displayProperties.name}
+                    </td>*/}
                   </tr>
                 );
               })}
@@ -106,13 +173,21 @@ class ClanPage extends Component {
 
 function mapStateToProps(state) {
   return {
+    activityDefs: state.definitions.activityDefs,
     isAuthenticated: state.auth.isAuthenticated,
     clanMembers: state.clan.clanMembers,
     clanDetails: state.clan.clanDetails,
-    profiles: state.clan.profiles
+    profiles: state.clan.profiles,
+    recentActivities: state.clan.recentActivities
   };
 }
 
-const mapDispatchToActions = { getClanDetails, getClanMembers, getProfile };
+const mapDispatchToActions = {
+  setBulkDefinitions,
+  getClanDetails,
+  getClanMembers,
+  getProfile,
+  getRecentActivitiesForAccount
+};
 
 export default connect(mapStateToProps, mapDispatchToActions)(ClanPage);

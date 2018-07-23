@@ -1,5 +1,7 @@
-import { makePayloadAction } from './utils';
+import { flatMap } from 'lodash';
+
 import * as destiny from 'src/lib/destiny';
+import { makePayloadAction } from './utils';
 
 export const CLANS_FOR_USER_SUCCESS = 'Clans for user - success';
 export const CLANS_FOR_USER_ERROR = 'Clans for user - error';
@@ -13,10 +15,16 @@ export const GET_CLAN_MEMBERS_ERROR = 'Clain members - error';
 export const GET_PROFILE_SUCCESS = 'Get profile - success';
 export const GET_PROFILE_ERROR = 'Get profile - error';
 
+export const PROFILE_RECENT_ACTIVITIES_SUCCESS =
+  'Get profile recent activities - success';
+export const PROFILE_RECENT_ACTIVITIES_ERROR =
+  'Get profile recent activities - error';
+
 const INITIAL_STATE = {
   clanDetails: {},
   clanMembers: {},
-  profiles: {}
+  profiles: {},
+  recentActivities: {}
 };
 
 const k = ({ membershipType, membershipId }) =>
@@ -50,6 +58,16 @@ export default function clanReducer(state = INITIAL_STATE, { type, payload }) {
         profiles: {
           ...state.profiles,
           [k(payload.profile.data.userInfo)]: payload.profile
+        }
+      };
+    }
+
+    case PROFILE_RECENT_ACTIVITIES_SUCCESS: {
+      return {
+        ...state,
+        recentActivities: {
+          ...state.recentActivities,
+          [payload.$player]: payload.activities
         }
       };
     }
@@ -130,15 +148,59 @@ export const getProfileError = makePayloadAction(GET_PROFILE_ERROR);
 export function getProfile({ membershipType, membershipId }) {
   return (dispatch, getState) => {
     const state = getState();
+    const prevProfile =
+      state.clan.profiles[k({ membershipType, membershipId })];
 
-    if (state.clan.profiles[k({ membershipType, membershipId })]) {
+    if (prevProfile) {
       console.log('already have profile data');
-      return;
+      return Promise.resolve({ profile: prevProfile });
     }
 
     return destiny
       .getProfile({ membershipType, membershipId }, state.auth.access)
-      .then(data => dispatch(getProfileSuccess(data)))
+      .then(data => {
+        dispatch(getProfileSuccess(data));
+        return data;
+      })
       .catch(err => dispatch(getProfileError(err)));
+  };
+}
+
+export const getRecentActivitiesForAccountSuccess = makePayloadAction(
+  PROFILE_RECENT_ACTIVITIES_SUCCESS
+);
+export const getRecentActivitiesForAccountError = makePayloadAction(
+  PROFILE_RECENT_ACTIVITIES_ERROR
+);
+
+export function getRecentActivitiesForAccount(profile) {
+  return (dispatch, getState) => {
+    const { characterIds } = profile.data;
+    const { membershipType, membershipId } = profile.data.userInfo;
+
+    const promises = characterIds.map(characterId => {
+      return destiny.getRecentActivities({
+        membershipType,
+        membershipId,
+        characterId
+      });
+    });
+
+    Promise.all(promises)
+      .then(results => {
+        const activities = flatMap(results, r => r.activities)
+          .filter(Boolean)
+          .sort((a, b) => {
+            return new Date(b.period) - new Date(a.period);
+          });
+
+        dispatch(
+          getRecentActivitiesForAccountSuccess({
+            activities,
+            $player: k(profile.data.userInfo)
+          })
+        );
+      })
+      .catch(err => dispatch(getRecentActivitiesForAccountError(err)));
   };
 }

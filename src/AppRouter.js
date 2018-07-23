@@ -5,7 +5,7 @@ import { Router, Route, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 
 import store from './store';
-import App from './views/App';
+import App, { AuthRequired } from './views/App';
 import Home from './views/Home';
 import UserPage from './views/UserPage';
 import ClanPage from './views/ClanPage';
@@ -16,7 +16,9 @@ export default class AppRouter extends Component {
       <Provider store={store}>
         <Router history={browserHistory}>
           <Route component={App}>
-            <Route path="/" component={Home} />
+            <Route component={AuthRequired}>
+              <Route path="/" component={Home} />
+            </Route>
             <Route path="/clan/:groupId" component={ClanPage} />
             <Route path="/:membershipType/:membershipId" component={UserPage} />
           </Route>
