@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { memoize } from 'lodash';
+import { AllHtmlEntities } from 'html-entities';
 
 import {
   getClanDetails,
@@ -15,6 +17,9 @@ import { setBulkDefinitions } from 'src/store/definitions';
 import PrettyDate from 'src/components/Date';
 
 import s from './styles.styl';
+
+const entities = new AllHtmlEntities();
+const decode = memoize(string => entities.decode(string));
 
 const k = ({ membershipType, membershipId }) =>
   [membershipType, membershipId].join(':');
@@ -69,7 +74,7 @@ class ClanPage extends Component {
     const clanDetails = this.getClanDetails();
 
     if (clanDetails) {
-      return clanDetails.detail.name;
+      return decode(clanDetails.detail.name);
     }
 
     return <span>{this.props.routeParams.groupId}</span>;
@@ -86,9 +91,9 @@ class ClanPage extends Component {
         {clan && (
           <div className={s.details}>
             <p>
-              <em>{clan.detail.motto}</em>
+              <em>{decode(clan.detail.motto)}</em>
             </p>
-            <p>{clan.detail.about}</p>
+            <p>{decode(clan.detail.about)}</p>
           </div>
         )}
 
@@ -137,7 +142,7 @@ class ClanPage extends Component {
                           }`}
                           target="_blank"
                           style={{
-                            webkitMask: `url(${bungieUrl(
+                            WebkitMask: `url(${bungieUrl(
                               lastActivityDef.displayProperties.icon
                             )}) center / cover`
                           }}
