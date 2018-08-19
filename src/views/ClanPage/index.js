@@ -84,10 +84,18 @@ class ClanPage extends Component {
           return 0;
         }
 
-        return (
-          new Date(playerB.profile.data.dateLastPlayed) -
-          new Date(playerA.profile.data.dateLastPlayed)
-        );
+        const playerACurrentActivity = getCurrentActivity(playerA);
+        const playerBCurrentActivity = getCurrentActivity(playerB);
+
+        const playerADate = playerACurrentActivity
+          ? playerACurrentActivity.dateActivityStarted
+          : playerA.profile.data.dateLastPlayed;
+
+        const playerBDate = playerBCurrentActivity
+          ? playerBCurrentActivity.dateActivityStarted
+          : playerB.profile.data.dateLastPlayed;
+
+        return new Date(playerBDate) - new Date(playerADate);
       });
   }
 
