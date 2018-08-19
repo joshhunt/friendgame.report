@@ -57,7 +57,7 @@ export default function clanReducer(state = INITIAL_STATE, { type, payload }) {
         ...state,
         profiles: {
           ...state.profiles,
-          [k(payload.profile.data.userInfo)]: payload.profile
+          [k(payload.profile.data.userInfo)]: payload
         }
       };
     }
@@ -175,8 +175,10 @@ export const getRecentActivitiesForAccountError = makePayloadAction(
 
 export function getRecentActivitiesForAccount(profile) {
   return (dispatch, getState) => {
-    const { characterIds } = profile.data;
-    const { membershipType, membershipId } = profile.data.userInfo;
+    const {
+      characterIds,
+      userInfo: { membershipType, membershipId }
+    } = profile.data;
 
     const promises = characterIds.map(characterId => {
       return destiny.getRecentActivities({

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { format, formatDistance } from 'date-fns';
+import { format, formatDistanceStrict } from 'date-fns';
 
 export default class PrettyDate extends Component {
   state = {
@@ -17,7 +17,7 @@ export default class PrettyDate extends Component {
     return (
       <span onClick={this.onClick}>
         {this.state.toggle
-          ? `${formatDistance(d, new Date())} ago`
+          ? `${formatDistanceStrict(d, new Date())} ago`
           : format(d, formatFormat || 'd LLL Y, h:mm aaaa')}
       </span>
     );

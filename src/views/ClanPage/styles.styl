@@ -6,10 +6,16 @@
   max-width: 610px
   line-height: 1.5
 
+.tableWrapper
+  // width: 0%
+  margin: 0 -20px
+  padding: 0 20px
+  overflow: auto
+
 .table
-  width: 100%
   font-size: 15px
   border-collapse: collapse
+  white-space: nowrap
 
   thead
     font-weight: bold
@@ -29,3 +35,10 @@
   margin: 0ch
   width: 1.5em
   height: 1.5em
+
+.lastPlayed
+  opacity: .6
+
+.started
+  composes: lastPlayed
+  font-size: .8em

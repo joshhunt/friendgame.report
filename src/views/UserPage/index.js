@@ -19,7 +19,7 @@ class UserPage extends Component {
     const key = k(this.props.routeParams);
     const profile = this.props.profiles[key];
 
-    return profile ? profile.data.userInfo.displayName : key;
+    return profile ? profile.profile.data.userInfo.displayName : key;
   }
 
   render() {
