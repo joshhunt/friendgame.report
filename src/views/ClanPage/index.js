@@ -22,11 +22,11 @@ const entities = new AllHtmlEntities();
 const decode = memoize(string => entities.decode(string));
 
 const getCurrentActivity = memoize(profile => {
-  const found = Object.values(profile.characterActivities.data).find(
-    character => {
+  const found =
+    profile.characterActivities.data &&
+    Object.values(profile.characterActivities.data).find(character => {
       return character.currentActivityHash !== 0;
-    }
-  );
+    });
 
   return found;
 });
