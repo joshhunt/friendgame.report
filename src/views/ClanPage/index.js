@@ -134,6 +134,7 @@ class ClanPage extends Component {
                   <td>#</td>
                   <td>gamertag</td>
                   <td>date joined</td>
+                  <td>current light</td>
                   <td>current activity</td>
                 </tr>
               </thead>
@@ -156,6 +157,8 @@ class ClanPage extends Component {
                     currentActivity &&
                     activityModeDefs[currentActivity.currentActivityModeHash];
 
+                  const maxLight = Object.values(profile.characters.data).reduce((max, character) => Math.max(max, character.light), 0)
+
                   if (
                     currentActivityDef &&
                     currentActivityDef.placeHash === 2961497387
@@ -169,12 +172,14 @@ class ClanPage extends Component {
                   }
 
                   return (
-                    <tr key={key}>
+                    <tr key={key} data-k={k(member.destinyUserInfo)}>
                       <td className={s.smallCell}>{index + 1}</td>
                       <td>{member.destinyUserInfo.displayName}</td>
                       <td>
                         <PrettyDate date={member.joinDate} />
                       </td>
+
+                      <td>{maxLight}</td>
 
                       <td>
                         {currentActivityDef && (
