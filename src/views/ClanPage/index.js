@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { memoize } from 'lodash';
 import { AllHtmlEntities } from 'html-entities';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 
 import {
   getClanDetails,
@@ -113,6 +115,95 @@ class ClanPage extends Component {
     const members = this.getClanMembers();
     const clan = this.getClanDetails();
     const { profiles, activityDefs, activityModeDefs } = this.props;
+    const data = members.map(m => ({
+      ...m,
+      profile: profiles[k(m.destinyUserInfo)]
+    }));
+
+    const columns = [
+      {
+        Header: 'gamertag',
+        id: 'gamertag',
+        accessor: d => d.destinyUserInfo.displayName
+      },
+      {
+        Header: 'date joined',
+        id: 'dateJoined',
+        accessor: 'joinDate',
+        Cell: props => <PrettyDate date={props.value} />
+      },
+      {
+        Header: 'current light',
+        id: 'currentLight',
+        accessor: d =>
+          d.profile &&
+          Math.max(
+            ...Object.values(d.profile.characters.data).map(c => c.light)
+          )
+      },
+      {
+        Header: 'current activity',
+        id: 'currentActivity',
+        accessor: d => {
+          const currentActivity = d.profile && getCurrentActivity(d.profile);
+          return currentActivity && currentActivity.currentActivityHash;
+        },
+        Cell: ({ original }) => {
+          const member = original;
+          const profile = member.profile;
+          const currentActivity =
+            member.profile && getCurrentActivity(member.profile);
+
+          let currentActivityDef =
+            activityDefs &&
+            currentActivity &&
+            activityDefs[currentActivity.currentActivityHash];
+
+          const currentActivityModeDef =
+            activityModeDefs &&
+            currentActivity &&
+            activityModeDefs[currentActivity.currentActivityModeHash];
+
+          return (
+            <span>
+              {currentActivityDef && (
+                <span>
+                  {currentActivityDef.displayProperties.icon && (
+                    <span>
+                      <span
+                        style={{
+                          WebkitMask: `url(${bungieUrl(
+                            currentActivityDef.displayProperties.icon
+                          )}) center / cover`
+                        }}
+                        className={s.activityIcon}
+                      />{' '}
+                    </span>
+                  )}
+                  {currentActivityModeDef &&
+                    `${currentActivityModeDef.displayProperties.name}: `}
+                  {currentActivityDef.displayProperties.name}{' '}
+                  <span className={s.started}>
+                    (Started{' '}
+                    <PrettyDate date={currentActivity.dateActivityStarted} />
+                    )
+                  </span>
+                </span>
+              )}
+
+              {!currentActivityDef &&
+                profile &&
+                profile.profile.data && (
+                  <span className={s.lastPlayed}>
+                    Last played{' '}
+                    <PrettyDate date={profile.profile.data.dateLastPlayed} />
+                  </span>
+                )}
+            </span>
+          );
+        }
+      }
+    ];
 
     return (
       <div className={s.root}>
@@ -128,13 +219,23 @@ class ClanPage extends Component {
 
         <div className={s.tableWrapper}>
           {members.length > 0 && (
+            <ReactTable
+              data={data}
+              columns={columns}
+              resizable={false}
+              filterable={false}
+            />
+          )}
+        </div>
+
+        <div className={s.tableWrapper}>
+          {members.length > 0 && (
             <table className={s.table}>
               <thead>
                 <tr>
                   <td>#</td>
                   <td>gamertag</td>
                   <td>date joined</td>
-                  <td>current light</td>
                   <td>current activity</td>
                 </tr>
               </thead>
@@ -157,8 +258,6 @@ class ClanPage extends Component {
                     currentActivity &&
                     activityModeDefs[currentActivity.currentActivityModeHash];
 
-                  const maxLight = Object.values(profile.characters.data).reduce((max, character) => Math.max(max, character.light), 0)
-
                   if (
                     currentActivityDef &&
                     currentActivityDef.placeHash === 2961497387
@@ -178,9 +277,6 @@ class ClanPage extends Component {
                       <td>
                         <PrettyDate date={member.joinDate} />
                       </td>
-
-                      <td>{maxLight}</td>
-
                       <td>
                         {currentActivityDef && (
                           <span>
