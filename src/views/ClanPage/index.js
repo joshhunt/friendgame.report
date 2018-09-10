@@ -157,7 +157,12 @@ class ClanPage extends Component {
                     currentActivity &&
                     activityModeDefs[currentActivity.currentActivityModeHash];
 
-                  const maxLight = Object.values(profile.characters.data).reduce((max, character) => Math.max(max, character.light), 0)
+                  const maxLight =
+                    profile &&
+                    Object.values(profile.characters.data).reduce(
+                      (max, character) => Math.max(max, character.light),
+                      0
+                    );
 
                   if (
                     currentActivityDef &&
