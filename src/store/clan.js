@@ -28,7 +28,7 @@ const INITIAL_STATE = {
 };
 
 const k = ({ membershipType, membershipId }) =>
-  [membershipType, membershipId].join(':');
+  [membershipType, membershipId].join('/');
 
 export default function clanReducer(state = INITIAL_STATE, { type, payload }) {
   switch (type) {

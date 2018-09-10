@@ -3,11 +3,16 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
 import { getClansForUser, getProfile } from 'src/store/clan';
+import Triumphs from 'src/components/Triumphs';
 
 import s from './styles.styl';
 
 const k = ({ membershipType, membershipId }) =>
-  [membershipType, membershipId].join(':');
+  [membershipType, membershipId].join('/');
+
+const TRIUMPHS =
+  window.location.href.includes('triumphs') ||
+  window.location.href.includes('localhost');
 
 class UserPage extends Component {
   componentDidMount() {
@@ -28,6 +33,7 @@ class UserPage extends Component {
 
   render() {
     const clans = this.props.clans || [];
+    const profile = this.getProfile();
 
     return (
       <div className={s.root}>
@@ -38,6 +44,8 @@ class UserPage extends Component {
             <Link to={`/clan/${clan.group.groupId}`}>{clan.group.name}</Link>
           </p>
         ))}
+
+        {TRIUMPHS && profile && <Triumphs profile={profile} />}
       </div>
     );
   }

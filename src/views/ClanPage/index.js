@@ -34,7 +34,7 @@ const getCurrentActivity = memoize(profile => {
 });
 
 const k = ({ membershipType, membershipId }) =>
-  [membershipType, membershipId].join(':');
+  [membershipType, membershipId].join('/');
 
 class ClanPage extends Component {
   componentDidMount() {
@@ -111,6 +111,10 @@ class ClanPage extends Component {
           Math.max(
             ...Object.values(d.profile.characters.data).map(c => c.light)
           )
+      },
+      {
+        name: 'triumph score',
+        cell: d => d.profile && d.profile.profileRecords.data.score
       },
       {
         name: 'current activity',
