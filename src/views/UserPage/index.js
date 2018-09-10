@@ -15,10 +15,14 @@ class UserPage extends Component {
     this.props.getProfile(this.props.routeParams);
   }
 
-  renderName() {
+  getProfile() {
     const key = k(this.props.routeParams);
     const profile = this.props.profiles[key];
+    return { profile, key };
+  }
 
+  renderName() {
+    const { profile, key } = this.getProfile();
     return profile ? profile.profile.data.userInfo.displayName : key;
   }
 
