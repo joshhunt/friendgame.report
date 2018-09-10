@@ -5,6 +5,7 @@ import s from './styles.styl';
 
 const ASC = 'asc';
 const DSC = 'dsc';
+const defaultSort = DSC;
 
 export default class Table extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export default class Table extends Component {
 
     this.state = {
       sortField: props.defaultSortField,
-      sortDirection: ASC
+      sortDirection: defaultSort
     };
   }
 
@@ -26,7 +27,7 @@ export default class Table extends Component {
     } else {
       this.setState({
         sortField: cell.name,
-        sortDirection: ASC
+        sortDirection: defaultSort
       });
     }
   };
