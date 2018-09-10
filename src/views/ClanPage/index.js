@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { memoize } from 'lodash';
 import { AllHtmlEntities } from 'html-entities';
-import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 import {
@@ -17,6 +16,7 @@ import { bungieUrl } from 'src/lib/destinyUtils';
 import { setBulkDefinitions } from 'src/store/definitions';
 
 import PrettyDate from 'src/components/Date';
+import Table from 'src/components/Table';
 
 import s from './styles.styl';
 
@@ -67,38 +67,12 @@ class ClanPage extends Component {
     const membersQuery = clanMembers[this.props.routeParams.groupId];
     const members = membersQuery ? membersQuery.results : [];
 
-    return members
-      .map(member => {
-        return {
-          ...member,
-          profile: profiles[k(member.destinyUserInfo)]
-        };
-      })
-      .sort((a, b) => {
-        const playerA = a.profile;
-        const playerB = b.profile;
-
-        if (playerA && !playerB) {
-          return -1;
-        } else if (!playerA && playerB) {
-          return 1;
-        } else if (!playerA && !playerB) {
-          return 0;
-        }
-
-        const playerACurrentActivity = getCurrentActivity(playerA);
-        const playerBCurrentActivity = getCurrentActivity(playerB);
-
-        const playerADate = playerACurrentActivity
-          ? playerACurrentActivity.dateActivityStarted
-          : playerA.profile.data.dateLastPlayed;
-
-        const playerBDate = playerBCurrentActivity
-          ? playerBCurrentActivity.dateActivityStarted
-          : playerB.profile.data.dateLastPlayed;
-
-        return new Date(playerBDate) - new Date(playerADate);
-      });
+    return members.map(member => {
+      return {
+        ...member,
+        profile: profiles[k(member.destinyUserInfo)]
+      };
+    });
   }
 
   renderName() {
@@ -122,34 +96,30 @@ class ClanPage extends Component {
 
     const columns = [
       {
-        Header: 'gamertag',
-        id: 'gamertag',
-        accessor: d => d.destinyUserInfo.displayName
+        name: 'gamertag',
+        cell: d => d.destinyUserInfo.displayName
       },
       {
-        Header: 'date joined',
-        id: 'dateJoined',
-        accessor: 'joinDate',
-        Cell: props => <PrettyDate date={props.value} />
+        name: 'date joined',
+        sortValue: member => member.joinDate,
+        cell: member => <PrettyDate date={member.joinDate} />
       },
       {
-        Header: 'current light',
-        id: 'currentLight',
-        accessor: d =>
+        name: 'current light',
+        cell: d =>
           d.profile &&
           Math.max(
             ...Object.values(d.profile.characters.data).map(c => c.light)
           )
       },
       {
-        Header: 'current activity',
-        id: 'currentActivity',
-        accessor: d => {
-          const currentActivity = d.profile && getCurrentActivity(d.profile);
+        name: 'current activity',
+        sortValue: member => {
+          const currentActivity =
+            member.profile && getCurrentActivity(member.profile);
           return currentActivity && currentActivity.currentActivityHash;
         },
-        Cell: ({ original }) => {
-          const member = original;
+        cell: member => {
           const profile = member.profile;
           const currentActivity =
             member.profile && getCurrentActivity(member.profile);
@@ -219,110 +189,11 @@ class ClanPage extends Component {
 
         <div className={s.tableWrapper}>
           {members.length > 0 && (
-            <ReactTable
+            <Table
               data={data}
               columns={columns}
-              resizable={false}
-              filterable={false}
+              defaultSortField="current activity"
             />
-          )}
-        </div>
-
-        <div className={s.tableWrapper}>
-          {members.length > 0 && (
-            <table className={s.table}>
-              <thead>
-                <tr>
-                  <td>#</td>
-                  <td>gamertag</td>
-                  <td>date joined</td>
-                  <td>current activity</td>
-                </tr>
-              </thead>
-
-              <tbody>
-                {members.map((member, index) => {
-                  const key = k(member.destinyUserInfo);
-                  const profile = profiles[key];
-
-                  const currentActivity =
-                    member.profile && getCurrentActivity(member.profile);
-
-                  let currentActivityDef =
-                    activityDefs &&
-                    currentActivity &&
-                    activityDefs[currentActivity.currentActivityHash];
-
-                  const currentActivityModeDef =
-                    activityModeDefs &&
-                    currentActivity &&
-                    activityModeDefs[currentActivity.currentActivityModeHash];
-
-                  if (
-                    currentActivityDef &&
-                    currentActivityDef.placeHash === 2961497387
-                  ) {
-                    currentActivityDef = {
-                      ...currentActivityDef,
-                      displayProperties: {
-                        name: 'In orbit'
-                      }
-                    };
-                  }
-
-                  return (
-                    <tr key={key} data-k={k(member.destinyUserInfo)}>
-                      <td className={s.smallCell}>{index + 1}</td>
-                      <td>{member.destinyUserInfo.displayName}</td>
-                      <td>
-                        <PrettyDate date={member.joinDate} />
-                      </td>
-                      <td>
-                        {currentActivityDef && (
-                          <span>
-                            {currentActivityDef.displayProperties.icon && (
-                              <span>
-                                <span
-                                  style={{
-                                    WebkitMask: `url(${bungieUrl(
-                                      currentActivityDef.displayProperties.icon
-                                    )}) center / cover`
-                                  }}
-                                  className={s.activityIcon}
-                                />{' '}
-                              </span>
-                            )}
-                            {currentActivityModeDef &&
-                              `${
-                                currentActivityModeDef.displayProperties.name
-                              }: `}
-                            {currentActivityDef.displayProperties.name}{' '}
-                            <span className={s.started}>
-                              (Started{' '}
-                              <PrettyDate
-                                date={currentActivity.dateActivityStarted}
-                              />
-                              )
-                            </span>
-                          </span>
-                        )}
-
-                        {!currentActivityDef &&
-                          profile &&
-                          profile.profile.data && (
-                            <span className={s.lastPlayed}>
-                              Last played{' '}
-                              <PrettyDate
-                                date={profile.profile.data.dateLastPlayed}
-                              />
-                            </span>
-                          )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           )}
         </div>
       </div>
