@@ -114,7 +114,10 @@ class ClanPage extends Component {
       },
       {
         name: 'triumph score',
-        cell: d => d.profile && d.profile.profileRecords.data.score
+        cell: d =>
+          d.profile &&
+          d.profile.profileRecords.data &&
+          d.profile.profileRecords.data.score
       },
       {
         name: 'current activity',
@@ -142,18 +145,6 @@ class ClanPage extends Component {
             <span>
               {currentActivityDef && (
                 <span>
-                  {currentActivityDef.displayProperties.icon && (
-                    <span>
-                      <span
-                        style={{
-                          WebkitMask: `url(${bungieUrl(
-                            currentActivityDef.displayProperties.icon
-                          )}) center / cover`
-                        }}
-                        className={s.activityIcon}
-                      />{' '}
-                    </span>
-                  )}
                   {currentActivityModeDef &&
                     `${currentActivityModeDef.displayProperties.name}: `}
                   {currentActivityDef.displayProperties.name}{' '}
