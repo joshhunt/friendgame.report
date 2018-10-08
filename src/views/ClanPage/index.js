@@ -33,6 +33,13 @@ const getCurrentActivity = memoize(profile => {
   return found;
 });
 
+const baseSort = sortFn => member =>
+  member.profile ? sortFn(member) : -99999999;
+
+const maxLight = member =>
+  member.profile &&
+  Math.max(...Object.values(member.profile.characters.data).map(c => c.light));
+
 const k = ({ membershipType, membershipId }) =>
   [membershipType, membershipId].join('/');
 
@@ -101,19 +108,20 @@ class ClanPage extends Component {
       },
       {
         name: 'date joined',
-        sortValue: member => member.joinDate,
+        sortValue: baseSort(member => member.joinDate),
         cell: member => <PrettyDate date={member.joinDate} />
       },
       {
         name: 'current light',
-        cell: d =>
-          d.profile &&
-          Math.max(
-            ...Object.values(d.profile.characters.data).map(c => c.light)
-          )
+        sortValue: baseSort(d => maxLight(d)),
+        cell: d => maxLight(d)
       },
       {
         name: 'triumph score',
+        sortValue: baseSort(
+          d =>
+            d.profile.profileRecords.data && d.profile.profileRecords.data.score
+        ),
         cell: d =>
           d.profile &&
           d.profile.profileRecords.data &&
@@ -121,11 +129,14 @@ class ClanPage extends Component {
       },
       {
         name: 'current activity',
-        sortValue: member => {
+        sortValue: baseSort(member => {
           const currentActivity =
             member.profile && getCurrentActivity(member.profile);
-          return currentActivity && currentActivity.currentActivityHash;
-        },
+
+          return currentActivity
+            ? currentActivity.dateActivityStarted
+            : member.profile.profile.data.dateLastPlayed;
+        }),
         cell: member => {
           const profile = member.profile;
           const currentActivity =
