@@ -152,8 +152,7 @@ export function getProfile({ membershipType, membershipId }) {
       state.clan.profiles[k({ membershipType, membershipId })];
 
     if (prevProfile) {
-      console.log('already have profile data');
-      return Promise.resolve({ profile: prevProfile });
+      return Promise.resolve(prevProfile);
     }
 
     return destiny

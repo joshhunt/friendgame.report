@@ -4,12 +4,22 @@ import thunk from 'redux-thunk';
 import app from './app';
 import auth from './auth';
 import clan from './clan';
-import definitions, { SET_BULK_DEFINITIONS } from './definitions';
+import pgcr from './pgcr';
+
+import definitions, {
+  setBulkDefinitions,
+  definitionsStatus,
+  definitionsError,
+  SET_BULK_DEFINITIONS
+} from 'app/store/definitions';
+
+import { fasterGetDefinitions } from 'app/lib/definitions';
 
 const rootReducer = combineReducers({
   app,
   auth,
   clan,
+  pgcr,
   definitions
 });
 
@@ -28,5 +38,26 @@ const enhancer = composeEnhancers(applyMiddleware(thunk));
 
 const store = createStore(rootReducer, enhancer);
 window.__store = store;
+
+const LANGUAGE = 'en';
+
+fasterGetDefinitions(
+  LANGUAGE,
+  null,
+  data => {
+    store.dispatch(definitionsStatus(data));
+  },
+  (err, data) => {
+    if (err) {
+      store.dispatch(definitionsError(err));
+      return;
+    }
+
+    if (data && data.definitions) {
+      store.dispatch(definitionsStatus({ status: null }));
+      store.dispatch(setBulkDefinitions(data.definitions));
+    }
+  }
+);
 
 export default store;

@@ -25,7 +25,9 @@ export function get(url, opts) {
 }
 
 export function getDestiny(_pathname, opts = {}, postBody) {
-  const url = `https://www.bungie.net/Platform${_pathname}`;
+  let url = `https://www.bungie.net/Platform${_pathname}`;
+  url = url.replace('/Platform/Platform/', '/Platform/');
+
   const { pathname } = new URL(url);
 
   opts.headers = opts.headers || {};
@@ -117,5 +119,16 @@ export function getRecentActivities(
     {
       accessToken
     }
+  );
+}
+
+export function getCharacterPGCRHistory({
+  membershipType,
+  membershipId,
+  characterId
+}) {
+  // https://www.bungie.net/Platform/Destiny2/2/Account/4611686018469271298/Character/2305843009269703481/Stats/Activities/?mode=None&count=200&page=0
+  return getDestiny(
+    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=200&page=0`
   );
 }

@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { memoize } from 'lodash';
 import { AllHtmlEntities } from 'html-entities';
@@ -11,7 +12,6 @@ import {
   getProfile,
   getRecentActivitiesForAccount
 } from 'src/store/clan';
-import { bungieUrl } from 'src/lib/destinyUtils';
 
 import { setBulkDefinitions } from 'src/store/definitions';
 
@@ -104,7 +104,16 @@ class ClanPage extends Component {
     const columns = [
       {
         name: 'gamertag',
-        cell: d => d.destinyUserInfo.displayName
+        cell: d => (
+          <Link
+            className={s.link}
+            to={`/${d.destinyUserInfo.membershipType}/${
+              d.destinyUserInfo.membershipId
+            }`}
+          >
+            {d.destinyUserInfo.displayName}
+          </Link>
+        )
       },
       {
         name: 'date joined',

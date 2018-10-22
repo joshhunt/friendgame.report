@@ -4,15 +4,19 @@ import sqlWasmBinaryPath from '!!file-loader!sql.js/js/sql-optimized-wasm-raw.wa
 function importAsmJs() {
   delete window.Module;
   delete window.SQL;
+
   console.log('Using asm.js SQLite');
-  return import(/* webpackChunkName: "sqlLib" */ 'sql.js');
+
+  if (!window.previousAsmJsPromise) {
+    window.previousAsmJsPromise = import(/* webpackChunkName: "sqlLib" */ 'sql.js');
+  }
+
+  return window.previousAsmJsPromise;
 }
 
 export function getAllRecords(db, table) {
   const rows = db.exec(`SELECT * FROM ${table}`);
   const result = {};
-
-  window.__rows = rows;
 
   const data = rows.filter(Boolean)[0];
 
@@ -22,7 +26,8 @@ export function getAllRecords(db, table) {
 
   data.values.forEach(([key, json]) => {
     const obj = JSON.parse(json);
-    result[obj.hash || key] = obj;
+    const adjustedKey = parseInt(key, 10) >>> 0;
+    result[obj.hash || adjustedKey] = obj;
   });
 
   return result;
@@ -44,6 +49,7 @@ export function requireDatabase() {
         return sqlWasmBinaryPath;
       }
     };
+
     window.SQL = {
       onRuntimeInitialized() {
         if (!loaded) {

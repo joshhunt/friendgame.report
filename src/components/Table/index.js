@@ -43,8 +43,6 @@ export default class Table extends Component {
     const colToSortBy = columns.find(col => col.name === sortField);
     const sortValueFn = colToSortBy.sortValue || colToSortBy.cell;
 
-    console.log({ colToSortBy });
-
     const sorted = sortBy(data, item => {
       return sortValueFn(item);
     });
