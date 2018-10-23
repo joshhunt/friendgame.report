@@ -9,6 +9,8 @@ export default function GamesTable({ games }) {
       <thead>
         <tr>
           <td>game</td>
+          <td>stats</td>
+          <td>duration</td>
           <td>date</td>
           <td>links</td>
           <td>pgcr</td>

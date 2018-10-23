@@ -35,9 +35,30 @@ function GameRow({ game, modeDef, activityDef }) {
           {activityDef && activityDef.displayProperties.name}
         </div>
       </td>
+
+      <td>
+      <div className={s.statSet}>
+        <div className={s.stat}>
+          <div className={s.statName}>
+            score
+          </div>
+          <div className={s.statValue}>
+            {game.values.score && game.values.score.basic.displayValue}
+          </div>
+        </div>
+      </div>
+
+      </td>
+
+      <td>
+        {game.values.timePlayedSeconds &&
+          game.values.timePlayedSeconds.basic.displayValue}
+      </td>
+
       <td>
         <PrettyDate date={game.period} />
       </td>
+
       <td>
         <a
           href={`https://destinytracker.com/d2/pgcr/${
@@ -47,6 +68,7 @@ function GameRow({ game, modeDef, activityDef }) {
           DTR
         </a>
       </td>
+
       <td>{game.activityDetails.instanceId}</td>
     </tr>
   );

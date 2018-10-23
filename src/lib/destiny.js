@@ -1,9 +1,15 @@
 import { has } from 'lodash';
 import { queue } from 'async';
+import Dexie from 'dexie';
 
 const log = require('src/lib/log')('http');
 
+export const db = new Dexie('requestCache');
+
 const GET_CONCURRENCY = 50;
+db.version(1).stores({
+  requests: '&url, response, date'
+});
 
 function getWorker({ url, opts }, cb) {
   fetch(url, opts)
