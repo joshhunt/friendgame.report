@@ -12,6 +12,19 @@ const STANDING = {
   undefined: s.standing
 };
 
+const SCORE_NAME = {
+  1848252830: 'motes'
+};
+
+function Stat({ name, value }) {
+  return (
+    <div className={s.stat}>
+      <div className={s.statName}>{name}</div>
+      <div className={s.statValue}>{value}</div>
+    </div>
+  );
+}
+
 function GameRow({ game, modeDef, activityDef }) {
   return (
     <tr>
@@ -36,18 +49,29 @@ function GameRow({ game, modeDef, activityDef }) {
         </div>
       </td>
 
-      <td>
-      <div className={s.statSet}>
-        <div className={s.stat}>
-          <div className={s.statName}>
-            score
-          </div>
-          <div className={s.statValue}>
-            {game.values.score && game.values.score.basic.displayValue}
-          </div>
-        </div>
-      </div>
+      <td className={s.statColumn}>
+        <Stat
+          name={SCORE_NAME[modeDef.hash] || 'score'}
+          value={game.values.score && game.values.score.basic.displayValue}
+        />
+      </td>
 
+      <td className={s.statColumn}>
+        {game.values.killsDeathsRatio && (
+          <Stat
+            name="k/d"
+            value={game.values.killsDeathsRatio.basic.displayValue}
+          />
+        )}
+      </td>
+
+      <td className={s.statColumn}>
+        {game.values.killsDeathsAssists && (
+          <Stat
+            name="kda"
+            value={game.values.killsDeathsAssists.basic.displayValue}
+          />
+        )}
       </td>
 
       <td>
