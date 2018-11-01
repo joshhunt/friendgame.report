@@ -31,7 +31,8 @@ const TITLES = [
   { title: "Lore", hash: 1754983323 },
   { title: "Raids", hash: 2182090828 },
   { title: "The Dreaming City", hash: 1693645129 },
-  { title: "Destinations", hash: 2757681677 }
+  { title: "Destinations", hash: 2757681677 },
+  { title: "Last Wish: Raid First", hash: 1754815776 }
 ];
 
 const getCurrentActivity = memoize(profile => {
