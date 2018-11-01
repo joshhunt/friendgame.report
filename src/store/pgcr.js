@@ -1,13 +1,16 @@
-import * as destiny from 'src/lib/destiny';
-import immer from 'immer';
-import { makePayloadAction } from './utils';
+import * as destiny from "src/lib/destiny";
+import immer from "immer";
+import { makePayloadAction } from "./utils";
 
-const GET_PLAYER_PGCR_HISTORY_SUCCESS = 'Get player PGCR history - success';
-const GET_PLAYER_PGCR_HISTORY_ERROR = 'Get player PGCR history - error';
+const GET_PLAYER_PGCR_HISTORY_SUCCESS = "Get player PGCR history - success";
+const GET_PLAYER_PGCR_HISTORY_ERROR = "Get player PGCR history - error";
+
+const GET_PGCR_DETAILS_SUCCESS = "Get PGCR details - success";
+const GET_PGCR_DETAILS_ERROR = "Get PGCR details - error";
 
 const defaultState = {
   histories: {},
-  games: {}
+  pgcr: {}
 };
 
 export default function pgcrReducer(state = defaultState, { type, payload }) {
@@ -18,6 +21,15 @@ export default function pgcrReducer(state = defaultState, { type, payload }) {
         draft.histories[payload.key][payload.characterId] =
           payload.data.activities;
       });
+
+    case GET_PGCR_DETAILS_SUCCESS:
+      return {
+        ...state,
+        pgcr: {
+          ...state.pgcr,
+          [payload.pgcrId]: payload.data
+        }
+      };
 
     default:
       return state;
@@ -38,11 +50,30 @@ const getCharacterPGCRHistoryError = makePayloadAction(
   GET_PLAYER_PGCR_HISTORY_ERROR
 );
 
+const getPGCRDetailsSuccess = makePayloadAction(GET_PGCR_DETAILS_SUCCESS);
+const getPGCRDetailsError = makePayloadAction(GET_PGCR_DETAILS_ERROR);
+
+export function getPGCRDetails(pgcrId) {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    if (state.pgcr.pgcr[pgcrId]) {
+      return;
+    }
+
+    return destiny
+      .getCacheablePGCRDetails(pgcrId)
+      .then(data => dispatch(getPGCRDetailsSuccess({ pgcrId, data })))
+      .catch(err => dispatch(getPGCRDetailsError(err)));
+  };
+}
+
 export function getCharacterPGCRHistory(
   { membershipType, membershipId },
-  characterId
+  characterId,
+  opts = {}
 ) {
-  return (dispatch, getState) => {
+  return dispatch => {
     return destiny
       .getCharacterPGCRHistory({ membershipType, membershipId, characterId })
       .then(data => {
@@ -52,6 +83,14 @@ export function getCharacterPGCRHistory(
             data
           )
         );
+
+        if (opts.fetchPGCRDetails) {
+          console.log("fetchPGCRDetails", data);
+
+          data.activities.forEach(activity => {
+            dispatch(getPGCRDetails(activity.activityDetails.instanceId));
+          });
+        }
       })
       .catch(err => dispatch(getCharacterPGCRHistoryError(err)));
   };
