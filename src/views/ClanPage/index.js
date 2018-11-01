@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router";
 import { connect } from "react-redux";
-import { memoize, get } from "lodash";
+import { memoize } from "lodash";
 import { AllHtmlEntities } from "html-entities";
 import "react-table/react-table.css";
 

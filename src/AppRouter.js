@@ -10,6 +10,7 @@ import Home from "./views/Home";
 import UserPage from "./views/UserPage";
 import ClanPage from "./views/ClanPage";
 import CrawlPage from "./views/CrawlPage";
+import TriumphReport from "./views/TriumphReport";
 
 export default class AppRouter extends Component {
   render() {
@@ -21,6 +22,7 @@ export default class AppRouter extends Component {
               <Route path="/" component={Home} />
             </Route>
             <Route path="/clan/:groupId" component={ClanPage} />
+            <Route path="/triumph-report" component={TriumphReport} />
             <Route path="/:membershipType/:membershipId" component={UserPage} />
             <Route
               path="/:membershipType/:membershipId/crawl"

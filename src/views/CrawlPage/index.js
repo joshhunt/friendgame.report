@@ -1,4 +1,4 @@
-import { get, memoize } from "lodash";
+import { memoize } from "lodash";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
