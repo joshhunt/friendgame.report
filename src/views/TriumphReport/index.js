@@ -16,6 +16,10 @@ const lookup = {
   4: "Record"
 };
 
+function percent(fraction) {
+  return Math.round(fraction * 100 * 100) / 100;
+}
+
 class TriumphReport extends Component {
   render() {
     const { recordDefs } = this.props;
@@ -67,8 +71,7 @@ class TriumphReport extends Component {
       { name: "completed", cell: row => row.completed },
       {
         name: "% completed",
-        cell: row =>
-          `${Math.round((row.completed / triumphsData.usersProcessed) * 100)}%`,
+        cell: row => `${percent(row.completed / triumphsData.usersProcessed)}%`,
         sortValue: row => row.completed / triumphsData.usersProcessed
       },
       { name: "hash", cell: row => row.hash },
