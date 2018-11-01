@@ -148,7 +148,7 @@ class ClanPage extends Component {
           d.profile.profileRecords.data.score
       },
       {
-        name: "titles",
+        name: "seals",
         cell: d => {
           return TITLES.filter(({ hash }) =>
             profileHasCompletedTriumph(d.profile, hash)
