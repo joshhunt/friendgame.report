@@ -80,6 +80,7 @@ class CrawlPage extends Component {
 
         <ul>
           <li>{results.hasMalfeasance.length} have Malfeasance</li>
+          <li>{results.hasLunasHowl.length} have Luna's Howl</li>
 
           <li>
             {results.doneRelicRumble.length} have done the 'Relic Rumble' secret
@@ -99,6 +100,7 @@ class CrawlPage extends Component {
 const MALFEASANCE_TRIUMPH_HASH = 723502823;
 const RELIC_RUMBLE_HASH = 3641166665;
 const RIDDLE_ME_THIS_TRIUMPH = 1498253977;
+const LUNAS_HOWL_TRIUMPH = 2362939119;
 
 function hasCompletedTriumph(profiles, triumphHash) {
   return profiles.filter(profile => {
@@ -112,7 +114,8 @@ const stateForPlayers = memoize(_profiles => {
   return {
     hasMalfeasance: hasCompletedTriumph(profiles, MALFEASANCE_TRIUMPH_HASH),
     doneRelicRumble: hasCompletedTriumph(profiles, RELIC_RUMBLE_HASH),
-    doneRiddleMeThis: hasCompletedTriumph(profiles, RIDDLE_ME_THIS_TRIUMPH)
+    doneRiddleMeThis: hasCompletedTriumph(profiles, RIDDLE_ME_THIS_TRIUMPH),
+    hasLunasHowl: hasCompletedTriumph(profiles, LUNAS_HOWL_TRIUMPH)
   };
 });
 
