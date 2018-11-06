@@ -25,7 +25,7 @@ const GAMBIT_FIELDS = [
   field('lost', 'motesLost'),
   field('denied', 'motesDenied'),
   field('degraded', 'motesDegraded'),
-  field('invasion', 'invasions'),
+  field('invasions', 'invasions'),
   field('invader deaths', 'invaderDeaths'),
   field('invaders killed', 'invaderKills'),
   field('invasion kills', 'invasionKills'),
@@ -37,15 +37,11 @@ const GAMBIT_FIELDS = [
       : null;
   }),
   field('blockers', stats => {
-    return (
-      <span>
-        {stat(stats, 'smallBlockersSent')}
-        {' / '}
-        {stat(stats, 'mediumBlockersSent')}
-        {' / '}
-        {stat(stats, 'largeBlockersSent')}
-      </span>
-    );
+    return [
+      `${stat(stats, 'smallBlockersSent')}`,
+      `${stat(stats, 'mediumBlockersSent')}`,
+      `${stat(stats, 'largeBlockersSent')}`
+    ].join(' / ');
   })
 ];
 
