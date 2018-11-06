@@ -1,16 +1,16 @@
-import { has } from "lodash";
-import { queue } from "async";
-import Dexie from "dexie";
+import { has } from 'lodash';
+import { queue } from 'async';
+import Dexie from 'dexie';
 
-const log = require("src/lib/log")("http");
+const log = require('src/lib/log')('http');
 
-export const db = new Dexie("requestCache");
+export const db = new Dexie('requestCache');
 
 const CACHE_PROFILES = false;
 
 const GET_CONCURRENCY = 50;
 db.version(1).stores({
-  requests: "&url, response, date"
+  requests: '&url, response, date'
 });
 
 function getWorker({ url, opts }, cb) {
@@ -34,24 +34,24 @@ export function get(url, opts) {
 
 export function getDestiny(_pathname, opts = {}, postBody) {
   let url = `https://www.bungie.net/Platform${_pathname}`;
-  url = url.replace("/Platform/Platform/", "/Platform/");
+  url = url.replace('/Platform/Platform/', '/Platform/');
 
   const { pathname } = new URL(url);
 
   opts.headers = opts.headers || {};
-  opts.headers["x-api-key"] = process.env.REACT_APP_API_KEY;
+  opts.headers['x-api-key'] = process.env.REACT_APP_API_KEY;
 
   if (opts.accessToken) {
-    opts.headers["Authorization"] = `Bearer ${opts.accessToken}`;
+    opts.headers['Authorization'] = `Bearer ${opts.accessToken}`;
   }
 
   if (postBody) {
-    opts.method = "POST";
-    if (typeof postBody === "string") {
-      opts.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    opts.method = 'POST';
+    if (typeof postBody === 'string') {
+      opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
       opts.body = postBody;
     } else {
-      opts.headers["Content-Type"] = "application/json";
+      opts.headers['Content-Type'] = 'application/json';
       opts.body = JSON.stringify(postBody);
     }
   }
@@ -61,18 +61,18 @@ export function getDestiny(_pathname, opts = {}, postBody) {
   return get(url, opts).then(resp => {
     log(`RESPONSE: ${pathname}`, resp);
 
-    if (resp.ErrorStatus === "DestinyAccountNotFound") {
+    if (resp.ErrorStatus === 'DestinyAccountNotFound') {
       return null;
     }
 
-    if (has(resp, "ErrorCode") && resp.ErrorCode !== 1) {
-      const cleanedUrl = url.replace(/\/\d+\//g, "/_/");
+    if (has(resp, 'ErrorCode') && resp.ErrorCode !== 1) {
+      const cleanedUrl = url.replace(/\/\d+\//g, '/_/');
       const err = new Error(
-        "Bungie API Error " +
+        'Bungie API Error ' +
           resp.ErrorStatus +
-          " - " +
+          ' - ' +
           resp.Message +
-          "\nURL: " +
+          '\nURL: ' +
           cleanedUrl
       );
 
@@ -100,7 +100,7 @@ export function getCacheableDestiny(pathname, opts) {
 }
 
 export function getCurrentMembership(accessToken) {
-  return getDestiny("/User/GetMembershipsForCurrentUser/", { accessToken });
+  return getDestiny('/User/GetMembershipsForCurrentUser/', { accessToken });
 }
 
 const GROUP_TYPE_CLAN = 1;

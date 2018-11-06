@@ -1,10 +1,60 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import cx from 'classnames';
-import { groupBy } from 'lodash';
+import { isString, groupBy, memoize } from 'lodash';
 
 import s from './styles.styl';
 
 import tableStyles from 'app/components/Table/styles.styl';
+
+const getTotalPrimevalDamage = memoize(teamMembers => {
+  return teamMembers.reduce((acc, teamMember) => {
+    return (
+      acc +
+      (teamMember.extended.values.primevalDamage
+        ? teamMember.extended.values.primevalDamage.basic.value
+        : 0)
+    );
+  }, 0);
+});
+
+const field = (label, statKey) => ({ label, stat: statKey });
+
+const GAMBIT_FIELDS = [
+  field('most deposited', 'motesDeposited'),
+  field('picked up', 'motesPickedUp'),
+  field('lost', 'motesLost'),
+  field('denied', 'motesDenied'),
+  field('degraded', 'motesDegraded'),
+  field('invasion', 'invasions'),
+  field('invader deaths', 'invaderDeaths'),
+  field('invaders killed', 'invaderKills'),
+  field('invasion kills', 'invasionKills'),
+  field('primeval damage', (stats, teamMember, teamMembers) => {
+    return stats.primevalDamage
+      ? percent(
+          stats.primevalDamage.basic.value / getTotalPrimevalDamage(teamMembers)
+        )
+      : null;
+  }),
+  field('blockers', stats => {
+    return (
+      <span>
+        {stat(stats, 'smallBlockersSent')}
+        {' / '}
+        {stat(stats, 'mediumBlockersSent')}
+        {' / '}
+        {stat(stats, 'largeBlockersSent')}
+      </span>
+    );
+  })
+];
+
+const GAME_MODE_FIELDS = [
+  {
+    test: pgcr => pgcr.activityDetails.directorActivityHash === 3577607128,
+    fields: GAMBIT_FIELDS
+  }
+];
 
 function percent(fraction) {
   if (isNaN(fraction)) {
@@ -22,72 +72,49 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
     t => t.teamId === teamId || t.teamId === parseInt(teamId, 10)
   );
 
-  const totalPrimevalDamage = teamMembers.reduce((acc, teamMember) => {
-    return (
-      acc +
-      (teamMember.extended.values.primevalDamage
-        ? teamMember.extended.values.primevalDamage.basic.value
-        : 0)
-    );
-  }, 0);
+  const fieldSet = GAME_MODE_FIELDS.find(gmf => gmf.test(pgcr));
 
   return (
-    <div className={s.scrollable}>
-      {team && <h4>{team.teamName}</h4>}
-      <table className={cx(tableStyles.table, s.table)}>
-        <thead>
+    <Fragment>
+      <thead>
+        {team && (
           <tr>
-            <td>player</td>
-            <td colSpan={3}>motes banked / collected / lost</td>
-            <td>motes denied</td>
-            <td>motes degraded?</td>
-            <td>invasions</td>
-            <td>invader deaths</td>
-            <td>invader kills</td>
-            <td>invasion kills</td>
-            <td>primeval damage</td>
-            <td>blockers</td>
+            <td className={s.team} colSpan={(fieldSet.fields.length || 0) + 1}>
+              {team.teamName}
+            </td>
           </tr>
-        </thead>
+        )}
+        <tr>
+          <td>player</td>
 
-        <tbody>
-          {teamMembers.map(teamMember => {
-            const stats = teamMember.extended.values || {};
-            return (
-              <tr>
-                <td>{teamMember.player.destinyUserInfo.displayName}</td>
-                <td>{stat(stats, 'motesDeposited')}</td>
-                <td>{stat(stats, 'motesPickedUp')}</td>
-                <td>{stat(stats, 'motesLost')}</td>
-                <td>{stat(stats, 'motesDenied')}</td>
-                <td>{stat(stats, 'motesDegraded')}</td>
+          {fieldSet && fieldSet.fields.map(f => <td>{f.label}</td>)}
+        </tr>
+      </thead>
 
-                <td>{stat(stats, 'invasions')}</td>
-                <td>{stat(stats, 'invaderDeaths')}</td>
-                <td>{stat(stats, 'invaderKills')}</td>
-                <td>{stat(stats, 'invasionKills')}</td>
+      <tbody>
+        {teamMembers.map(teamMember => {
+          const stats = teamMember.extended.values || {};
+          return (
+            <tr>
+              <td>{teamMember.player.destinyUserInfo.displayName}</td>
 
-                <td>
-                  {stats.primevalDamage
-                    ? percent(
-                        stats.primevalDamage.basic.value / totalPrimevalDamage
-                      )
-                    : null}
-                </td>
+              {fieldSet &&
+                fieldSet.fields.map(f => {
+                  return (
+                    <td>
+                      {isString(f.stat)
+                        ? stat(stats, f.stat)
+                        : f.stat(stats, teamMember, teamMembers, pgcr, teamId)}
+                    </td>
+                  );
+                })}
 
-                <td>
-                  {stat(stats, 'smallBlockersSent')}
-                  {' / '}
-                  {stat(stats, 'mediumBlockersSent')}
-                  {' / '}
-                  {stat(stats, 'largeBlockersSent')}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+              <td />
+            </tr>
+          );
+        })}
+      </tbody>
+    </Fragment>
   );
 }
 
@@ -105,14 +132,16 @@ export default function GameDetails({ pgcr }) {
 
   return (
     <div className={s.root}>
-      {playersPerTeam.map(([teamId, teamMembers], index) => (
-        <TeamTable
-          key={index}
-          pgcr={pgcr}
-          teamMembers={teamMembers}
-          teamId={teamId}
-        />
-      ))}
+      <table className={tableStyles.table}>
+        {playersPerTeam.map(([teamId, teamMembers], index) => (
+          <TeamTable
+            key={index}
+            pgcr={pgcr}
+            teamMembers={teamMembers}
+            teamId={teamId}
+          />
+        ))}
+      </table>
     </div>
   );
 }
