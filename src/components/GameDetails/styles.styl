@@ -1,0 +1,23 @@
+$bgColor = #f1f1f1
+
+.root
+  background: $bgColor
+  padding: 5px
+  position: relative
+  margin-top: 5px
+  margin-bottom: 10px
+
+  &:after
+    _size = 10px
+    content: ''
+    position: absolute
+    top: (_size * 2 * -1)
+    left: (_size * 2)
+    border: _size solid transparent
+    border-bottom-color: $bgColor
+
+  table
+    margin-bottom: 0
+
+  tbody tr:last-child td
+    border-bottom: none

@@ -4,7 +4,11 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
 import { getClansForUser, getProfile } from 'src/store/clan';
-import { getCharacterPGCRHistory } from 'src/store/pgcr';
+import {
+  getCharacterPGCRHistory,
+  toggleViewPGCRDetails,
+  getPGCRDetails
+} from 'src/store/pgcr';
 import GamesTable from 'app/components/GamesTable';
 
 import s from './styles.styl';
@@ -33,6 +37,11 @@ class UserPage extends Component {
     return profile ? profile.profile.data.userInfo.displayName : key;
   }
 
+  viewPGCRDetails = pgcrId => {
+    this.props.toggleViewPGCRDetails(pgcrId);
+    this.props.getPGCRDetails(pgcrId);
+  };
+
   render() {
     const games = this.props.gameHistory;
     const clans = this.props.clans || [];
@@ -47,7 +56,12 @@ class UserPage extends Component {
           </p>
         ))}
 
-        <GamesTable games={games} />
+        <GamesTable
+          games={games}
+          pgcrDetails={this.props.pgcrDetails}
+          onGameRowClick={this.viewPGCRDetails}
+          activePgcrs={this.props.activePgcrs}
+        />
       </div>
     );
   }
@@ -66,14 +80,18 @@ function mapStateToProps(state, ownProps) {
     isAuthenticated: state.auth.isAuthenticated,
     clans: state.clan.clanResults,
     profiles: state.clan.profiles,
-    gameHistory
+    gameHistory,
+    activePgcrs: state.pgcr.viewDetails,
+    pgcrDetails: state.pgcr.pgcr
   };
 }
 
 const mapDispatchToActions = {
   getClansForUser,
   getProfile,
-  getCharacterPGCRHistory
+  getCharacterPGCRHistory,
+  toggleViewPGCRDetails,
+  getPGCRDetails
 };
 
 export default connect(mapStateToProps, mapDispatchToActions)(UserPage);

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import tableStyles from 'app/components/Table/styles.styl';
+import GameDetails from 'app/components/GameDetails';
 import GameRow from './GameRow';
 
-export default function GamesTable({ games }) {
+export default function GamesTable({ games, activePgcrs, pgcrDetails, onGameRowClick }) {
   return (
     <table className={tableStyles.table}>
       <thead>
@@ -19,7 +20,23 @@ export default function GamesTable({ games }) {
         </tr>
       </thead>
 
-      <tbody>{games.map(game => <GameRow game={game} />)}</tbody>
+      <tbody>
+        {games.map((game, index) => (
+          <Fragment key={index}>
+            <GameRow game={game} onClick={onGameRowClick} />
+
+            {activePgcrs[game.activityDetails.instanceId] && (
+              <tr>
+                <td colSpan={8}>
+                  <GameDetails
+                    pgcr={pgcrDetails[game.activityDetails.instanceId]}
+                  />
+                </td>
+              </tr>
+            )}
+          </Fragment>
+        ))}
+      </tbody>
     </table>
   );
 }

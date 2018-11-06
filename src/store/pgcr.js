@@ -1,39 +1,48 @@
-import * as destiny from "src/lib/destiny";
-import immer from "immer";
-import { makePayloadAction } from "./utils";
+import * as destiny from 'src/lib/destiny';
+import immer from 'immer';
+import { makePayloadAction } from './utils';
 
-const GET_PLAYER_PGCR_HISTORY_SUCCESS = "Get player PGCR history - success";
-const GET_PLAYER_PGCR_HISTORY_ERROR = "Get player PGCR history - error";
+const GET_PLAYER_PGCR_HISTORY_SUCCESS = 'Get player PGCR history - success';
+const GET_PLAYER_PGCR_HISTORY_ERROR = 'Get player PGCR history - error';
 
-const GET_PGCR_DETAILS_SUCCESS = "Get PGCR details - success";
-const GET_PGCR_DETAILS_ERROR = "Get PGCR details - error";
+const GET_PGCR_DETAILS_SUCCESS = 'Get PGCR details - success';
+const GET_PGCR_DETAILS_ERROR = 'Get PGCR details - error';
+
+const TOGGLE_VIEW_PGCR_DETAILS = 'View PGCR Details';
 
 const defaultState = {
   histories: {},
-  pgcr: {}
+  pgcr: {},
+  viewDetails: {}
 };
 
 export default function pgcrReducer(state = defaultState, { type, payload }) {
-  switch (type) {
-    case GET_PLAYER_PGCR_HISTORY_SUCCESS:
-      return immer(state, draft => {
+  return immer(state, draft => {
+    switch (type) {
+      case TOGGLE_VIEW_PGCR_DETAILS:
+        draft.viewDetails[payload] = !draft.viewDetails[payload];
+        return draft;
+
+      case GET_PLAYER_PGCR_HISTORY_SUCCESS:
         draft.histories[payload.key] = draft.histories[payload.key] || {};
         draft.histories[payload.key][payload.characterId] =
           payload.data.activities;
-      });
 
-    case GET_PGCR_DETAILS_SUCCESS:
-      return {
-        ...state,
-        pgcr: {
-          ...state.pgcr,
-          [payload.pgcrId]: payload.data
-        }
-      };
+        return draft;
 
-    default:
-      return state;
-  }
+      case GET_PGCR_DETAILS_SUCCESS:
+        return {
+          ...state,
+          pgcr: {
+            ...state.pgcr,
+            [payload.pgcrId]: payload.data
+          }
+        };
+
+      default:
+        return state;
+    }
+  });
 }
 
 const getCharacterPGCRHistorySuccess = (
@@ -52,6 +61,10 @@ const getCharacterPGCRHistoryError = makePayloadAction(
 
 const getPGCRDetailsSuccess = makePayloadAction(GET_PGCR_DETAILS_SUCCESS);
 const getPGCRDetailsError = makePayloadAction(GET_PGCR_DETAILS_ERROR);
+
+export const toggleViewPGCRDetails = makePayloadAction(
+  TOGGLE_VIEW_PGCR_DETAILS
+);
 
 export function getPGCRDetails(pgcrId) {
   return (dispatch, getState) => {
@@ -85,7 +98,7 @@ export function getCharacterPGCRHistory(
         );
 
         if (opts.fetchPGCRDetails) {
-          console.log("fetchPGCRDetails", data);
+          console.log('fetchPGCRDetails', data);
 
           data.activities.forEach(activity => {
             dispatch(getPGCRDetails(activity.activityDetails.instanceId));

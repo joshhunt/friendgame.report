@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
 
 import PrettyDate from 'src/components/Date';
@@ -25,9 +24,9 @@ function Stat({ name, value }) {
   );
 }
 
-function GameRow({ game, modeDef, activityDef }) {
+function GameRow({ game, modeDef, activityDef, onClick }) {
   return (
-    <tr>
+    <tr onClick={() => onClick(game.activityDetails.instanceId)}>
       <td>
         <div
           className={
