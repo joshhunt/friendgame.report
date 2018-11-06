@@ -1,67 +1,9 @@
 import React, { Fragment } from 'react';
-import cx from 'classnames';
-import { isString, groupBy, memoize } from 'lodash';
-
-import s from './styles.styl';
+import { isString, groupBy } from 'lodash';
 
 import tableStyles from 'app/components/Table/styles.styl';
-
-const getTotalPrimevalDamage = memoize(teamMembers => {
-  return teamMembers.reduce((acc, teamMember) => {
-    return (
-      acc +
-      (teamMember.extended.values.primevalDamage
-        ? teamMember.extended.values.primevalDamage.basic.value
-        : 0)
-    );
-  }, 0);
-});
-
-const field = (label, statKey) => ({ label, stat: statKey });
-
-const GAMBIT_FIELDS = [
-  field('most deposited', 'motesDeposited'),
-  field('picked up', 'motesPickedUp'),
-  field('lost', 'motesLost'),
-  field('denied', 'motesDenied'),
-  field('degraded', 'motesDegraded'),
-  field('invasions', 'invasions'),
-  field('invader deaths', 'invaderDeaths'),
-  field('invaders killed', 'invaderKills'),
-  field('invasion kills', 'invasionKills'),
-  field('primeval damage', (stats, teamMember, teamMembers) => {
-    return stats.primevalDamage
-      ? percent(
-          stats.primevalDamage.basic.value / getTotalPrimevalDamage(teamMembers)
-        )
-      : null;
-  }),
-  field('blockers', stats => {
-    return [
-      `${stat(stats, 'smallBlockersSent')}`,
-      `${stat(stats, 'mediumBlockersSent')}`,
-      `${stat(stats, 'largeBlockersSent')}`
-    ].join(' / ');
-  })
-];
-
-const GAME_MODE_FIELDS = [
-  {
-    test: pgcr => pgcr.activityDetails.directorActivityHash === 3577607128,
-    fields: GAMBIT_FIELDS
-  }
-];
-
-function percent(fraction) {
-  if (isNaN(fraction)) {
-    return '-';
-  }
-  return `${Math.round(fraction * 100)}%`;
-}
-
-function stat(stats, statName) {
-  return stats[statName] && stats[statName].basic.displayValue;
-}
+import s from './styles.styl';
+import GAME_MODE_FIELDS, { stat } from './fields';
 
 function TeamTable({ pgcr, teamId, teamMembers }) {
   const team = pgcr.teams.find(
@@ -104,8 +46,6 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
                     </td>
                   );
                 })}
-
-              <td />
             </tr>
           );
         })}
