@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 import { groupBy } from 'lodash';
 
 import s from './styles.styl';
@@ -10,6 +11,10 @@ function percent(fraction) {
     return '-';
   }
   return `${Math.round(fraction * 100)}%`;
+}
+
+function stat(stats, statName) {
+  return stats[statName] && stats[statName].basic.displayValue;
 }
 
 function TeamTable({ pgcr, teamId, teamMembers }) {
@@ -27,15 +32,19 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
   }, 0);
 
   return (
-    <div>
+    <div className={s.scrollable}>
       {team && <h4>{team.teamName}</h4>}
-      <table className={tableStyles.table}>
+      <table className={cx(tableStyles.table, s.table)}>
         <thead>
           <tr>
             <td>player</td>
-            <td>motes collected</td>
-            <td>motes lost</td>
+            <td colSpan={3}>motes banked / collected / lost</td>
             <td>motes denied</td>
+            <td>motes degraded?</td>
+            <td>invasions</td>
+            <td>invader deaths</td>
+            <td>invader kills</td>
+            <td>invasion kills</td>
             <td>primeval damage</td>
             <td>blockers</td>
           </tr>
@@ -47,14 +56,17 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
             return (
               <tr>
                 <td>{teamMember.player.destinyUserInfo.displayName}</td>
-                <td>
-                  {stats.motesPickedUp &&
-                    stats.motesPickedUp.basic.displayValue}
-                </td>
-                <td>{stats.motesLost && stats.motesLost.basic.displayValue}</td>
-                <td>
-                  {stats.motesDenied && stats.motesDenied.basic.displayValue}
-                </td>
+                <td>{stat(stats, 'motesDeposited')}</td>
+                <td>{stat(stats, 'motesPickedUp')}</td>
+                <td>{stat(stats, 'motesLost')}</td>
+                <td>{stat(stats, 'motesDenied')}</td>
+                <td>{stat(stats, 'motesDegraded')}</td>
+
+                <td>{stat(stats, 'invasions')}</td>
+                <td>{stat(stats, 'invaderDeaths')}</td>
+                <td>{stat(stats, 'invaderKills')}</td>
+                <td>{stat(stats, 'invasionKills')}</td>
+
                 <td>
                   {stats.primevalDamage
                     ? percent(
@@ -64,14 +76,11 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
                 </td>
 
                 <td>
-                  {stats.smallBlockersSent &&
-                    stats.smallBlockersSent.basic.displayValue}
+                  {stat(stats, 'smallBlockersSent')}
                   {' / '}
-                  {stats.mediumBlockersSent &&
-                    stats.mediumBlockersSent.basic.displayValue}
+                  {stat(stats, 'mediumBlockersSent')}
                   {' / '}
-                  {stats.largeBlockersSent &&
-                    stats.largeBlockersSent.basic.displayValue}
+                  {stat(stats, 'largeBlockersSent')}
                 </td>
               </tr>
             );
