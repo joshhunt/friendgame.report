@@ -2,6 +2,7 @@ import React from 'react';
 import { memoize } from 'lodash';
 
 import Item from 'app/components/Item';
+import Medal from 'app/components/Medal';
 
 import s from './styles.styl';
 
@@ -29,6 +30,39 @@ export function stat(stats, statName) {
 
 const field = (label, statKey) => ({ label, stat: statKey });
 
+const WEAPONS_FIELD = field('weapons', (stats, teamMember) => {
+  return (
+    teamMember.extended.weapons &&
+    teamMember.extended.weapons.map(weapon => {
+      return <Item className={s.item} hash={weapon.referenceId} />;
+    })
+  );
+});
+
+const MEDALS_FIELD = field(
+  'medals',
+  (
+    stats,
+    teamMember,
+    teamMembers,
+    pgcr,
+    teamId,
+    DestinyHistoricalStatsDefinition
+  ) => {
+    return Object.entries(stats)
+      .map(([statId, stat]) => {
+        const statDef = DestinyHistoricalStatsDefinition[statId];
+        return { statId, stat, statDef };
+      })
+      .filter(({ statDef }) => {
+        return statDef && statDef.medalTierHash;
+      })
+      .map(({ statDef, stat }) => (
+        <Medal className={s.item} statDef={statDef} count={stat.basic.value} />
+      ));
+  }
+);
+
 const GAMBIT_FIELDS = [
   field('most deposited', 'motesDeposited'),
   field('picked up', 'motesPickedUp'),
@@ -53,19 +87,22 @@ const GAMBIT_FIELDS = [
       `${stat(stats, 'largeBlockersSent')}`
     ].join(' / ');
   }),
-  field('weapons', (stats, teamMember) => {
-    return (
-      teamMember.extended.weapons &&
-      teamMember.extended.weapons.map(weapon => {
-        return <Item className={s.item} hash={weapon.referenceId} />;
-      })
-    );
-  })
+  WEAPONS_FIELD,
+  MEDALS_FIELD
 ];
+
+const FALLBACK_FIELDS = [WEAPONS_FIELD];
 
 export default [
   {
     test: pgcr => pgcr.activityDetails.directorActivityHash === 3577607128,
     fields: GAMBIT_FIELDS
-  }
+  },
+
+  {
+    test: pgcr => pgcr.activityDetails.directorActivityHash === 2274172949,
+    fields: [WEAPONS_FIELD, MEDALS_FIELD]
+  },
+
+  { test: () => true, fields: FALLBACK_FIELDS }
 ];

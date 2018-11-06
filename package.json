@@ -36,6 +36,7 @@
     "react-scripts": "1.0.17",
     "react-table": "^6.8.6",
     "react-tabs": "^2.2.2",
+    "react-tippy": "^1.2.3",
     "react-toggled": "^1.2.7",
     "react-virtualized": "^9.19.1",
     "redux": "^3.7.2",

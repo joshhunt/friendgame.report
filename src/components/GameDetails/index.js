@@ -1,11 +1,17 @@
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import { isString, groupBy } from 'lodash';
 
 import tableStyles from 'app/components/Table/styles.styl';
 import s from './styles.styl';
 import GAME_MODE_FIELDS, { stat } from './fields';
 
-function TeamTable({ pgcr, teamId, teamMembers }) {
+function TeamTable({
+  pgcr,
+  teamId,
+  teamMembers,
+  DestinyHistoricalStatsDefinition
+}) {
   const team = pgcr.teams.find(
     t => t.teamId === teamId || t.teamId === parseInt(teamId, 10)
   );
@@ -42,7 +48,14 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
                     <td>
                       {isString(f.stat)
                         ? stat(stats, f.stat)
-                        : f.stat(stats, teamMember, teamMembers, pgcr, teamId)}
+                        : f.stat(
+                            stats,
+                            teamMember,
+                            teamMembers,
+                            pgcr,
+                            teamId,
+                            DestinyHistoricalStatsDefinition
+                          )}
                     </td>
                   );
                 })}
@@ -54,7 +67,7 @@ function TeamTable({ pgcr, teamId, teamMembers }) {
   );
 }
 
-export default function GameDetails({ pgcr }) {
+function GameDetails({ pgcr, DestinyHistoricalStatsDefinition }) {
   if (!pgcr) {
     return 'Loading...';
   }
@@ -75,9 +88,19 @@ export default function GameDetails({ pgcr }) {
             pgcr={pgcr}
             teamMembers={teamMembers}
             teamId={teamId}
+            DestinyHistoricalStatsDefinition={DestinyHistoricalStatsDefinition}
           />
         ))}
       </table>
     </div>
   );
 }
+
+function mapStateToProps(state) {
+  return {
+    DestinyHistoricalStatsDefinition:
+      state.definitions.DestinyHistoricalStatsDefinition
+  };
+}
+
+export default connect(mapStateToProps)(GameDetails);

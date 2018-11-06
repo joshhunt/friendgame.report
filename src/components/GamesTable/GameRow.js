@@ -37,7 +37,8 @@ function GameRow({ game, modeDef, activityDef, onClick }) {
           <img
             alt=""
             className={s.activityIcon}
-            src={`https://bungie.net${modeDef.displayProperties.icon}`}
+            src={`https://bungie.net${modeDef &&
+              modeDef.displayProperties.icon}`}
           />
         </div>
         <div className={s.mode}>
@@ -50,7 +51,7 @@ function GameRow({ game, modeDef, activityDef, onClick }) {
 
       <td className={s.statColumn}>
         <Stat
-          name={SCORE_NAME[modeDef.hash] || 'score'}
+          name={SCORE_NAME[modeDef && modeDef.hash] || 'score'}
           value={game.values.score && game.values.score.basic.displayValue}
         />
       </td>

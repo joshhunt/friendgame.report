@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { Tooltip } from 'react-tippy';
 
 import BungieImage from 'src/components/BungieImage';
+
+import s from './styles.styl';
 
 const NO_ICON = '/img/misc/missing_icon_d2.png';
 
 function Item({ item, className }) {
   const icon = (item && item.displayProperties.icon) || NO_ICON;
-  return <BungieImage className={className} src={icon} />;
+  return (
+    <Tooltip
+      html={
+        <Fragment>
+          <div className={s.name}>{item && item.displayProperties.name}</div>
+        </Fragment>
+      }
+      position="top"
+      arrow
+      followCursor
+    >
+      <BungieImage className={className} src={icon} />
+    </Tooltip>
+  );
 }
 
 const mapStateToProps = (state, ownProps) => {
