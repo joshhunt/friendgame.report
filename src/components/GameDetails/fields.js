@@ -100,7 +100,7 @@ export default [
   },
 
   {
-    test: pgcr => pgcr.activityDetails.directorActivityHash === 2274172949,
+    test: pgcr => pgcr.activityDetails.modes.includes(5),
     fields: [WEAPONS_FIELD, MEDALS_FIELD]
   },
 
