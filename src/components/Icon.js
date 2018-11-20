@@ -8,6 +8,8 @@ library.add(
   require('@fortawesome/pro-light-svg-icons/faShoppingBasket').faShoppingBasket,
   require('@fortawesome/pro-regular-svg-icons/faPlus').faPlus,
   require('@fortawesome/pro-regular-svg-icons/faSync').faSync,
+  require('@fortawesome/pro-regular-svg-icons/faCheck').faCheck,
+  require('@fortawesome/pro-regular-svg-icons/faTimes').faTimes,
   require('@fortawesome/pro-regular-svg-icons/faExternalLinkSquareAlt')
     .faExternalLinkSquareAlt
 );

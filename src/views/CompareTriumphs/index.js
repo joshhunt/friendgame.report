@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import TriumphSummary from 'src/components/TriumphSummary';
 import { enumerateTriumphState } from 'src/lib/destinyUtils';
+import Icon from 'src/components/Icon';
 import { getProfile } from 'src/store/clan';
 
 import tableStyles from 'app/components/Table/styles.styl';
@@ -126,7 +127,7 @@ class CompareTriumphs extends Component {
                               : s.cellIncomplete
                           }
                         >
-                          {record.$hasCompleted ? 'Complete' : 'Incomplete'}
+                          {record.$hasCompleted ? <Icon name="check" /> : <Icon name="times" />}
                         </td>
                       );
                     })}
