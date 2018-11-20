@@ -105,6 +105,7 @@ class CompareTriumphs extends Component {
 
                 return (
                   <tr
+                    className={s.row}
                     data-depth={
                       node.headingNode ? currentDepth : currentDepth + 1
                     }
@@ -127,7 +128,15 @@ class CompareTriumphs extends Component {
                               : s.cellIncomplete
                           }
                         >
-                          {record.$hasCompleted ? <Icon name="check" /> : <Icon name="times" />}
+                          {record.$hasCompleted ? (
+                            <Icon className={s.icon} name="check" />
+                          ) : (
+                            <Icon className={s.icon} name="times" />
+                          )}
+                          <div className={s.subtlePlayerName}>
+                            {player &&
+                              player.profile.profile.data.userInfo.displayName}
+                          </div>
                         </td>
                       );
                     })}
