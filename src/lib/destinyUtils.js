@@ -1,8 +1,8 @@
-import React from "react";
-import { memoize, toPairs, get } from "lodash";
+import React from 'react';
+import { memoize, toPairs, get } from 'lodash';
 
-import { EMBLEM, HUNTER, TITAN, WARLOCK, NO_CLASS } from "app/lib/destinyEnums";
-import { getLower } from "src/lib/utils";
+import { EMBLEM, HUNTER, TITAN, WARLOCK, NO_CLASS } from 'app/lib/destinyEnums';
+import { getLower } from 'src/lib/utils';
 // import CLASS_OVERRIDES from 'app/extraData/classOverrides';
 
 export const flagEnum = (state, value) => !!(state & value);
@@ -40,7 +40,7 @@ export const isOrnament = item =>
   item.inventory.stackUniqueLabel &&
   item.plug &&
   item.plug.plugCategoryIdentifier &&
-  item.plug.plugCategoryIdentifier.includes("skins");
+  item.plug.plugCategoryIdentifier.includes('skins');
 
 export const makeTypeShort = memoize(type => {
   const match = type.match(/Destiny(\w+)Definition/);
@@ -55,7 +55,7 @@ export const getName = item => {
 };
 
 export const bungieUrl = path => {
-  return path.includes("//bungie.net/") ? path : `https://bungie.net${path}`;
+  return path.includes('//bungie.net/') ? path : `https://bungie.net${path}`;
 };
 
 function classFromString(str) {
@@ -65,11 +65,11 @@ function classFromString(str) {
   }
 
   switch (results[0]) {
-    case "hunter":
+    case 'hunter':
       return HUNTER;
-    case "warlock":
+    case 'warlock':
       return WARLOCK;
-    case "titan":
+    case 'titan':
       return TITAN;
     default:
       return NO_CLASS;
@@ -81,8 +81,8 @@ export const getItemClass = item => {
   //   return CLASS_OVERRIDES[item.hash];
   // }
 
-  const stackUniqueLabel = getLower(item, "inventory.stackUniqueLabel");
-  const plugCategoryIdentifier = getLower(item, "plug.plugCategoryIdentifier");
+  const stackUniqueLabel = getLower(item, 'inventory.stackUniqueLabel');
+  const plugCategoryIdentifier = getLower(item, 'plug.plugCategoryIdentifier');
 
   if (item.itemCategoryHashes.includes(EMBLEM) && stackUniqueLabel.length) {
     return classFromString(stackUniqueLabel);
@@ -111,7 +111,7 @@ export function getNameForItem(item, noQuotes) {
     return foundName;
   }
 
-  return foundName ? `"${foundName}"` : "";
+  return foundName ? `"${foundName}"` : '';
 }
 
 export const makeAllDefsArray = memoize(allDefs => {

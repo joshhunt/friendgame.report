@@ -232,6 +232,8 @@ class ClanPage extends Component {
             />
           )}
         </div>
+
+        <Link to="/compare-triumphs">Compare triumphs</Link>
       </div>
     );
   }

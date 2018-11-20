@@ -1,16 +1,17 @@
 // eslint-disable no-console
-import React, { Component } from "react";
-import { isString } from "lodash";
-import { Router, Route, browserHistory } from "react-router";
-import { Provider } from "react-redux";
+import React, { Component } from 'react';
+import { isString } from 'lodash';
+import { Router, Route, browserHistory } from 'react-router';
+import { Provider } from 'react-redux';
 
-import store from "./store";
-import App, { AuthRequired } from "./views/App";
-import Home from "./views/Home";
-import UserPage from "./views/UserPage";
-import ClanPage from "./views/ClanPage";
-import CrawlPage from "./views/CrawlPage";
-import TriumphReport from "./views/TriumphReport";
+import store from './store';
+import App, { AuthRequired } from './views/App';
+import Home from './views/Home';
+import UserPage from './views/UserPage';
+import ClanPage from './views/ClanPage';
+import CrawlPage from './views/CrawlPage';
+import TriumphReport from './views/TriumphReport';
+import CompareTriumphs from './views/CompareTriumphs';
 
 export default class AppRouter extends Component {
   render() {
@@ -23,6 +24,7 @@ export default class AppRouter extends Component {
             </Route>
             <Route path="/clan/:groupId" component={ClanPage} />
             <Route path="/triumph-report" component={TriumphReport} />
+            <route path="/compare-triumphs" component={CompareTriumphs} />
             <Route path="/:membershipType/:membershipId" component={UserPage} />
             <Route
               path="/:membershipType/:membershipId/crawl"
@@ -48,7 +50,7 @@ if (module.hot) {
       args &&
       args.length === 1 &&
       isString(args[0]) &&
-      args[0].indexOf("You cannot change <Router routes>;") > -1
+      args[0].indexOf('You cannot change <Router routes>;') > -1
     ) {
       // React route changed
     } else {
