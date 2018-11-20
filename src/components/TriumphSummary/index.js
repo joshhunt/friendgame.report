@@ -4,7 +4,14 @@ import BungieImage from 'src/components/BungieImage';
 
 import s from './styles.styl';
 
-export default function TriumphSummary({ record }) {
+export default function TriumphSummary({ record, anchorLink }) {
+  const linkProps = anchorLink
+    ? { href: `#${anchorLink}` }
+    : {
+        href: `https://data.destinysets.com/i/Record:${record.hash}`,
+        target: '_blank'
+      };
+
   return (
     <div className={s.recordSummary}>
       {record.displayProperties.icon && (
@@ -19,11 +26,7 @@ export default function TriumphSummary({ record }) {
       )}
 
       <div className={s.recordMain}>
-        <a
-          className={s.link}
-          href={`https://data.destinysets.com/i/Record:${record.hash}`}
-          target="_blank"
-        >
+        <a className={s.link} {...linkProps}>
           {record.displayProperties.name}
         </a>
         <br />

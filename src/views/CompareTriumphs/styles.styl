@@ -29,9 +29,16 @@
     .heading
       font-size: 14px
 
-.heading
-  font-weight: bold
+.link
+  color: inherit
+  text-decoration: none
 
+  &:hover
+    text-decoration: underline
+
+.heading
+  composes: link
+  font-weight: bold
 
 .cell
   color: white
@@ -46,4 +53,3 @@
   composes: cell
   background: #e74c3c
   border-color: #e74c3c !important
-

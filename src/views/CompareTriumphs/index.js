@@ -65,6 +65,12 @@ class CompareTriumphs extends Component {
           <tbody className={s.tbody}>
             {flattenedRecords &&
               flattenedRecords.map(node => {
+                const hash = node.headingNode
+                  ? node.headingNode.hash
+                  : node.hash;
+
+                const anchorId = `triumph_${hash}`;
+
                 if (!node.headingNode && hideAllCompleted) {
                   const allCompleted = playersToCompare.reduce(
                     (acc, playerKey) => {
@@ -86,12 +92,14 @@ class CompareTriumphs extends Component {
                 if (node.headingNode) {
                   currentDepth = node.depth;
                   content = (
-                    <span className={s.heading}>
+                    <a className={s.heading} href={`#${anchorId}`}>
                       {node.headingNode.displayProperties.name}
-                    </span>
+                    </a>
                   );
                 } else {
-                  content = <TriumphSummary record={node} />;
+                  content = (
+                    <TriumphSummary record={node} anchorLink={anchorId} />
+                  );
                 }
 
                 return (
@@ -100,7 +108,7 @@ class CompareTriumphs extends Component {
                       node.headingNode ? currentDepth : currentDepth + 1
                     }
                   >
-                    <td>{content}</td>
+                    <td id={anchorId}>{content}</td>
 
                     {playersToCompare.map(playerKey => {
                       const player = recordsByPlayerKey[playerKey];
@@ -206,7 +214,7 @@ const enumeratedRecordsFromProfile = profile => {
     return {
       ...record,
       $enumeratedState: state,
-      $hasCompleted: !state.objectiveNotCompleted
+      $hasCompleted: state.recordRedeemed || !state.objectiveNotCompleted
     };
   });
 
@@ -242,8 +250,6 @@ function mapStateToProps(state, ownProps) {
       }
     };
   }, {});
-
-  console.log(recordsFromPlayers);
 
   return {
     recordDefs,
