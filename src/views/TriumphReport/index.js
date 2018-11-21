@@ -1,19 +1,20 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import Table from "src/components/Table";
-import BungieImage from "src/components/BungieImage";
+import Table from 'src/components/Table';
+import BungieImage from 'src/components/BungieImage';
+import TriumphSummary from 'src/components/TriumphSummary';
 
-import s from "./styles.styl";
+import s from './styles.styl';
 
-const triumphsData = require("../../bulkTriumphData.json");
+const triumphsData = require('../../bulkTriumphData.json');
 
 const lookup = {
-  0: "Category",
-  1: "Badge",
-  2: "Medals",
-  3: "Collectible",
-  4: "Record"
+  0: 'Category',
+  1: 'Badge',
+  2: 'Medals',
+  3: 'Collectible',
+  4: 'Record'
 };
 
 function percent(fraction) {
@@ -27,40 +28,11 @@ class TriumphReport extends Component {
 
     const columns = [
       {
-        name: "triumph",
+        name: 'triumph',
         cell: row => {
           const def = recordDefs && recordDefs[row.hash];
 
-          return def ? (
-            <div className={s.recordSummary}>
-              {def.displayProperties.icon && (
-                <div className={s.recordAccessory}>
-                  <div className={s.iconWrapper}>
-                    <BungieImage
-                      className={s.icon}
-                      src={def.displayProperties.icon}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className={s.recordMain}>
-                <a
-                  className={s.link}
-                  href={`https://data.destinysets.com/i/Record:${row.hash}`}
-                  target="_blank"
-                >
-                  {def.displayProperties.name}
-                </a>
-                <br />
-                <small className={s.desc}>
-                  {def.displayProperties.description}
-                </small>
-              </div>
-            </div>
-          ) : (
-            row.hash
-          );
+          return def ? <TriumphSummary record={def} /> : row.hash;
         },
         sortValue: row => {
           return recordDefs
@@ -68,19 +40,19 @@ class TriumphReport extends Component {
             : row.hash;
         }
       },
-      { name: "completed", cell: row => row.completed },
+      { name: 'completed', cell: row => row.completed },
       {
-        name: "% completed",
+        name: '% completed',
         cell: row => `${percent(row.completed / triumphsData.usersProcessed)}%`,
         sortValue: row => row.completed / triumphsData.usersProcessed
       },
-      { name: "hash", cell: row => row.hash },
+      { name: 'hash', cell: row => row.hash },
       {
-        name: "display type",
+        name: 'display type',
         cell: row => {
           const def = recordDefs && recordDefs[row.hash];
 
-          return def ? lookup[def.presentationInfo.displayStyle] : "";
+          return def ? lookup[def.presentationInfo.displayStyle] : '';
         }
       }
     ];
@@ -108,7 +80,4 @@ function mapStateToProps(state, ownProps) {
 
 const mapDispatchToActions = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToActions
-)(TriumphReport);
+export default connect(mapStateToProps, mapDispatchToActions)(TriumphReport);

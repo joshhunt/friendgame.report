@@ -51,7 +51,7 @@ class CompareTriumphs extends Component {
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <td>Triumph</td>
+              <td />
               {playersToCompare.map(playerKey => {
                 const player = recordsByPlayerKey[playerKey];
                 return (
