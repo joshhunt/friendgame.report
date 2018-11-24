@@ -17,6 +17,18 @@ export default function App({ children }) {
       </div>
 
       {children}
+
+      <div className={s.footer}>
+        clan.report is made by{' '}
+        <a
+          href="https://twitter.com/joshhunt"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          joshhunt
+        </a>, who also made <a href="https://destinysets.com">Destiny Sets</a>.
+        All content is owned by their respective owners, most probably Bungie.
+      </div>
     </div>
   );
 }
