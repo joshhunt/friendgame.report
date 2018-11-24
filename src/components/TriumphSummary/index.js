@@ -28,6 +28,8 @@ export default function TriumphSummary({ record, anchorLink }) {
       <div className={s.recordMain}>
         <a className={s.link} {...linkProps}>
           {record.displayProperties.name}
+
+          <small className={s.points}>{record.completionInfo.ScoreValue} pts</small>
         </a>
         <br />
         <small className={s.desc}>{record.displayProperties.description}</small>

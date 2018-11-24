@@ -30,6 +30,7 @@ const ComparisonTable = React.memo(
     recordsByPlayerKey,
     flattenedRecords,
     hideAllCompleted,
+    hideZeroPointRecords,
     onAddPlayerClick
   }) => {
     let currentDepth = 0;
@@ -78,6 +79,15 @@ const ComparisonTable = React.memo(
                 );
 
                 if (allCompleted) {
+                  return null;
+                }
+              }
+
+              if (!node.headingNode && hideZeroPointRecords) {
+                if (
+                  node.completionInfo &&
+                  node.completionInfo.ScoreValue === 0
+                ) {
                   return null;
                 }
               }
@@ -154,6 +164,12 @@ class CompareTriumphs extends Component {
     });
   };
 
+  toggleHideZeroPointTriumphs = () => {
+    this.setState({
+      hideZeroPointRecords: !this.state.hideZeroPointRecords
+    });
+  };
+
   componentDidMount() {
     this.fetchProfiles(this.props.playersToCompare);
   }
@@ -192,7 +208,11 @@ class CompareTriumphs extends Component {
       recordsByPlayerKey
     } = this.props;
 
-    const { hideAllCompleted, addPlayerModalVisible } = this.state;
+    const {
+      hideAllCompleted,
+      addPlayerModalVisible,
+      hideZeroPointRecords
+    } = this.state;
 
     return (
       <div className={s.root}>
@@ -209,11 +229,25 @@ class CompareTriumphs extends Component {
           {hideAllCompleted ? 'Show all completed' : 'Hide all completed'}
         </button>
 
+        <button
+          className={s.addPlayerButton}
+          onClick={this.toggleHideZeroPointTriumphs}
+        >
+          <Icon
+            className={s.addPlayerIcon}
+            name={hideZeroPointRecords ? 'eye' : 'eye-slash'}
+          />
+          {hideZeroPointRecords
+            ? 'Show all Triumphs'
+            : 'Hide zero-point Triumphs'}
+        </button>
+
         <ComparisonTable
           playersToCompare={playersToCompare}
           recordsByPlayerKey={recordsByPlayerKey}
           flattenedRecords={flattenedRecords}
           hideAllCompleted={hideAllCompleted}
+          hideZeroPointRecords={hideZeroPointRecords}
           onAddPlayerClick={this.toggleAddPlayer}
         />
 
