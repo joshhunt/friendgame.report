@@ -1,25 +1,26 @@
-.root
-  content: 'root'
+.playerSearch
+  width: 500px
+  max-width: 100%
+  margin-top: 50px
+  // padding: 15px
+  // box-shadow: 0 0 100px 2px rgba(black, .3)
 
-.platformLink
-  display: inline-block
-  text-decoration: none
+.resultPlayer
+  display: block
+  max-width: 500px
   color: inherit
-  background: #f8f8f8
-  padding: 2px 8px
-  border-radius: 2px
-  transition: 300ms cubic-bezier(.25,.8,.25,1);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-
-  & + &
-    margin-left: 1ch
+  text-decoration: none
+  padding: 8px 10px
+  margin-top: 4px
+  transition: 150ms ease-in-out
+  background: lighten(#ececec, 60%)
 
   &:hover
-    // position: relative
-    // top: -1px
-    background: #f5f5f5
-    box-shadow: 0 3px 6px rgba(0,0,0,0.25), 0 2px 2px rgba(0,0,0,0.22);
+    background: lighten(#ececec, 10%)
 
 .platformIcon
-  height: 1.5em
-  vertical-align: middle
+  margin-right: 5px
+
+.authLink
+  color: inherit
+  font-weight: 500

@@ -162,4 +162,10 @@ export function getCacheablePGCRDetails(pgcrId) {
   );
 }
 
+export function getCacheableSearch(searchTerm) {
+  return getDestiny(
+    `/Destiny2/SearchDestinyPlayer/-1/${encodeURIComponent(searchTerm)}/`
+  );
+}
+
 window.getCacheablePGCRDetails = getCacheablePGCRDetails;

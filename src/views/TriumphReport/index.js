@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Table from 'src/components/Table';
-import BungieImage from 'src/components/BungieImage';
 import TriumphSummary from 'src/components/TriumphSummary';
 
 import s from './styles.styl';

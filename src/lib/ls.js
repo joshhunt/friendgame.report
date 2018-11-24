@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 const keys = {
-  AUTH: 'auth'
+  AUTH: 'auth',
+  recentProfiles: 'recentProfiles'
 };
 
 let LOCAL_STORAGE;
@@ -80,6 +81,23 @@ export function setAuth(authData) {
 
 export function getAuth() {
   return get(keys.AUTH);
+}
+
+export function addRecentProfile(profile) {
+  const recentProfiles = getRecentProfiles([]);
+  const found = recentProfiles.find(
+    r => r.membershipId === profile.membershipId
+  );
+
+  if (!found) {
+    recentProfiles.push(profile);
+  }
+
+  set(keys.recentProfiles, recentProfiles);
+}
+
+export function getRecentProfiles(defaultValue) {
+  return get(keys.recentProfiles, defaultValue);
 }
 
 export function removeAuth() {

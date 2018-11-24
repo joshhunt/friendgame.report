@@ -5,14 +5,142 @@ import { connect } from 'react-redux';
 import TriumphSummary from 'src/components/TriumphSummary';
 import { enumerateTriumphState } from 'src/lib/destinyUtils';
 import Icon from 'src/components/Icon';
+import Modal from 'src/components/Modal';
+import SearchForPlayer from 'src/components/SearchForPlayer';
 import { getProfile } from 'src/store/clan';
 
 import tableStyles from 'app/components/Table/styles.styl';
 
 import s from './styles.styl';
 
+function AddPlayer({ onClick }) {
+  return (
+    <td className={s.addPlayerTd}>
+      <button className={s.addPlayerButton} onClick={onClick}>
+        <Icon className={s.addPlayerIcon} name="plus" />
+        Add Player
+      </button>
+    </td>
+  );
+}
+
+const ComparisonTable = React.memo(
+  ({
+    playersToCompare,
+    recordsByPlayerKey,
+    flattenedRecords,
+    hideAllCompleted,
+    onAddPlayerClick
+  }) => {
+    let currentDepth = 0;
+
+    return (
+      <table className={tableStyles.table}>
+        <thead>
+          <tr>
+            <AddPlayer onClick={onAddPlayerClick} />
+
+            {playersToCompare.map(playerKey => {
+              const player = recordsByPlayerKey[playerKey];
+              return (
+                <td key={playerKey}>
+                  {player
+                    ? player.profile.profile.data.userInfo.displayName
+                    : 'Loading...'}
+                </td>
+              );
+            })}
+          </tr>
+        </thead>
+
+        <tbody className={s.tbody}>
+          {flattenedRecords &&
+            flattenedRecords.map(node => {
+              const hash = node.headingNode ? node.headingNode.hash : node.hash;
+
+              const anchorId = `triumph_${hash}`;
+
+              if (!node.headingNode && hideAllCompleted) {
+                const allCompleted = playersToCompare.reduce(
+                  (acc, playerKey) => {
+                    const player = recordsByPlayerKey[playerKey];
+                    const thisPlayerCompleted =
+                      player && player.records[node.hash].$hasCompleted;
+                    return thisPlayerCompleted && acc;
+                  },
+                  true
+                );
+
+                if (allCompleted) {
+                  return null;
+                }
+              }
+
+              let content;
+
+              if (node.headingNode) {
+                currentDepth = node.depth;
+                content = (
+                  <a className={s.heading} href={`#${anchorId}`}>
+                    {node.headingNode.displayProperties.name}
+                  </a>
+                );
+              } else {
+                content = (
+                  <TriumphSummary record={node} anchorLink={anchorId} />
+                );
+              }
+
+              return (
+                <tr
+                  key={node.hash || node.headingNode.hash}
+                  className={s.row}
+                  data-depth={
+                    node.headingNode ? currentDepth : currentDepth + 1
+                  }
+                >
+                  <td id={anchorId}>{content}</td>
+
+                  {playersToCompare.map(playerKey => {
+                    const player = recordsByPlayerKey[playerKey];
+                    const record = player && player.records[node.hash];
+
+                    if (!record) {
+                      return <td key={playerKey} />;
+                    }
+
+                    return (
+                      <td
+                        key={playerKey}
+                        className={
+                          record.$hasCompleted
+                            ? s.cellCompleted
+                            : s.cellIncomplete
+                        }
+                      >
+                        {record.$hasCompleted ? (
+                          <Icon className={s.icon} name="check" />
+                        ) : (
+                          <Icon className={s.icon} name="times" />
+                        )}
+                        <div className={s.subtlePlayerName}>
+                          {player &&
+                            player.profile.profile.data.userInfo.displayName}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+    );
+  }
+);
+
 class CompareTriumphs extends Component {
-  state = { hideAllCompleted: false };
+  state = { hideAllCompleted: false, addPlayerModalVisible: false };
 
   toggleHideAllCompleted = () => {
     this.setState({
@@ -21,13 +149,35 @@ class CompareTriumphs extends Component {
   };
 
   componentDidMount() {
-    this.props.playersToCompare
+    this.fetchProfiles(this.props.playersToCompare);
+  }
+
+  componentDidUpdate(prevProps) {
+    const newPlayers = this.props.playersToCompare.filter(currentPlayer => {
+      return !prevProps.playersToCompare.includes(currentPlayer);
+    });
+
+    if (newPlayers.length) {
+      this.setState({ addPlayerModalVisible: false });
+    }
+
+    this.fetchProfiles(newPlayers);
+  }
+
+  fetchProfiles(playersToCompare) {
+    playersToCompare
       .filter(playerKey => !this.props.recordsByPlayerKey[playerKey])
       .forEach(playerKey => {
         const [membershipType, membershipId] = playerKey.split('/');
         this.props.getProfile({ membershipType, membershipId });
       });
   }
+
+  toggleAddPlayer = () => {
+    this.setState({
+      addPlayerModalVisible: !this.state.addPlayerModalVisible
+    });
+  };
 
   render() {
     const {
@@ -36,115 +186,37 @@ class CompareTriumphs extends Component {
       recordsByPlayerKey
     } = this.props;
 
-    const { hideAllCompleted } = this.state;
-
-    let currentDepth = 0;
+    const { hideAllCompleted, addPlayerModalVisible } = this.state;
 
     return (
       <div className={s.root}>
         <h2>Compare triumphs</h2>
 
-        <button onClick={this.toggleHideAllCompleted}>
+        <button
+          className={s.addPlayerButton}
+          onClick={this.toggleHideAllCompleted}
+        >
+          <Icon
+            className={s.addPlayerIcon}
+            name={hideAllCompleted ? 'eye' : 'eye-slash'}
+          />
           {hideAllCompleted ? 'Show all completed' : 'Hide all completed'}
         </button>
 
-        <table className={tableStyles.table}>
-          <thead>
-            <tr>
-              <td />
-              {playersToCompare.map(playerKey => {
-                const player = recordsByPlayerKey[playerKey];
-                return (
-                  <td>
-                    {player && player.profile.profile.data.userInfo.displayName}
-                  </td>
-                );
-              })}
-            </tr>
-          </thead>
+        <ComparisonTable
+          playersToCompare={playersToCompare}
+          recordsByPlayerKey={recordsByPlayerKey}
+          flattenedRecords={flattenedRecords}
+          hideAllCompleted={hideAllCompleted}
+          onAddPlayerClick={this.toggleAddPlayer}
+        />
 
-          <tbody className={s.tbody}>
-            {flattenedRecords &&
-              flattenedRecords.map(node => {
-                const hash = node.headingNode
-                  ? node.headingNode.hash
-                  : node.hash;
-
-                const anchorId = `triumph_${hash}`;
-
-                if (!node.headingNode && hideAllCompleted) {
-                  const allCompleted = playersToCompare.reduce(
-                    (acc, playerKey) => {
-                      const player = recordsByPlayerKey[playerKey];
-                      const thisPlayerCompleted =
-                        player && player.records[node.hash].$hasCompleted;
-                      return thisPlayerCompleted && acc;
-                    },
-                    true
-                  );
-
-                  if (allCompleted) {
-                    return null;
-                  }
-                }
-
-                let content;
-
-                if (node.headingNode) {
-                  currentDepth = node.depth;
-                  content = (
-                    <a className={s.heading} href={`#${anchorId}`}>
-                      {node.headingNode.displayProperties.name}
-                    </a>
-                  );
-                } else {
-                  content = (
-                    <TriumphSummary record={node} anchorLink={anchorId} />
-                  );
-                }
-
-                return (
-                  <tr
-                    className={s.row}
-                    data-depth={
-                      node.headingNode ? currentDepth : currentDepth + 1
-                    }
-                  >
-                    <td id={anchorId}>{content}</td>
-
-                    {playersToCompare.map(playerKey => {
-                      const player = recordsByPlayerKey[playerKey];
-                      const record = player && player.records[node.hash];
-
-                      if (!record) {
-                        return <td />;
-                      }
-
-                      return (
-                        <td
-                          className={
-                            record.$hasCompleted
-                              ? s.cellCompleted
-                              : s.cellIncomplete
-                          }
-                        >
-                          {record.$hasCompleted ? (
-                            <Icon className={s.icon} name="check" />
-                          ) : (
-                            <Icon className={s.icon} name="times" />
-                          )}
-                          <div className={s.subtlePlayerName}>
-                            {player &&
-                              player.profile.profile.data.userInfo.displayName}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+        <Modal
+          isOpen={addPlayerModalVisible}
+          onRequestClose={this.toggleAddPlayer}
+        >
+          <SearchForPlayer className={s.addPlayerModal} compareTriumphsLink />
+        </Modal>
       </div>
     );
   }
@@ -157,10 +229,6 @@ function recursiveRecords(node, definitions, depth = -1) {
     console.log('bailing early for', node);
     return [];
   }
-
-  // if (node.hash === 3052787867) {
-  //   debugger;
-  // }
 
   const fromChildren = flatMapDeep(
     node.children.presentationNodes,
@@ -237,7 +305,8 @@ function mapStateToProps(state, ownProps) {
     DestinyRecordDefinition: recordDefs
   } = state.definitions;
 
-  const playersToCompare = ownProps.router.location.query.players.split(',');
+  const { players } = ownProps.router.location.query;
+  const playersToCompare = players ? players.split(',') : [];
 
   const triumphNode =
     presentationNodeDefs && presentationNodeDefs[TRIUMPHS_PRESENTATION_NODE];
