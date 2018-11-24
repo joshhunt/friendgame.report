@@ -47,6 +47,12 @@ const ComparisonTable = React.memo(
                   {player
                     ? player.profile.profile.data.userInfo.displayName
                     : 'Loading...'}
+
+                  {player ? (
+                    <div className={s.score}>
+                      {player.profile.profileRecords.data.score} pts
+                    </div>
+                  ) : null}
                 </td>
               );
             })}
