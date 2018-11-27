@@ -148,10 +148,9 @@ class NewCollections extends Component {
 
     return (
       <div>
-        <h1>New Collections</h1>
+        <h2>New Collections</h2>
 
-        <div className={s.split}>
-          {/*          <div className={s.half}>
+        {/*          <div className={s.half}>
             <h2>prevCollectibles</h2>
             {prevCollectiblesGrouped &&
               Object.entries(prevCollectiblesGrouped).map(
@@ -169,27 +168,23 @@ class NewCollections extends Component {
               )}
           </div>*/}
 
-          <div className={s.half}>
-            <h2>diff</h2>
-            {currentCollectiblesGrouped &&
-              payload.map(obj => (
-                <div>
-                  <h3>
-                    {obj.sourceString || <em>no source</em>}{' '}
-                    <Tag tag={obj.tag} />
-                  </h3>
-                  {obj.collectibles.map(c => (
-                    <CollectibleLockup
-                      itemDefs={this.props.DestinyInventoryItemDefinition}
-                      collectible={c.collectible}
-                      tag={c.tag}
-                    />
-                  ))}
-                </div>
+        {currentCollectiblesGrouped &&
+          payload.map(obj => (
+            <div>
+              <h3>
+                {obj.sourceString || <em>no source</em>} <Tag tag={obj.tag} />
+              </h3>
+              {obj.collectibles.map(c => (
+                <CollectibleLockup
+                  itemDefs={this.props.DestinyInventoryItemDefinition}
+                  collectible={c.collectible}
+                  tag={c.tag}
+                />
               ))}
-          </div>
+            </div>
+          ))}
 
-          {/*<div className={s.half}>
+        {/*<div className={s.half}>
             <h2>currentCollectibles</h2>
             {currentCollectiblesGrouped &&
               Object.entries(currentCollectiblesGrouped).map(
@@ -206,7 +201,6 @@ class NewCollections extends Component {
                 )
               )}
           </div>*/}
-        </div>
       </div>
     );
   }
