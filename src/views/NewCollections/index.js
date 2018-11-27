@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { sortBy } from "lodash";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { sortBy } from 'lodash';
 
-import BungieImage from "src/components/BungieImage";
+import BungieImage from 'src/components/BungieImage';
 
-import s from "./styles.styl";
+import s from './styles.styl';
 
 // https://s3.amazonaws.com/destiny.plumbing/versions/1424950ea569506a3197e527fce36352/index.json
 
 // actual current one:  d6bb93a417aa8f95c383c68477308072
 
 const PREV_VERSION_URL =
-  "https://s3.amazonaws.com/destiny.plumbing/versions/d6bb93a417aa8f95c383c68477308072/en/raw/DestinyCollectibleDefinition.json";
+  'https://s3.amazonaws.com/destiny.plumbing/versions/d6bb93a417aa8f95c383c68477308072/en/raw/DestinyCollectibleDefinition.json';
 
 function groupCollectibles(collectibles) {
   return Object.values(collectibles).reduce((acc, def) => {
@@ -26,7 +26,7 @@ function groupCollectibles(collectibles) {
 }
 
 function tagSortFn(obj) {
-  if (obj.tag === "new") {
+  if (obj.tag === 'new') {
     return -1;
   }
 
@@ -109,7 +109,7 @@ class NewCollections extends Component {
 
                 return {
                   collectible: col,
-                  tag: wasInCollectionsPreviously ? null : "new"
+                  tag: wasInCollectionsPreviously ? null : 'new'
                 };
               });
 
@@ -119,11 +119,11 @@ class NewCollections extends Component {
             } else {
               // its new!
               payload.push({
-                tag: "new",
+                tag: 'new',
                 sourceString,
                 collectibles: collectibles.map(col => ({
                   collectible: col,
-                  tag: allprevCollectibles[col.hash] ? null : "new"
+                  tag: allprevCollectibles[col.hash] ? null : 'new'
                 }))
               });
             }
@@ -151,7 +151,7 @@ class NewCollections extends Component {
         <h1>New Collections</h1>
 
         <div className={s.split}>
-          <div className={s.half}>
+          {/*          <div className={s.half}>
             <h2>prevCollectibles</h2>
             {prevCollectiblesGrouped &&
               Object.entries(prevCollectiblesGrouped).map(
@@ -167,7 +167,7 @@ class NewCollections extends Component {
                   </div>
                 )
               )}
-          </div>
+          </div>*/}
 
           <div className={s.half}>
             <h2>diff</h2>
@@ -175,7 +175,7 @@ class NewCollections extends Component {
               payload.map(obj => (
                 <div>
                   <h3>
-                    {obj.sourceString || <em>no source</em>}{" "}
+                    {obj.sourceString || <em>no source</em>}{' '}
                     <Tag tag={obj.tag} />
                   </h3>
                   {obj.collectibles.map(c => (
@@ -189,7 +189,7 @@ class NewCollections extends Component {
               ))}
           </div>
 
-          <div className={s.half}>
+          {/*<div className={s.half}>
             <h2>currentCollectibles</h2>
             {currentCollectiblesGrouped &&
               Object.entries(currentCollectiblesGrouped).map(
@@ -205,7 +205,7 @@ class NewCollections extends Component {
                   </div>
                 )
               )}
-          </div>
+          </div>*/}
         </div>
       </div>
     );
