@@ -58,7 +58,7 @@ export default class Table extends Component {
       <table className={s.table}>
         <thead>
           <tr>
-            {columns.map(c => (
+            {columns.map((c, index) => (
               <td key={c.name} onClick={ev => this.onHeaderClick(ev, c)}>
                 {c.name}
               </td>
@@ -75,6 +75,21 @@ export default class Table extends Component {
             );
           })}
         </tbody>
+
+        <tfoot>
+          <tr>
+            <td>Totals:</td>
+            {columns.slice(1).map(c => {
+              const count =
+                c.hasTotal &&
+                rows.reduce((acc, rowData) => {
+                  return acc + (c.cell(rowData) || 0);
+                }, 0);
+
+              return <td key={c.name}>{c.hasTotal ? count : ''}</td>;
+            })}
+          </tr>
+        </tfoot>
       </table>
     );
   }

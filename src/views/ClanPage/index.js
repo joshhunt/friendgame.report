@@ -1,38 +1,74 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import React, { Component } from "react";
-import { Link } from "react-router";
-import { connect } from "react-redux";
-import { memoize } from "lodash";
-import { AllHtmlEntities } from "html-entities";
-import "react-table/react-table.css";
+import React, { Component } from 'react';
+import { Link } from 'react-router';
+import { connect } from 'react-redux';
+import { memoize } from 'lodash';
+import { AllHtmlEntities } from 'html-entities';
+import 'react-table/react-table.css';
 
-import { profileHasCompletedTriumph } from "src/lib/destinyUtils";
+import { profileHasCompletedTriumph } from 'src/lib/destinyUtils';
 
 import {
   getClanDetails,
   getClanMembers,
   getProfile,
   getRecentActivitiesForAccount
-} from "src/store/clan";
+} from 'src/store/clan';
 
-import { setBulkDefinitions } from "src/store/definitions";
+import { setBulkDefinitions } from 'src/store/definitions';
 
-import PrettyDate from "src/components/Date";
-import Table from "src/components/Table";
+import PrettyDate from 'src/components/Date';
+import Table from 'src/components/Table';
 
-import s from "./styles.styl";
+import s from './styles.styl';
 
 const entities = new AllHtmlEntities();
 const decode = memoize(string => entities.decode(string));
 
+const getCookieCount = memoize(d => {
+  if (
+    !(
+      d.profile &&
+      d.profile.characterRecords &&
+      d.profile.characterRecords.data
+    )
+  ) {
+    return null;
+  }
+
+  const total = Object.values(d.profile.characterRecords.data)
+    .map(({ records }) => {
+      return COOKIE_TRIUMPHS.map(hash => records && records[hash]).filter(
+        Boolean
+      );
+    })
+    .find(found => found.length === COOKIE_TRIUMPHS.length)
+    .reduce((acc, record) => {
+      return (
+        acc +
+        record.objectives.reduce((counter, objective) => {
+          return counter + objective.progress;
+        }, 0)
+      );
+    }, 0);
+
+  return total;
+});
+
+const COOKIE_TRIUMPHS = [
+  3055480592, // The Dawning: Three Guardians
+  3055480593, // The Dawning: Faraway Friends
+  3055480594 // The Dawning: Nearby Friends
+];
+
 const TITLES = [
-  { title: "Gambit", hash: 3798931976 },
-  { title: "Crucible", hash: 3369119720 },
-  { title: "Lore", hash: 1754983323 },
-  { title: "Raids", hash: 2182090828 },
-  { title: "The Dreaming City", hash: 1693645129 },
-  { title: "Destinations", hash: 2757681677 },
-  { title: "Last Wish: Raid First", hash: 1754815776 }
+  { title: 'Gambit', hash: 3798931976 },
+  { title: 'Crucible', hash: 3369119720 },
+  { title: 'Lore', hash: 1754983323 },
+  { title: 'Raids', hash: 2182090828 },
+  { title: 'The Dreaming City', hash: 1693645129 },
+  { title: 'Destinations', hash: 2757681677 },
+  { title: 'Last Wish: Raid First', hash: 1754815776 }
 ];
 
 const getCurrentActivity = memoize(profile => {
@@ -46,22 +82,30 @@ const getCurrentActivity = memoize(profile => {
 });
 
 const baseSort = sortFn => member =>
-  member.profile ? sortFn(member) : -99999999;
+  member.profile ? sortFn(member) : -99999999999;
+
+const baseSort2 = sortFn => member =>
+  member.profile &&
+  member.profile &&
+  member.profile.profileRecords &&
+  member.profile.profileRecords.data
+    ? sortFn(member)
+    : -99999999999;
 
 const maxLight = member =>
   member.profile &&
   Math.max(...Object.values(member.profile.characters.data).map(c => c.light));
 
 const k = ({ membershipType, membershipId }) =>
-  [membershipType, membershipId].join("/");
+  [membershipType, membershipId].join('/');
 
 class ClanPage extends Component {
   componentDidMount() {
-    fetch("https://destiny.plumbing/en/raw/DestinyActivityDefinition.json")
+    fetch('https://destiny.plumbing/en/raw/DestinyActivityDefinition.json')
       .then(r => r.json())
       .then(defs => this.props.setBulkDefinitions({ activityDefs: defs }));
 
-    fetch("https://destiny.plumbing/en/raw/DestinyActivityModeDefinition.json")
+    fetch('https://destiny.plumbing/en/raw/DestinyActivityModeDefinition.json')
       .then(r => r.json())
       .then(defs => this.props.setBulkDefinitions({ activityModeDefs: defs }));
 
@@ -115,7 +159,7 @@ class ClanPage extends Component {
 
     const columns = [
       {
-        name: "gamertag",
+        name: 'gamertag',
         cell: d => (
           <Link
             className={s.link}
@@ -128,18 +172,18 @@ class ClanPage extends Component {
         )
       },
       {
-        name: "date joined",
+        name: 'date joined',
         sortValue: baseSort(member => member.joinDate),
         cell: member => <PrettyDate date={member.joinDate} />
       },
       {
-        name: "current light",
+        name: 'current light',
         sortValue: baseSort(d => maxLight(d)),
         cell: d => maxLight(d)
       },
       {
-        name: "triumph score",
-        sortValue: baseSort(
+        name: 'triumph score',
+        sortValue: baseSort2(
           d =>
             d.profile.profileRecords.data && d.profile.profileRecords.data.score
         ),
@@ -149,17 +193,23 @@ class ClanPage extends Component {
           d.profile.profileRecords.data.score
       },
       {
-        name: "seals",
+        name: 'cookies baked',
+        cell: getCookieCount,
+        sortValue: baseSort2(getCookieCount),
+        hasTotal: true
+      },
+      {
+        name: 'seals',
         cell: d => {
           return TITLES.filter(({ hash }) =>
             profileHasCompletedTriumph(d.profile, hash)
           )
             .map(({ title }) => title)
-            .join(", ");
+            .join(', ');
         }
       },
       {
-        name: "current activity",
+        name: 'current activity',
         sortValue: baseSort(member => {
           const currentActivity =
             member.profile && getCurrentActivity(member.profile);
@@ -189,9 +239,9 @@ class ClanPage extends Component {
                 <span>
                   {currentActivityModeDef &&
                     `${currentActivityModeDef.displayProperties.name}: `}
-                  {currentActivityDef.displayProperties.name}{" "}
+                  {currentActivityDef.displayProperties.name}{' '}
                   <span className={s.started}>
-                    (Started{" "}
+                    (Started{' '}
                     <PrettyDate date={currentActivity.dateActivityStarted} />)
                   </span>
                 </span>
@@ -201,7 +251,7 @@ class ClanPage extends Component {
                 profile &&
                 profile.profile.data && (
                   <span className={s.lastPlayed}>
-                    Last played{" "}
+                    Last played{' '}
                     <PrettyDate date={profile.profile.data.dateLastPlayed} />
                   </span>
                 )}
@@ -259,7 +309,4 @@ const mapDispatchToActions = {
   getRecentActivitiesForAccount
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToActions
-)(ClanPage);
+export default connect(mapStateToProps, mapDispatchToActions)(ClanPage);
