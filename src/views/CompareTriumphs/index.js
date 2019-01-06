@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { flatMapDeep, get, mapValues } from 'lodash';
 import { connect } from 'react-redux';
+import _LazyLoad from 'react-lazyload';
 
 import TriumphSummary from 'src/components/TriumphSummary';
 import { enumerateTriumphState } from 'src/lib/destinyUtils';
@@ -12,6 +13,28 @@ import { getProfile } from 'src/store/clan';
 import tableStyles from 'app/components/Table/styles.styl';
 
 import s from './styles.styl';
+import Objectives from './Objectives';
+
+const AsyncMode = React.unstable_ConcurrentMode;
+
+window.React = React;
+
+const USE_LAZY_LOAD = false;
+const LazyLoad = USE_LAZY_LOAD ? _LazyLoad : Fragment;
+
+function chunkArray(myArray, chunkSize) {
+  var index = 0;
+  var arrayLength = myArray.length;
+  var tempArray = [];
+
+  for (index = 0; index < arrayLength; index += chunkSize) {
+    const myChunk = myArray.slice(index, index + chunkSize);
+    // Do something if you want with the group
+    tempArray.push(myChunk);
+  }
+
+  return tempArray;
+}
 
 function AddPlayer({ onClick }) {
   return (
@@ -24,8 +47,12 @@ function AddPlayer({ onClick }) {
   );
 }
 
+const CHUNK_SIZE = 10;
+const ROW_HEIGHT = 50;
+
 const ComparisonTable = React.memo(
   ({
+    searchText,
     playersToCompare,
     recordsByPlayerKey,
     flattenedRecords,
@@ -33,124 +60,160 @@ const ComparisonTable = React.memo(
     hideZeroPointRecords,
     onAddPlayerClick
   }) => {
-    let currentDepth = 0;
+    let currentDepth = -1;
+
+    const chunkedRecords =
+      flattenedRecords && chunkArray(flattenedRecords, CHUNK_SIZE);
 
     return (
-      <table className={tableStyles.table}>
-        <thead>
-          <tr>
-            <AddPlayer onClick={onAddPlayerClick} />
+      <AsyncMode>
+        <table className={tableStyles.table}>
+          <thead>
+            <tr>
+              <AddPlayer onClick={onAddPlayerClick} />
 
-            {playersToCompare.map(playerKey => {
-              const player = recordsByPlayerKey[playerKey];
-              return (
-                <td key={playerKey}>
-                  {player
-                    ? player.profile.profile.data.userInfo.displayName
-                    : 'Loading...'}
+              {playersToCompare.map(playerKey => {
+                const player = recordsByPlayerKey[playerKey];
+                return (
+                  <td key={playerKey}>
+                    {player
+                      ? player.profile.profile.data.userInfo.displayName
+                      : 'Loading...'}
 
-                  {player ? (
-                    <div className={s.score}>
-                      {player.profile.profileRecords.data.score} pts
-                    </div>
-                  ) : null}
-                </td>
-              );
-            })}
-          </tr>
-        </thead>
-
-        <tbody className={s.tbody}>
-          {flattenedRecords &&
-            flattenedRecords.map(node => {
-              const hash = node.headingNode ? node.headingNode.hash : node.hash;
-
-              const anchorId = `triumph_${hash}`;
-
-              if (!node.headingNode && hideAllCompleted) {
-                const allCompleted = playersToCompare.reduce(
-                  (acc, playerKey) => {
-                    const player = recordsByPlayerKey[playerKey];
-                    const thisPlayerCompleted =
-                      player && player.records[node.hash].$hasCompleted;
-                    return thisPlayerCompleted && acc;
-                  },
-                  true
+                    {player ? (
+                      <div className={s.score}>
+                        {player.profile.profileRecords.data.score} pts
+                      </div>
+                    ) : null}
+                  </td>
                 );
+              })}
+            </tr>
+          </thead>
 
-                if (allCompleted) {
-                  return null;
-                }
-              }
-
-              if (!node.headingNode && hideZeroPointRecords) {
-                if (
-                  node.completionInfo &&
-                  node.completionInfo.ScoreValue === 0
-                ) {
-                  return null;
-                }
-              }
-
-              let content;
-
-              if (node.headingNode) {
-                currentDepth = node.depth;
-                content = (
-                  <a className={s.heading} href={`#${anchorId}`}>
-                    {node.headingNode.displayProperties.name}
-                  </a>
-                );
-              } else {
-                content = (
-                  <TriumphSummary record={node} anchorLink={anchorId} />
-                );
-              }
-
-              return (
-                <tr
-                  key={node.hash || node.headingNode.hash}
-                  className={s.row}
-                  data-depth={
-                    node.headingNode ? currentDepth : currentDepth + 1
-                  }
+          <tbody className={s.tbody}>
+            {chunkedRecords &&
+              chunkedRecords.map((flattenedRecords, index) => (
+                <LazyLoad
+                  height={CHUNK_SIZE * ROW_HEIGHT}
+                  key={index}
+                  offset={100}
                 >
-                  <td id={anchorId}>{content}</td>
+                  {flattenedRecords.map(node => {
+                    const hash = node.headingNode
+                      ? node.headingNode.hash
+                      : node.hash;
 
-                  {playersToCompare.map(playerKey => {
-                    const player = recordsByPlayerKey[playerKey];
-                    const record = player && player.records[node.hash];
+                    const anchorId = `triumph_${hash}`;
 
-                    if (!record) {
-                      return <td key={playerKey} />;
+                    if (!node.headingNode && hideAllCompleted) {
+                      const allCompleted = playersToCompare.reduce(
+                        (acc, playerKey) => {
+                          const player = recordsByPlayerKey[playerKey];
+                          const thisPlayerCompleted =
+                            player && player.records[node.hash].$hasCompleted;
+                          return thisPlayerCompleted && acc;
+                        },
+                        true
+                      );
+
+                      if (allCompleted) {
+                        return null;
+                      }
+                    }
+
+                    if (!node.headingNode && hideZeroPointRecords) {
+                      if (
+                        node.completionInfo &&
+                        node.completionInfo.ScoreValue === 0
+                      ) {
+                        return null;
+                      }
+                    }
+
+                    let content;
+                    let searchableContent;
+
+                    if (node.headingNode) {
+                      currentDepth = node.depth;
+                      searchableContent = node.headingNode.displayProperties.name.toLowerCase();
+                      content = (
+                        <a className={s.heading} href={`#${anchorId}`}>
+                          {node.headingNode.displayProperties.name}
+                        </a>
+                      );
+                    } else {
+                      searchableContent = node.displayProperties.name.toLowerCase();
+
+                      content = (
+                        <TriumphSummary record={node} anchorLink={anchorId} />
+                      );
+                    }
+
+                    if (searchText && searchText.length) {
+                      const thisMatches = searchableContent.includes(
+                        searchText
+                      );
+
+                      if (!thisMatches) {
+                        return null;
+                      }
                     }
 
                     return (
-                      <td
-                        key={playerKey}
-                        className={
-                          record.$hasCompleted
-                            ? s.cellCompleted
-                            : s.cellIncomplete
+                      <tr
+                        key={node.hash || node.headingNode.hash}
+                        className={s.row}
+                        data-depth={
+                          node.headingNode ? currentDepth : currentDepth + 1
                         }
                       >
-                        {record.$hasCompleted ? (
-                          <Icon className={s.icon} name="check" />
-                        ) : (
-                          <Icon className={s.icon} name="times" />
-                        )}
-                        <div className={s.subtlePlayerName}>
-                          {player &&
-                            player.profile.profile.data.userInfo.displayName}
-                        </div>
-                      </td>
+                        <td id={anchorId}>{content} </td>
+
+                        {playersToCompare.map(playerKey => {
+                          const player = recordsByPlayerKey[playerKey];
+                          const record = player && player.records[node.hash];
+
+                          if (!record) {
+                            return <td key={playerKey} />;
+                          }
+
+                          return (
+                            <td
+                              key={playerKey}
+                              className={
+                                record.$hasCompleted
+                                  ? s.cellCompleted
+                                  : s.cellIncomplete
+                              }
+                            >
+                              <div className={s.subtlePlayerName}>
+                                {player &&
+                                  player.profile.profile.data.userInfo
+                                    .displayName}
+                              </div>
+
+                              {record.$hasCompleted ? (
+                                <Icon className={s.icon} name="check" />
+                              ) : (
+                                <Icon className={s.icon} name="times" />
+                              )}
+
+                              {!record.$hasCompleted &&
+                                record.objectives && (
+                                  <Objectives objectives={record.objectives} />
+                                )}
+                            </td>
+                          );
+                        })}
+                      </tr>
                     );
                   })}
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
+                </LazyLoad>
+              ))}
+          </tbody>
+        </table>
+      </AsyncMode>
     );
   }
 );
@@ -201,6 +264,13 @@ class CompareTriumphs extends Component {
     });
   };
 
+  onFilterChange = ev => {
+    const filterText = ev.target.value.toLowerCase();
+    requestAnimationFrame(() => {
+      this.setState({ filterText });
+    });
+  };
+
   render() {
     const {
       flattenedRecords,
@@ -211,7 +281,8 @@ class CompareTriumphs extends Component {
     const {
       hideAllCompleted,
       addPlayerModalVisible,
-      hideZeroPointRecords
+      hideZeroPointRecords,
+      filterText
     } = this.state;
 
     return (
@@ -242,7 +313,10 @@ class CompareTriumphs extends Component {
             : 'Hide zero-point Triumphs'}
         </button>
 
+        <input placeholder="filter" onChange={this.onFilterChange} />
+
         <ComparisonTable
+          searchText={filterText}
           playersToCompare={playersToCompare}
           recordsByPlayerKey={recordsByPlayerKey}
           flattenedRecords={flattenedRecords}

@@ -152,7 +152,7 @@ export function getCharacterPGCRHistory({
 }) {
   // https://www.bungie.net/Platform/Destiny2/2/Account/4611686018469271298/Character/2305843009269703481/Stats/Activities/?mode=None&count=200&page=0
   return getDestiny(
-    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=200&page=0`
+    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=250&page=0`
   );
 }
 

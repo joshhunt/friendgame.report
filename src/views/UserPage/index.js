@@ -73,7 +73,7 @@ function mapStateToProps(state, ownProps) {
   }`;
 
   const byCharacter = Object.values(state.pgcr.histories[key] || {});
-  const allGames = [].concat(...byCharacter);
+  const allGames = [].concat(...byCharacter).filter(Boolean);
   const gameHistory = orderBy(allGames, g => new Date(g.period), ['desc']);
 
   return {
@@ -94,4 +94,7 @@ const mapDispatchToActions = {
   getPGCRDetails
 };
 
-export default connect(mapStateToProps, mapDispatchToActions)(UserPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToActions
+)(UserPage);
