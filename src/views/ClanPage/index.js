@@ -25,6 +25,12 @@ import s from './styles.styl';
 const entities = new AllHtmlEntities();
 const decode = memoize(string => entities.decode(string));
 
+const COOKIE_TRIUMPHS = [
+  3055480592, // The Dawning: Three Guardians
+  3055480593, // The Dawning: Faraway Friends
+  3055480594 // The Dawning: Nearby Friends
+];
+
 const getCookieCount = memoize(d => {
   if (
     !(
@@ -54,12 +60,6 @@ const getCookieCount = memoize(d => {
 
   return total;
 });
-
-const COOKIE_TRIUMPHS = [
-  3055480592, // The Dawning: Three Guardians
-  3055480593, // The Dawning: Faraway Friends
-  3055480594 // The Dawning: Nearby Friends
-];
 
 const TITLES = [
   { title: 'Gambit', hash: 3798931976 },
@@ -192,12 +192,12 @@ class ClanPage extends Component {
           d.profile.profileRecords.data &&
           d.profile.profileRecords.data.score
       },
-      {
-        name: 'cookies baked',
-        cell: getCookieCount,
-        sortValue: baseSort2(getCookieCount),
-        hasTotal: true
-      },
+      // {
+      //   name: 'cookies baked',
+      //   cell: getCookieCount,
+      //   sortValue: baseSort2(getCookieCount),
+      //   hasTotal: true
+      // },
       {
         name: 'seals',
         cell: d => {
