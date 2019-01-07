@@ -95,27 +95,56 @@
   font-weight: 400
   font-size: .9em
 
+.objectives
+  font-size: 0
+  margin-top: 10px
+
+.objective
+  display: flex
+  width: 100%
+  background: rgba(white, .3)
+  text-align: left
+  margin-bottom: 4px
 
 .checkboxBase
+  _size = 15px
   display: inline-block
-  margin-right: .5em
-  background: rgba(white, .95)
-  border-radius: 2px
-  padding: 2px
+  font-size: 0
   line-height: 1
-
-  .icon
-    font-size: .8em
-    color: inherit
+  flex: 0 0 _size
+  width: _size
+  height: _size
 
 .checkboxTicked
   composes: checkboxBase
-  color: #2CCC71
+  background: rgba(white, .8)
 
 .checkboxEmpty
   composes: checkboxBase
-  color: #2CCC71
+  border: 1px solid rgba(white, .8)
 
-.objectives
+.objectiveText
+.objectiveProgress
   font-size: 12px
-  margin-top: 10px
+  padding-left: 4px
+
+.objectiveText
+  whitespace: no-wrap
+  text-overflow: ellipsis
+  overflow: hidden
+  flex: 1 1 100%
+
+.objectiveProgress
+  display: inline-flex
+  padding-right: 3px
+  align-items: center
+
+.playerCell
+  width: 250px
+
+.table
+  table-layout: fixed
+
+.slash
+  font-size: 0.8em
+  padding: 0 2px

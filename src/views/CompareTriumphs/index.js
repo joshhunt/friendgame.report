@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import cx from 'classnames';
 import { flatMapDeep, get, mapValues } from 'lodash';
 import { connect } from 'react-redux';
 import _LazyLoad from 'react-lazyload';
@@ -67,7 +68,7 @@ const ComparisonTable = React.memo(
 
     return (
       <AsyncMode>
-        <table className={tableStyles.table}>
+        <table className={cx(tableStyles.table, s.table)}>
           <thead>
             <tr>
               <AddPlayer onClick={onAddPlayerClick} />
@@ -75,7 +76,7 @@ const ComparisonTable = React.memo(
               {playersToCompare.map(playerKey => {
                 const player = recordsByPlayerKey[playerKey];
                 return (
-                  <td key={playerKey}>
+                  <td className={s.playerCell} key={playerKey}>
                     {player
                       ? player.profile.profile.data.userInfo.displayName
                       : 'Loading...'}
@@ -181,11 +182,12 @@ const ComparisonTable = React.memo(
                           return (
                             <td
                               key={playerKey}
-                              className={
+                              className={cx(
                                 record.$hasCompleted
                                   ? s.cellCompleted
-                                  : s.cellIncomplete
-                              }
+                                  : s.cellIncomplete,
+                                s.playerCell
+                              )}
                             >
                               <div className={s.subtlePlayerName}>
                                 {player &&
