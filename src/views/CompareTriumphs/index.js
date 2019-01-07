@@ -70,7 +70,7 @@ const ComparisonTable = React.memo(
       <AsyncMode>
         <table className={cx(tableStyles.table, s.table)}>
           <thead>
-            <tr>
+            <tr style={{ width: 500 }}>
               <AddPlayer onClick={onAddPlayerClick} />
 
               {playersToCompare.map(playerKey => {
