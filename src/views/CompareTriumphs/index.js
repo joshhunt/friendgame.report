@@ -415,6 +415,8 @@ const enumeratedRecordsFromProfile = profile => {
   return allMappedRecords;
 };
 
+const SEALS_NODE = 1652422747;
+
 function mapStateToProps(state, ownProps) {
   const {
     DestinyPresentationNodeDefinition: presentationNodeDefs,
@@ -427,8 +429,14 @@ function mapStateToProps(state, ownProps) {
   const triumphNode =
     presentationNodeDefs && presentationNodeDefs[TRIUMPHS_PRESENTATION_NODE];
 
-  let flattenedRecords =
+  const rootSealsNode =
+    presentationNodeDefs && presentationNodeDefs[SEALS_NODE];
+
+  const flattenedRecords =
     triumphNode && recursiveRecords(triumphNode, state.definitions).slice(1);
+
+  const flattenedSealRecords =
+    rootSealsNode && recursiveRecords(rootSealsNode, state.definitions, 0);
 
   const recordsFromPlayers = playersToCompare.reduce((acc, playerKey) => {
     const profile = state.clan.profiles[playerKey];
@@ -450,7 +458,10 @@ function mapStateToProps(state, ownProps) {
     recordDefs,
     presentationNodeDefs,
     triumphNode,
-    flattenedRecords,
+    flattenedRecords: [
+      ...(flattenedRecords || []),
+      ...(flattenedSealRecords || [])
+    ],
     playersToCompare,
     recordsByPlayerKey: recordsFromPlayers
   };
