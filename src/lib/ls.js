@@ -1,7 +1,8 @@
 // eslint-disable-next-line
 const keys = {
   AUTH: 'auth',
-  recentProfiles: 'recentProfiles'
+  recentProfiles: 'recentProfiles',
+  displayNameCache: 'displayNameCache',
 };
 
 let LOCAL_STORAGE;
@@ -81,6 +82,17 @@ export function setAuth(authData) {
 
 export function getAuth() {
   return get(keys.AUTH);
+}
+
+export function getDisplayNameCache() {
+  return get(keys.displayNameCache, {});
+}
+
+export function addToDisplayNameCache(key, value) {
+  const cache = getDisplayNameCache();
+  cache[key] = value;
+
+  return set(keys.displayNameCache, cache);
 }
 
 export function addRecentProfile(profile) {

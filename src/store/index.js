@@ -3,7 +3,7 @@ import thunk from "redux-thunk";
 
 import app from "./app";
 import auth from "./auth";
-import clan from "./clan";
+import profiles from "./profiles";
 import pgcr from "./pgcr";
 
 import definitions, {
@@ -18,7 +18,7 @@ import { fasterGetDefinitions } from "app/lib/definitions";
 const rootReducer = combineReducers({
   app,
   auth,
-  clan,
+  profiles,
   pgcr,
   definitions
 });
