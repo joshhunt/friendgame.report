@@ -125,41 +125,54 @@ function resolveDisplayName(membershipType, displayName) {
   const key = [membershipType, displayName].join('/');
   const membershipLookupCache = getDisplayNameCache();
 
-  console.log({key,
-membershipLookupCache})
+  console.log({
+    key,
+    membershipLookupCache
+  });
 
   if (membershipLookupCache[key]) {
-    return Promise.resolve(membershipLookupCache[key])
+    return Promise.resolve(membershipLookupCache[key]);
   }
 
-  return getCacheableSearch(displayName, membershipType)
-    .then(([player]) => {
-      if (!player) {
-        throw new Error('Unable to find user')
-      }
+  return getCacheableSearch(displayName, membershipType).then(([player]) => {
+    if (!player) {
+      throw new Error('Unable to find user');
+    }
 
-      const {membershipId} = player
-      addToDisplayNameCache(key, membershipId);
-      return membershipId
-    })
+    const { membershipId } = player;
+    addToDisplayNameCache(key, membershipId);
+    return membershipId;
+  });
 }
 
 const FRIENDLY_MEMBERSHIP_TYPES = {
   xb: 1,
   ps: 2,
-  bn: 4,
-}
+  bn: 4
+};
 
 // https://www.bungie.net/Platform/Destiny2/2/Profile/4611686018469271298/
 export function getProfile({ membershipType, membershipId }, accessToken) {
-  const realMembershipType = FRIENDLY_MEMBERSHIP_TYPES[membershipType] || membershipType
-  console.log('getProfile', { membershipType, realMembershipType, membershipId  })
+  const realMembershipType =
+    FRIENDLY_MEMBERSHIP_TYPES[membershipType] || membershipType;
+  console.log('getProfile', {
+    membershipType,
+    realMembershipType,
+    membershipId
+  });
 
   if (!Number(membershipId)) {
-    return resolveDisplayName(realMembershipType, membershipId)
-      .then(resolvedMembershipId => {
-        return getProfile({ membershipType: realMembershipType, membershipId: resolvedMembershipId }, accessToken)
-      })
+    return resolveDisplayName(realMembershipType, membershipId).then(
+      resolvedMembershipId => {
+        return getProfile(
+          {
+            membershipType: realMembershipType,
+            membershipId: resolvedMembershipId
+          },
+          accessToken
+        );
+      }
+    );
   }
 
   const getFn = CACHE_PROFILES ? getCacheableDestiny : getDestiny;
@@ -204,8 +217,12 @@ export function getCacheablePGCRDetails(pgcrId) {
 
 export function getCacheableSearch(searchTerm, membershipType = '-1') {
   return getDestiny(
-    `/Destiny2/SearchDestinyPlayer/${membershipType}/${encodeURIComponent(searchTerm)}/`
+    `/Destiny2/SearchDestinyPlayer/${membershipType}/${encodeURIComponent(
+      searchTerm
+    )}/`
   );
 }
+
+export function getDeepPGCRHistory(profile) {}
 
 window.getCacheablePGCRDetails = getCacheablePGCRDetails;

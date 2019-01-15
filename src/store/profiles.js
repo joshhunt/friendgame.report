@@ -53,3 +53,14 @@ export function getProfile({ membershipType, membershipId }) {
       .catch(err => dispatch(getProfileError(err)));
   };
 }
+
+export function getDeepProfile({ membershipType, membershipId }) {
+  return (dispatch, getState) => {
+    dispatch(getProfile({ membershipType, membershipId })).then(profile => {
+      destiny.getDeepPGCRHistory(profile, {
+        onSessionHistory(gameSession, character) {},
+        onPGCRDetails(pgcrDetails) {}
+      });
+    });
+  };
+}
