@@ -1,11 +1,24 @@
 import React from 'react';
 import { memoize, toPairs, get } from 'lodash';
 
-import { EMBLEM, HUNTER, TITAN, WARLOCK, NO_CLASS } from 'app/lib/destinyEnums';
+import {
+  EMBLEM,
+  HUNTER,
+  TITAN,
+  WARLOCK,
+  NO_CLASS,
+  MEMBERSHIP_TYPE_TO_NAME
+} from 'app/lib/destinyEnums';
 import { getLower } from 'src/lib/utils';
-// import CLASS_OVERRIDES from 'app/extraData/classOverrides';
 
 export const flagEnum = (state, value) => !!(state & value);
+
+export const pKey = ({ membershipType, membershipId, displayName }) => {
+  return [
+    MEMBERSHIP_TYPE_TO_NAME[membershipType] || membershipType,
+    displayName || membershipId
+  ].join('/');
+};
 
 export const enumerateTriumphState = state => ({
   none: flagEnum(state, 0),

@@ -64,6 +64,12 @@ export const PLATFORMS = {
   [BUNGIENEXT]: 'BungieNext'
 };
 
+export const MEMBERSHIP_TYPE_TO_NAME = {
+  [XBOX]: 'xb',
+  [PLAYSTATION]: 'ps',
+  [PC_BLIZZARD]: 'bn'
+};
+
 export const CLASSES = {
   [WARLOCK]: 'Warlock',
   [TITAN]: 'Titan',

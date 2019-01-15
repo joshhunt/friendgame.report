@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import { pKey } from 'src/lib/destinyUtils';
 
 import { getProfile } from 'src/store/profiles';
 
 import s from './styles.styl';
 
-const k = ({ membershipType, membershipId }) =>
-  [membershipType, membershipId].join('/');
-
 class UserPage extends Component {
   componentDidMount() {
-    this.props.getProfile(this.props.routeParams)
+    this.props.getProfile(this.props.routeParams);
   }
 
   getProfile() {
-    const key = k(this.props.routeParams);
+    const key = pKey(this.props.routeParams);
     const profile = this.props.profiles[key];
     return { profile, key };
   }
@@ -37,15 +35,12 @@ class UserPage extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     isAuthenticated: state.auth.isAuthenticated,
-    profiles: state.profiles.profiles,
+    profiles: state.profiles.profiles
   };
 }
 
 const mapDispatchToActions = {
-  getProfile,
+  getProfile
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToActions
-)(UserPage);
+export default connect(mapStateToProps, mapDispatchToActions)(UserPage);
