@@ -223,6 +223,5 @@ export function getCacheableSearch(searchTerm, membershipType = '-1') {
   );
 }
 
-export function getDeepPGCRHistory(profile) {}
 
 window.getCacheablePGCRDetails = getCacheablePGCRDetails;

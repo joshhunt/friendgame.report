@@ -13,7 +13,7 @@ class UserPage extends Component {
   }
 
   renderName() {
-    const { profile, key } = this.props;
+    const { profile, key, pgcrDetails } = this.props;
     return profile ? profile.profile.data.userInfo.displayName : key;
   }
 
@@ -21,6 +21,12 @@ class UserPage extends Component {
     return (
       <div className={s.root}>
         <h2>Clans for {this.renderName()}</h2>
+
+        <ul>
+          {this.props.pgcrDetails.map(pgcr => (
+            <li>{pgcr.activityDetails.instanceId} / {pgcr.period}</li>
+            ))}
+        </ul>
       </div>
     );
   }
@@ -30,9 +36,16 @@ function mapStateToProps(state, ownProps) {
   const key = pKey(ownProps.routeParams);
   const profile = state.profiles.profiles[key];
 
+  const pgcrDetails = [].concat(...Object.values(state.pgcr.histories[key] || {})).map(pgcrSummary => {
+    const pgcrId = pgcrSummary.activityDetails.instanceId;
+
+    return state.pgcr.pgcr[pgcrId]
+  }).filter(Boolean)
+
   return {
     isAuthenticated: state.auth.isAuthenticated,
     profiles: state.profiles.profiles,
+    pgcrDetails,
     profile,
     key
   };

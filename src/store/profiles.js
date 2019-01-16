@@ -2,6 +2,8 @@ import * as destiny from 'src/lib/destiny';
 import { makePayloadAction } from './utils';
 import { pKey } from 'src/lib/destinyUtils';
 
+import { getCharacterPGCRHistory } from './pgcr';
+
 export const GET_PROFILE_SUCCESS = 'Get profile - success';
 export const GET_PROFILE_ERROR = 'Get profile - error';
 
@@ -57,10 +59,12 @@ export function getProfile({ membershipType, membershipId }) {
 export function getDeepProfile({ membershipType, membershipId }) {
   return (dispatch, getState) => {
     dispatch(getProfile({ membershipType, membershipId })).then(profile => {
-      destiny.getDeepPGCRHistory(profile, {
-        onSessionHistory(gameSession, character) {},
-        onPGCRDetails(pgcrDetails) {}
+
+      const promises = Object.keys(profile.characters.data).map(characterId => {
+        return dispatch(getCharacterPGCRHistory(profile.profile.data.userInfo, characterId, { fetchPGCRDetails: true }))
       });
+
+      return Promise.all(promises);
     });
   };
 }
