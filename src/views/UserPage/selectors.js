@@ -1,10 +1,15 @@
 import { createSelector } from 'reselect';
 
-const routeParams = (state, props) => props.routeParams;
+import { pKey } from 'src/lib/destinyUtils';
 
-export const createUserFromRouteParamsSelector = () =>
-  createSelector(
-    profilesSelector,
-    routeParamsSelector,
-    (profiles, routeProps) => {}
-  );
+const profilesStateSelector = state => state.profiles.profiles;
+const routeParamsSelector = (state, ownProps) => ownProps.routeParams;
+
+export const profileSelector = createSelector(
+  profilesStateSelector,
+  routeParamsSelector,
+  (profiles, routeParams) => {
+    const key = pKey(routeParams);
+    return profiles[key];
+  }
+);

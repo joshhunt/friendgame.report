@@ -3,6 +3,7 @@ import { debounce } from 'lodash';
 import { Link } from 'react-router';
 
 import { getCacheableSearch } from 'src/lib/destiny';
+import { pKey } from 'src/lib/destinyUtils';
 import { addRecentProfile, getRecentProfiles } from 'src/lib/ls';
 import { PlatformIcon } from 'src/components/Icon';
 
@@ -22,21 +23,8 @@ function ProfileResultsList({
   return (
     <div>
       {results.map(result => {
-        let link;
-
-        if (compareTriumphsLink) {
-          if (window.location.href.includes('?players=')) {
-            link = `/compare-triumphs/${window.location.search},${
-              result.membershipType
-            }/${result.membershipId}`;
-          } else {
-            link = `/compare-triumphs/?players=${result.membershipType}/${
-              result.membershipId
-            }`;
-          }
-        } else {
-          link = `/${result.membershipType}/${result.membershipId}`;
-        }
+        const slug = pKey(result);
+        const link = `/${slug}`;
 
         return (
           <Link

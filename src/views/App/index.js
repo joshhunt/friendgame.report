@@ -13,13 +13,13 @@ export default function App({ children }) {
   return (
     <div className={s.root}>
       <div className={s.header}>
-        <h1>clan.report</h1>
+        <h1>friendgame.report</h1>
       </div>
 
       {children}
 
       <div className={s.footer}>
-        clan.report is made by{' '}
+        friendgame.report is made by{' '}
         <a
           href="https://twitter.com/joshhunt"
           target="_blank"
