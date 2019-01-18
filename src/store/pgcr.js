@@ -20,7 +20,7 @@ export default function pgcrReducer(state = defaultState, { type, payload }) {
       case GET_PLAYER_PGCR_HISTORY_SUCCESS:
         draft.histories[payload.key] = draft.histories[payload.key] || {};
         draft.histories[payload.key][payload.characterId] =
-          payload.data.activities;
+          payload.data;
 
         return draft;
 
@@ -66,7 +66,9 @@ export function getPGCRDetails(pgcrId) {
 
     return destiny
       .getCacheablePGCRDetails(pgcrId)
-      .then(data => dispatch(getPGCRDetailsSuccess({ pgcrId, data })))
+      .then(data => {
+        dispatch(getPGCRDetailsSuccess({ pgcrId, data }))
+      })
       .catch(err => dispatch(getPGCRDetailsError(err)));
   };
 }
@@ -81,11 +83,11 @@ export function getCharacterPGCRHistory(
   return dispatch => {
     return destiny
       .getCharacterPGCRHistory(userCharacterInfo)
-      .then(data => {
-        dispatch(getCharacterPGCRHistorySuccess(userCharacterInfo, data));
+      .then(activities => {
+        dispatch(getCharacterPGCRHistorySuccess(userCharacterInfo, activities));
 
         if (opts.fetchPGCRDetails) {
-          data.activities.forEach(activity => {
+          activities.forEach(activity => {
             dispatch(getPGCRDetails(activity.activityDetails.instanceId));
           });
         }

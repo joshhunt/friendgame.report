@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { memoize, mapValues, groupBy, sortBy } from 'lodash';
+import { memoize, mapValues, groupBy, sortBy, throttle } from 'lodash';
 import { connect } from 'react-redux';
 
 import { pKey } from 'src/lib/destinyUtils';
@@ -34,28 +34,21 @@ class UserPage extends Component {
   }
 
   render() {
+    const { playerCountsForModes } = this.props;
+
     return (
       <div className={s.root}>
         <h2>player report for {this.renderName()}</h2>
 
         <div className={s.split}>
-          <div>
-            <h3>Fireteam members</h3>
-            <PlayerList
-              players={sortByLength(
-                Object.values(this.props.playerCounts[FIRETEAM])
-              )}
-            />
-          </div>
-
-          <div>
-            <h3>Blueberries</h3>
-            <PlayerList
-              players={sortByLength(
-                Object.values(this.props.playerCounts[BLURBERRY])
-              )}
-            />
-          </div>
+          {Object.entries(playerCountsForModes).map(([mode, groupedPlayers]) => (
+            <div>
+              <h3>{MODE_NAMES[mode] || mode}</h3>
+              <PlayerList
+                players={groupedPlayers[FIRETEAM]}
+              />
+            </div>
+            ))}
         </div>
       </div>
     );
@@ -76,7 +69,8 @@ const addPlayer = (players, type, playerKey, entry) => {
 };
 
 const getPlayerCounts = (pgcrList, thisPlayerKey) => {
-  console.time('getPlayerCounts');
+
+
   const players = {
     [FIRETEAM]: {},
     [BLURBERRY]: {}
@@ -107,10 +101,49 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
     });
   });
 
-  console.timeEnd('getPlayerCounts');
+  const payload = {
+    [FIRETEAM]: sortByLength(Object.values(players[FIRETEAM])),
+    [BLURBERRY]: sortByLength(Object.values(players[BLURBERRY])),
+  }
 
-  return players;
+  return payload;
 };
+
+function filterGamesByMode(pgcrs, mode) {
+  return pgcrs.filter(p => {
+    return p.activityDetails.modes.includes(mode);
+  })
+}
+
+const CRUCIBLE = 5;
+const PVE = 7;
+const PVE_COMPETITIVE = 64;
+const RAID = 4;
+
+const MODE_NAMES = {
+  [CRUCIBLE]: 'Crucible',
+  [PVE]: 'PvE',
+  [PVE_COMPETITIVE]: 'Gambit',
+  [RAID]: 'Raids',
+}
+
+function topLevelGetPlayerCounts(pgcrs, playerKey) {
+  return {
+    all: cachedGetPlayerCounts(pgcrs, playerKey),
+    [CRUCIBLE]: cachedGetPlayerCounts(filterGamesByMode(pgcrs, CRUCIBLE), playerKey),
+    [PVE]: cachedGetPlayerCounts(filterGamesByMode(pgcrs, PVE), playerKey),
+    [PVE_COMPETITIVE]: cachedGetPlayerCounts(filterGamesByMode(pgcrs, PVE_COMPETITIVE), playerKey),
+    [RAID]: cachedGetPlayerCounts(filterGamesByMode(pgcrs, RAID), playerKey),
+  }
+}
+
+const pgcrPlusKeyCacheResolver = (pgcrs, userKey) => {
+  return `${pgcrs.map(p => p.activityDetails.instanceId).join(',')}|${userKey}}`
+}
+
+const cachedGetPlayerCounts = memoize(getPlayerCounts, pgcrPlusKeyCacheResolver)
+
+const cachedTopLevelGetPlayerCounts = memoize(topLevelGetPlayerCounts, pgcrPlusKeyCacheResolver);
 
 function mapStateToProps() {
   return (state, ownProps) => {
@@ -130,13 +163,15 @@ function mapStateToProps() {
         );
       });
 
-    const playerCounts = getPlayerCounts(pgcrDetails, key);
+    console.time('getPlayerCounts');
+    const playerCountsForModes = cachedTopLevelGetPlayerCounts(pgcrDetails, key);
+    console.timeEnd('getPlayerCounts');
 
     return {
       isAuthenticated: state.auth.isAuthenticated,
       profiles: state.profiles.profiles,
       pgcrDetails,
-      playerCounts,
+      playerCountsForModes,
       profile: profileSelector(state, ownProps),
       slug: key
     };

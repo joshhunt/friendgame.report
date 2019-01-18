@@ -9,7 +9,7 @@ export const db = new Dexie('requestCache');
 
 const CACHE_PROFILES = false;
 
-const GET_CONCURRENCY = 50;
+const GET_CONCURRENCY = 25;
 db.version(1).stores({
   requests: '&url, response, date'
 });
@@ -34,7 +34,8 @@ export function get(url, opts) {
 }
 
 export function getDestiny(_pathname, opts = {}, postBody) {
-  let url = `https://www.bungie.net/Platform${_pathname}`;
+  const host = opts.host || 'https://www.bungie.net';
+  let url = `${host}/Platform${_pathname}`;
   url = url.replace('/Platform/Platform/', '/Platform/');
 
   const { pathname } = new URL(url);
@@ -198,20 +199,46 @@ export function getRecentActivities(
   );
 }
 
+const COUNT = 250;
+const MAX_PAGE = 2;
 export function getCharacterPGCRHistory({
   membershipType,
   membershipId,
   characterId
-}) {
+}, page = 0, acc = []) {
   // https://www.bungie.net/Platform/Destiny2/2/Account/4611686018469271298/Character/2305843009269703481/Stats/Activities/?mode=None&count=200&page=0
+
+
   return getDestiny(
-    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=250&page=0`
-  );
+    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=${COUNT}&page=${page}`
+  ).then(data => {
+    if (data.activities) {
+      const newAcc = [...acc, ...data.activities];
+      const newPage = page + 1;
+
+      if (page > MAX_PAGE) {
+        return newAcc
+      }
+
+      return getCharacterPGCRHistory({
+        membershipType,
+        membershipId,
+        characterId
+      }, newPage, newAcc)
+    }
+
+    return acc;
+  });
+
+
 }
 
 export function getCacheablePGCRDetails(pgcrId) {
   return getCacheableDestiny(
-    `/Destiny2/Stats/PostGameCarnageReport/${pgcrId}/`
+    `/Destiny2/Stats/PostGameCarnageReport/${pgcrId}/`,
+    {
+      host: 'https://stats.bungie.net'
+    }
   );
 }
 
