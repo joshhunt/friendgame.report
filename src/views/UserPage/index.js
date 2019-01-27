@@ -57,8 +57,6 @@ class UserPage extends Component {
           </p>
         )}
 
-        <PlayerList players={callouts.newFriends} />
-
         <div className={s.split}>
           {Object.entries(playerCountsForModes).map(
             ([mode, groupedPlayers]) => (
@@ -71,6 +69,8 @@ class UserPage extends Component {
             )
           )}
         </div>
+
+        <PlayerList players={callouts.newFriends} title="New friends" />
       </div>
     );
   }
@@ -222,7 +222,8 @@ const MODE_NAMES = {
   [CRUCIBLE]: 'Crucible',
   [PVE]: 'PvE',
   [PVE_COMPETITIVE]: 'Gambit',
-  [RAID]: 'Raids'
+  [RAID]: 'Raids',
+  all: 'All activities'
 };
 
 function topLevelGetPlayerCounts(pgcrs, playerKey) {
