@@ -9,7 +9,7 @@ export const db = new Dexie('requestCache');
 
 const CACHE_PROFILES = false;
 
-const GET_CONCURRENCY = 25;
+const GET_CONCURRENCY = 10;
 db.version(1).stores({
   requests: '&url, response, date'
 });
@@ -201,13 +201,12 @@ export function getRecentActivities(
 
 const COUNT = 250;
 const MAX_PAGE = 2;
-export function getCharacterPGCRHistory({
-  membershipType,
-  membershipId,
-  characterId
-}, page = 0, acc = []) {
+export function getCharacterPGCRHistory(
+  { membershipType, membershipId, characterId },
+  page = 0,
+  acc = []
+) {
   // https://www.bungie.net/Platform/Destiny2/2/Account/4611686018469271298/Character/2305843009269703481/Stats/Activities/?mode=None&count=200&page=0
-
 
   return getDestiny(
     `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=${COUNT}&page=${page}`
@@ -217,20 +216,22 @@ export function getCharacterPGCRHistory({
       const newPage = page + 1;
 
       if (page > MAX_PAGE) {
-        return newAcc
+        return newAcc;
       }
 
-      return getCharacterPGCRHistory({
-        membershipType,
-        membershipId,
-        characterId
-      }, newPage, newAcc)
+      return getCharacterPGCRHistory(
+        {
+          membershipType,
+          membershipId,
+          characterId
+        },
+        newPage,
+        newAcc
+      );
     }
 
     return acc;
   });
-
-
 }
 
 export function getCacheablePGCRDetails(pgcrId) {
@@ -249,6 +250,5 @@ export function getCacheableSearch(searchTerm, membershipType = '-1') {
     )}/`
   );
 }
-
 
 window.getCacheablePGCRDetails = getCacheablePGCRDetails;

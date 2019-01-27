@@ -44,7 +44,8 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "sql.js": "github:DestinyItemManager/sql.js"
+    "sql.js": "github:DestinyItemManager/sql.js",
+    "time-overlap": "^1.2.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
