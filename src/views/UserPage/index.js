@@ -1,89 +1,21 @@
 import React, { Component } from 'react';
-import { sortBy } from 'lodash';
 import { connect } from 'react-redux';
 import timeOverlap from 'time-overlap';
+
+import PlayerList from 'src/components/PlayerList';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
 import { profileSelector } from './selectors';
 
 import s from './styles.styl';
-import tableStyles from 'src/components/Table/styles.styl';
 
-const sortByLength = players =>
-  sortBy(players, p => -p.pgcrs.length).filter(p => p.pgcrs.length > 1);
+const sortByLength = players => players.filter(p => p.pgcrs.length > 1);
 
 const percent = (v, t) => {
   const p = v / t;
   return isNaN(p) ? 0 : Math.floor(p * 100);
 };
-
-function PlayerList({ players }) {
-  return (
-    <ul>
-      {players.map(player => (
-        <li key={player.player.destinyUserInfo.displayName}>
-          {player.player.destinyUserInfo.displayName}: {player.pgcrs.length}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function PGCRTimeline({ pgcr }) {
-  const gameStartTime = new Date(pgcr.period);
-
-  return (
-    <div>
-      <strong>
-        <a href={`https://raid.report/pgcr/${pgcr.activityDetails.instanceId}`}>
-          {pgcr.activityDetails.instanceId}
-        </a>
-      </strong>
-      <br />
-      time: {gameStartTime.toLocaleString()} <br />
-      <table className={tableStyles.table}>
-        <thead>
-          <tr>
-            <td>player</td>
-            <td>activityDuration</td>
-            <td>start</td>
-            <td>timePlayed</td>
-            <td>start time</td>
-            <td>end time</td>
-          </tr>
-        </thead>
-
-        <tbody>
-          {pgcr.entries.map(entry => {
-            const playerStartTime = new Date(gameStartTime);
-            playerStartTime.setSeconds(
-              playerStartTime.getSeconds() +
-                entry.values.startSeconds.basic.value
-            );
-            const playerEndTime = new Date(playerStartTime);
-            playerEndTime.setSeconds(
-              playerEndTime.getSeconds() +
-                entry.values.timePlayedSeconds.basic.value
-            );
-
-            return (
-              <tr>
-                <td>{entry.player.destinyUserInfo.displayName}</td>
-                <td>{entry.values.activityDurationSeconds.basic.value}</td>
-                <td>{entry.values.startSeconds.basic.value}</td>
-                <td>{entry.values.timePlayedSeconds.basic.value}</td>
-                <td>{playerStartTime.toLocaleTimeString()}</td>
-                <td>{playerEndTime.toLocaleTimeString()}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <br />
-    </div>
-  );
-}
 
 class UserPage extends Component {
   componentDidMount() {
@@ -100,8 +32,7 @@ class UserPage extends Component {
       playerCountsForModes,
       totalGames,
       loadedGames,
-      callouts,
-      timelineGames
+      callouts
     } = this.props;
 
     return (
@@ -112,8 +43,6 @@ class UserPage extends Component {
           <br />
           {percent(loadedGames, totalGames)}%<br />
         </p>
-
-        {/* {timelineGames.map(pgcr => <PGCRTimeline pgcr={pgcr} />)} */}
 
         {callouts.bestFriend && (
           <p>
@@ -134,8 +63,10 @@ class UserPage extends Component {
           {Object.entries(playerCountsForModes).map(
             ([mode, groupedPlayers]) => (
               <div key={mode}>
-                <h3>{MODE_NAMES[mode] || mode}</h3>
-                <PlayerList players={groupedPlayers[FIRETEAM]} />
+                <PlayerList
+                  players={groupedPlayers[FIRETEAM]}
+                  title={MODE_NAMES[mode] || mode}
+                />
               </div>
             )
           )}
@@ -152,16 +83,17 @@ const getFireteamId = entry => entry.values.fireteamId.basic.value;
 
 const addPlayer = (players, type, playerKey, entry) => {
   if (!players[type][playerKey]) {
-    players[type][playerKey] = { pgcrs: [] };
+    players[type][playerKey] = { pgcrs: [], timePlayedTogether: 0 };
   }
 
   players[type][playerKey].player = entry.player;
+  if (entry.timePlayedTogether) {
+    players[type][playerKey].timePlayedTogether += entry.timePlayedTogether;
+  }
   players[type][playerKey].pgcrs.push(entry);
 };
 
-const getSingleStartEndTimes = (playerEntry, pgcr) => {
-  const gameStartTime = new Date(pgcr.period);
-
+const getSingleStartEndTimes = (playerEntry, gameStartTime) => {
   const startTime = new Date(gameStartTime);
   startTime.setSeconds(
     startTime.getSeconds() + playerEntry.values.startSeconds.basic.value
@@ -174,28 +106,30 @@ const getSingleStartEndTimes = (playerEntry, pgcr) => {
   return { startTime, endTime };
 };
 
-const getStartEndTimes = (playerEntry, pgcr) => {
-  const base = getSingleStartEndTimes(playerEntry, pgcr);
+const getStartEndTimes = (playerEntry, pgcr, gameStartTime) => {
+  return getSingleStartEndTimes(playerEntry, gameStartTime);
 
-  return pgcr.entries.reduce((acc, entry) => {
-    if (
-      entry.player.destinyUserInfo.membershipId !==
-      playerEntry.player.destinyUserInfo.membershipId
-    ) {
-      return acc;
-    }
-
-    const comp = getSingleStartEndTimes(entry, pgcr);
-    if (comp.startTime < acc.startTime) {
-      acc.startTime = comp.startTime;
-    }
-
-    if (comp.endTime > acc.endTime) {
-      acc.endTime = comp.endTime;
-    }
-
-    return acc;
-  }, base);
+  //   const base = getSingleStartEndTimes(playerEntry, gameStartTime);
+  //
+  //   return pgcr.entries.reduce((acc, entry) => {
+  //     if (
+  //       entry.player.destinyUserInfo.membershipId !==
+  //       playerEntry.player.destinyUserInfo.membershipId
+  //     ) {
+  //       return acc;
+  //     }
+  //
+  //     const comp = getSingleStartEndTimes(entry, pgcr);
+  //     if (comp.startTime < acc.startTime) {
+  //       acc.startTime = comp.startTime;
+  //     }
+  //
+  //     if (comp.endTime > acc.endTime) {
+  //       acc.endTime = comp.endTime;
+  //     }
+  //
+  //     return acc;
+  //   }, base);
 };
 
 const getPlayerCounts = (pgcrList, thisPlayerKey) => {
@@ -210,6 +144,18 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
     );
     const thisPlayersFireteamId = getFireteamId(thisPlayersEntry);
     const seenPlayers = [];
+
+    const gameStartTime = new Date(pgcr.period);
+    const thisPlayerTimes = getStartEndTimes(
+      thisPlayersEntry,
+      pgcr,
+      gameStartTime
+    );
+
+    const thisPlayerTimeRange = [
+      thisPlayerTimes.startTime.getTime(),
+      thisPlayerTimes.endTime.getTime()
+    ];
 
     pgcr.entries.forEach(entry => {
       const key = pKey(entry.player.destinyUserInfo);
@@ -229,12 +175,24 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
       const fireteamId = getFireteamId(entry);
       const isInFireteam = fireteamId === thisPlayersFireteamId;
       const listType = isInFireteam ? FIRETEAM : BLURBERRY;
-      // const { startTime, endTime } = getStartEndTimes(entry, pgcr);
+
+      const { startTime, endTime } = getStartEndTimes(
+        entry,
+        pgcr,
+        gameStartTime
+      );
+
+      const [startOverlap, endOverlap] = timeOverlap.cross(
+        thisPlayerTimeRange,
+        [startTime.getTime(), endTime.getTime()]
+      );
+
+      const timePlayedTogether =
+        endOverlap && startOverlap && endOverlap - startOverlap;
 
       addPlayer(players, listType, key, {
         player: entry.player,
-        // startTime,
-        // endTime,
+        timePlayedTogether,
         pgcr,
         pgcrId: pgcr.activityDetails.instanceId
       });

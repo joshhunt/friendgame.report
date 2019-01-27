@@ -61,7 +61,7 @@ const getPGCRDetailsError = makePayloadAction(GET_PGCR_DETAILS_ERROR);
 
 let pgcrBatchStore = [];
 let timeoutId = null;
-const DISPATCH_INTERVAL = 500;
+const DISPATCH_INTERVAL = 1000;
 
 function bulkDispatch(dispatch) {
   console.log('DISPATCHING BULK PGCRS!', pgcrBatchStore.length);
