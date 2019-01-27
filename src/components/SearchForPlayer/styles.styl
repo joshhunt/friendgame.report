@@ -1,0 +1,58 @@
+$activeColor = #737373
+
+.searchWrapper
+  position: relative
+
+.searchField
+  width: 100%
+  border: none
+  appearance: none
+  background: #ececec
+  font-family: inherit
+  font-size: inherit
+  padding: 8px 10px
+  outline: none
+  transition: 150ms ease-in-out
+  outline: 1px solid rgba($activeColor, 0)
+  outline-offset: 2px
+  border-bottom: 1px solid $activeColor
+
+  &:focus
+    outline-color: $activeColor
+
+.loadingBar
+  position: absolute
+  bottom: -2px
+  left: 50%
+  transform: translateX(-50%)
+  height: 2px
+  width: 50%
+  background: black
+  animation: loading 1.5s ease-in-out infinite
+
+@keyframes loading
+  from
+    width: 0%
+    opacity: 1
+
+  to
+    width: 100%
+    opacity: 0
+
+.results
+  margin-top: 15px
+
+.resultPlayer
+  display: block
+  color: inherit
+  text-decoration: none
+  padding: 8px 10px
+  margin-top: 4px
+  transition: 150ms ease-in-out
+  background: lighten(#ececec, 60%)
+
+  &:hover
+    background: lighten(#ececec, 10%)
+
+.platformIcon
+  margin-right: 5px

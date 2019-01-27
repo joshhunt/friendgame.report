@@ -1,0 +1,48 @@
+$bgColor = #f1f1f1
+
+.root
+  background: $bgColor
+  padding: 5px
+  position: relative
+  margin-top: 5px
+  margin-bottom: 10px
+  font-size: 14px
+  border-radius: 3px
+
+  &:after
+    _size = 10px
+    content: ''
+    position: absolute
+    top: (_size * 2 * -1)
+    left: (_size * 2)
+    border: _size solid transparent
+    border-bottom-color: $bgColor
+
+  table
+    margin-bottom: 0
+
+  thead td
+    cursor: initial !important
+
+  tbody:last-child tr:last-child td
+    border-bottom: none
+
+
+.scrollable
+  overflow: auto
+  max-width: 100%
+
+.table
+  td
+    padding: 8px
+
+.team
+  font-size: 1.2em
+
+.item
+  width: 35px
+  height: 35px
+  margin: -6px 0
+  display: inline-block
+  border-radius: 3px
+  margin-right: 5px
