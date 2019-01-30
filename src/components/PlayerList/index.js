@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import { sortBy } from 'lodash';
 import FlipMove from 'react-flip-move';
 
+import { pKey } from 'src/lib/destinyUtils';
 import BungieImage from 'src/components/BungieImage';
 
 import s from './styles.styl';
@@ -16,9 +18,9 @@ function formatDuration(ms) {
     .join(' ');
 }
 
-function Player({ userInfo, children }) {
+function Player({ userInfo, children, parentPlayer }) {
   return (
-    <div className={s.player}>
+    <Link to={`/${pKey(parentPlayer)}+${userInfo.displayName}`} className={s.player}>
       <div className={s.playerWell}>
         <BungieImage className={s.playerIcon} src={userInfo.iconPath} />
       </div>
@@ -26,7 +28,7 @@ function Player({ userInfo, children }) {
         <div className={s.playerName}>{userInfo.displayName}</div>
         <div className={s.playerAlt}>{children}</div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -57,7 +59,7 @@ export default class PlayerList extends Component {
   };
 
   render() {
-    const { players, title } = this.props;
+    const { title, parentPlayer } = this.props;
     const { active, radioGroupName, sorted } = this.state;
 
     return (
@@ -107,7 +109,7 @@ export default class PlayerList extends Component {
               className={s.listItem}
               key={player.player.destinyUserInfo.displayName}
             >
-              <Player userInfo={player.player.destinyUserInfo}>
+              <Player userInfo={player.player.destinyUserInfo} parentPlayer={parentPlayer}>
                 {active === COUNT
                   ? `${player.pgcrs.length} matches`
                   : formatDuration(player.timePlayedTogether)}

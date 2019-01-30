@@ -32,7 +32,8 @@ class UserPage extends Component {
       playerCountsForModes,
       totalGames,
       loadedGames,
-      callouts
+      callouts,
+      profile,
     } = this.props;
 
     return (
@@ -62,6 +63,7 @@ class UserPage extends Component {
             ([mode, groupedPlayers]) => (
               <div key={mode}>
                 <PlayerList
+                  parentPlayer={profile && profile.profile.data.userInfo}
                   players={groupedPlayers[FIRETEAM]}
                   title={MODE_NAMES[mode] || mode}
                 />
@@ -70,7 +72,7 @@ class UserPage extends Component {
           )}
         </div>
 
-        <PlayerList players={callouts.newFriends} title="New friends" />
+        <PlayerList players={callouts.newFriends} title="New friends" parentPlayer={profile && profile.profile.data.userInfo} />
       </div>
     );
   }

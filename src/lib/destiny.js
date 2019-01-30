@@ -7,7 +7,7 @@ const log = require('src/lib/log')('http');
 
 export const db = new Dexie('requestCache');
 
-const CACHE_PROFILES = false;
+const CACHE_EVERYTHING = true;
 
 const GET_CONCURRENCY = 10;
 db.version(1).stores({
@@ -34,6 +34,11 @@ export function get(url, opts) {
 }
 
 export function getDestiny(_pathname, opts = {}, postBody) {
+  if (CACHE_EVERYTHING && !opts._fromCachedRequest) {
+    console.log('routing through cache: ', _pathname, opts);
+    return getCacheableDestiny(_pathname, opts);
+  }
+
   const host = opts.host || 'https://www.bungie.net';
   let url = `${host}/Platform${_pathname}`;
   url = url.replace('/Platform/Platform/', '/Platform/');
@@ -94,10 +99,12 @@ export function getCacheableDestiny(pathname, opts) {
       return result.response;
     }
 
-    return getDestiny(pathname, opts).then(data => {
-      db.requests.put({ url: pathname, response: data, date: new Date() });
-      return data;
-    });
+    return getDestiny(pathname, { ...opts, _fromCachedRequest: true }).then(
+      data => {
+        db.requests.put({ url: pathname, response: data, date: new Date() });
+        return data;
+      }
+    );
   });
 }
 
@@ -176,9 +183,7 @@ export function getProfile({ membershipType, membershipId }, accessToken) {
     );
   }
 
-  const getFn = CACHE_PROFILES ? getCacheableDestiny : getDestiny;
-
-  return getFn(
+  return getDestiny(
     `/Destiny2/${realMembershipType}/Profile/${membershipId}/?components=100,200,204,900`,
     {
       accessToken

@@ -64,7 +64,6 @@ let timeoutId = null;
 const DISPATCH_INTERVAL = 1000;
 
 function bulkDispatch(dispatch) {
-  console.log('DISPATCHING BULK PGCRS!', pgcrBatchStore.length);
   dispatch({
     type: BULK_PGCR_DETAILS,
     payload: pgcrBatchStore
@@ -90,11 +89,9 @@ export function getPGCRDetails(pgcrId, batch) {
         }
 
         const shouldMakeNewOne = timeoutId === null;
-        console.log('  queueing pgcr...');
         pgcrBatchStore.push({ pgcrId, data });
 
         if (shouldMakeNewOne) {
-          console.log('** no timeout, making one **');
           timeoutId = window.setTimeout(
             bulkDispatch.bind(null, dispatch),
             DISPATCH_INTERVAL

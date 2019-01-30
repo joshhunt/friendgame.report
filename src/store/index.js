@@ -40,24 +40,24 @@ const store = createStore(rootReducer, enhancer);
 window.__store = store;
 
 const LANGUAGE = 'en';
-//
-// fasterGetDefinitions(
-//   LANGUAGE,
-//   null,
-//   data => {
-//     store.dispatch(definitionsStatus(data));
-//   },
-//   (err, data) => {
-//     if (err) {
-//       store.dispatch(definitionsError(err));
-//       return;
-//     }
-//
-//     if (data && data.definitions) {
-//       store.dispatch(definitionsStatus({ status: null }));
-//       store.dispatch(setBulkDefinitions(data.definitions));
-//     }
-//   }
-// );
+
+fasterGetDefinitions(
+  LANGUAGE,
+  null,
+  data => {
+    store.dispatch(definitionsStatus(data));
+  },
+  (err, data) => {
+    if (err) {
+      store.dispatch(definitionsError(err));
+      return;
+    }
+
+    if (data && data.definitions) {
+      store.dispatch(definitionsStatus({ status: null }));
+      store.dispatch(setBulkDefinitions(data.definitions));
+    }
+  }
+);
 
 export default store;
