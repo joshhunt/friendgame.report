@@ -1,5 +1,51 @@
 .root
-  margin: 20px
+  padding: 0
+  margin: 0
+
+.header
+  background: #121D24
+  color: white
+  overflow: auto
+
+.headerInner
+  max-width: 1200px
+  padding: 15px
+  margin: auto
+  display: flex
+  align-items: center
+  justify-content: center
+
+.headerMain
+  flex: 1 0 auto
+  margin-left: 30px
+
+.searchInput
+  border: none
+  border-radius: 3px
+  width: 100%
+  font-size: 18px
+  appearance: none
+  background: rgba(white, .05)
+  padding: 8px 10px
+  color: white
+  transition: 150ms ease-in-out
+  border: 1px solid rgba(white, .05)
+
+  &:focus
+    outline: 0
+    border: 1px solid rgba(white, .9)
+    background: rgba(white, .15)
+
+.siteName
+  margin: 0
+  font-size: 22px
+  font-weight: 600
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  color: #737e82
+
+  span
+    color: #a6aeb0
 
 .footer
   margin-top: 30px
@@ -9,3 +55,4 @@
 
   a
     color: darken(#737373, 50%)
+

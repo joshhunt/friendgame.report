@@ -12,8 +12,16 @@ const AUTH_URL = `https://www.bungie.net/en/OAuth/Authorize?client_id=${CLIENT_I
 export default function App({ children }) {
   return (
     <div className={s.root}>
+
       <div className={s.header}>
-        <h1>friendgame.report</h1>
+        <div className={s.headerInner}>
+          <div className={s.headerName}>
+            <h1 className={s.siteName}>fri<span>endgame</span>.report</h1>
+          </div>
+          <div className={s.headerMain}>
+            <input className={s.searchInput} placeholder="Search for player" type="text" />
+          </div>
+        </div>
       </div>
 
       {children}
