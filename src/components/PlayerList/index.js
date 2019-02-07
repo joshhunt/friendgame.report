@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import { sortBy } from 'lodash';
 import FlipMove from 'react-flip-move';
 
 import { pKey } from 'src/lib/destinyUtils';
 import BungieImage from 'src/components/BungieImage';
+import { COUNT } from 'src/store/app';
 
 import s from './styles.styl';
 
@@ -19,8 +19,9 @@ function formatDuration(ms) {
 }
 
 function Player({ userInfo, children, parentPlayer }) {
+  // <Link to={`/${pKey(parentPlayer)}+${userInfo.displayName}`} className={s.player}>
   return (
-    <Link to={`/${pKey(parentPlayer)}+${userInfo.displayName}`} className={s.player}>
+    <div className={s.player}>
       <div className={s.playerWell}>
         <BungieImage className={s.playerIcon} src={userInfo.iconPath} />
       </div>
@@ -28,74 +29,18 @@ function Player({ userInfo, children, parentPlayer }) {
         <div className={s.playerName}>{userInfo.displayName}</div>
         <div className={s.playerAlt}>{children}</div>
       </div>
-    </Link>
+    </div>
   );
 }
 
-const COUNT = 'count';
-const TIME = 'time';
-
 export default class PlayerList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      active: COUNT,
-      radioGroupName: Math.round(Math.random() * 1000)
-    };
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    return {
-      sorted: sortBy(props.players, player => {
-        return state.active === COUNT
-          ? -player.pgcrs.length
-          : -player.timePlayedTogether;
-      })
-    };
-  }
-
-  onChange = ev => {
-    this.setState({ active: ev.target.value });
-  };
-
   render() {
-    const { title, parentPlayer } = this.props;
-    const { active, radioGroupName, sorted } = this.state;
+    const { players, title, parentPlayer, activeSortMode } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.top}>
           <h3 className={s.title}>{title}</h3>
-
-          <div className={s.radioStack}>
-            <div className={s.radio}>
-              <label>
-                <input
-                  type="radio"
-                  value={COUNT}
-                  name={radioGroupName}
-                  onChange={this.onChange}
-                  checked={active === COUNT}
-                />
-                <div className={s.radioBg} />
-                <div className={s.radioLabel}>Matches</div>
-              </label>
-            </div>
-
-            <div className={s.radio}>
-              <label>
-                <input
-                  type="radio"
-                  value={TIME}
-                  name={radioGroupName}
-                  onChange={this.onChange}
-                  checked={active === TIME}
-                />
-                <div className={s.radioBg} />
-                <div className={s.radioLabel}>Duration</div>
-              </label>
-            </div>
-          </div>
         </div>
 
         <FlipMove
@@ -104,19 +49,27 @@ export default class PlayerList extends Component {
           leaveAnimation="fade"
           className={s.list}
         >
-          {sorted.map(player => (
-            <li
-              className={s.listItem}
-              key={player.player.destinyUserInfo.displayName}
-            >
-              <Player userInfo={player.player.destinyUserInfo} parentPlayer={parentPlayer}>
-                {active === COUNT
-                  ? `${player.pgcrs.length} matches`
-                  : formatDuration(player.timePlayedTogether)}
-              </Player>
-            </li>
-          ))}
+          {players &&
+            players.map(player => (
+              <li
+                className={s.listItem}
+                key={player.player.destinyUserInfo.displayName}
+              >
+                <Player
+                  userInfo={player.player.destinyUserInfo}
+                  parentPlayer={parentPlayer}
+                >
+                  {activeSortMode === COUNT
+                    ? `${player.pgcrs.length} matches`
+                    : formatDuration(player.timePlayedTogether)}
+                </Player>
+              </li>
+            ))}
         </FlipMove>
+
+        {/* {players.length !== sorted.length && ( */}
+        {/*   <div className={s.showAll}>Show all {players.length} players</div> */}
+        {/* )} */}
       </div>
     );
   }

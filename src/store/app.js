@@ -1,39 +1,20 @@
-import { makeSimpleAction, makePayloadAction, toggle } from './utils';
+import { makePayloadAction } from './utils';
+
+export const COUNT = 'count';
+export const TIME = 'time';
+
+const SET_SORT_MODE = 'Set sort mode';
 
 const INITIAL_STATE = {
-  collectModeEnabled: false,
-  searchHelpEnabled: false,
-  collectedItems: {}
+  sortMode: COUNT
 };
 
-const TOGGLE_COLLECT_MODE = 'Toggle collect mode';
-const TOGGLE_SEARCH_HELP = 'Toggle searchHelp';
-const ADD_COLLECTED_ITEM = 'Add collected item';
-const REMOVE_COLLECTED_ITEM = 'Remove collected item';
-
-export default function appReducer(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case TOGGLE_COLLECT_MODE:
-      return toggle(state, 'collectModeEnabled');
-
-    case TOGGLE_SEARCH_HELP:
-      return toggle(state, 'searchHelpEnabled');
-
-    case ADD_COLLECTED_ITEM:
+export default function appReducer(state = INITIAL_STATE, { type, payload }) {
+  switch (type) {
+    case SET_SORT_MODE:
       return {
         ...state,
-        collectedItems: {
-          ...state.collectedItems,
-          [action.payload.dxId]: action.payload
-        }
-      };
-
-    case REMOVE_COLLECTED_ITEM:
-      const newCollectedItems = { ...state.collectedItems };
-      delete newCollectedItems[action.payload.dxId];
-      return {
-        ...state,
-        collectedItems: newCollectedItems
+        sortMode: payload
       };
 
     default:
@@ -41,8 +22,4 @@ export default function appReducer(state = INITIAL_STATE, action) {
   }
 }
 
-export const toggleCollectMode = makeSimpleAction(TOGGLE_COLLECT_MODE);
-export const toggleSearchHelp = makeSimpleAction(TOGGLE_SEARCH_HELP);
-
-export const addCollectedItem = makePayloadAction(ADD_COLLECTED_ITEM);
-export const removeCollectedItem = makePayloadAction(REMOVE_COLLECTED_ITEM);
+export const setSortMode = makePayloadAction(SET_SORT_MODE);

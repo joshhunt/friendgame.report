@@ -8,12 +8,6 @@ import store from './store';
 import App from './views/App';
 import Home from './views/Home';
 import UserPage from './views/UserPage';
-// import ClanPage from './views/ClanPage';
-// import CrawlPage from './views/CrawlPage';
-// import TriumphReport from './views/TriumphReport';
-// import CompareTriumphs from './views/CompareTriumphs';
-// import NewCollections from './views/NewCollections';
-// import ActivityGraphPage from './views/ActivityGraphPage';
 
 export default class AppRouter extends Component {
   render() {

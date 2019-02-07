@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import timeOverlap from 'time-overlap';
+import { sortBy, mapValues } from 'lodash';
+import memoizeOne from 'memoize-one';
 
 import PlayerList from 'src/components/PlayerList';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
+import { COUNT } from 'src/store/app';
 import { profileSelector } from './selectors';
 
 import s from './styles.styl';
@@ -33,7 +36,7 @@ class UserPage extends Component {
       totalGames,
       loadedGames,
       callouts,
-      profile,
+      profile
     } = this.props;
 
     return (
@@ -72,14 +75,18 @@ class UserPage extends Component {
           )}
         </div>
 
-        <PlayerList players={callouts.newFriends} title="New friends" parentPlayer={profile && profile.profile.data.userInfo} />
+        <PlayerList
+          players={callouts.newFriends}
+          title="New friends"
+          parentPlayer={profile && profile.profile.data.userInfo}
+        />
       </div>
     );
   }
 }
 
-const FIRETEAM = Symbol('fireteam');
-const BLURBERRY = Symbol('blueberry');
+const FIRETEAM = 'FIRETEAM';
+const BLURBERRY = 'BLURBERRY';
 
 const getFireteamId = entry => entry.values.fireteamId.basic.value;
 
@@ -110,28 +117,6 @@ const getSingleStartEndTimes = (playerEntry, gameStartTime) => {
 
 const getStartEndTimes = (playerEntry, pgcr, gameStartTime) => {
   return getSingleStartEndTimes(playerEntry, gameStartTime);
-
-  //   const base = getSingleStartEndTimes(playerEntry, gameStartTime);
-  //
-  //   return pgcr.entries.reduce((acc, entry) => {
-  //     if (
-  //       entry.player.destinyUserInfo.membershipId !==
-  //       playerEntry.player.destinyUserInfo.membershipId
-  //     ) {
-  //       return acc;
-  //     }
-  //
-  //     const comp = getSingleStartEndTimes(entry, pgcr);
-  //     if (comp.startTime < acc.startTime) {
-  //       acc.startTime = comp.startTime;
-  //     }
-  //
-  //     if (comp.endTime > acc.endTime) {
-  //       acc.endTime = comp.endTime;
-  //     }
-  //
-  //     return acc;
-  //   }, base);
 };
 
 const getPlayerCounts = (pgcrList, thisPlayerKey) => {
@@ -176,6 +161,11 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
 
       const fireteamId = getFireteamId(entry);
       const isInFireteam = fireteamId === thisPlayersFireteamId;
+
+      if (!isInFireteam) {
+        return;
+      }
+
       const listType = isInFireteam ? FIRETEAM : BLURBERRY;
 
       const { startTime, endTime } = getStartEndTimes(
@@ -219,13 +209,14 @@ const CRUCIBLE = 5;
 const PVE = 7;
 const PVE_COMPETITIVE = 64;
 const RAID = 4;
+const ALL = 'all';
 
 const MODE_NAMES = {
   [CRUCIBLE]: 'Crucible',
   [PVE]: 'PvE',
   [PVE_COMPETITIVE]: 'Gambit',
   [RAID]: 'Raids',
-  all: 'All activities'
+  [ALL]: 'All activities'
 };
 
 function topLevelGetPlayerCounts(pgcrs, playerKey) {
@@ -240,6 +231,18 @@ function topLevelGetPlayerCounts(pgcrs, playerKey) {
     [RAID]: getPlayerCounts(filterGamesByMode(pgcrs, RAID), playerKey)
   };
 }
+
+const makeMemoizeKey = (pgcrs, playerKey) => {
+  const ids = pgcrs.map(p => p.activityDetails.instanceId).join('');
+  return ids + playerKey;
+};
+
+const memoizedTopLevelGetPlayerCounts = memoizeOne(
+  topLevelGetPlayerCounts,
+  (newArgs, oldArgs) => {
+    return makeMemoizeKey(...newArgs) === makeMemoizeKey(...oldArgs);
+  }
+);
 
 function mapStateToProps() {
   return (state, ownProps) => {
@@ -262,20 +265,37 @@ function mapStateToProps() {
     });
 
     console.time('getPlayerCounts');
-    const playerCountsForModes = topLevelGetPlayerCounts(pgcrDetails, key);
+    let playerCountsForModes = memoizedTopLevelGetPlayerCounts(
+      pgcrDetails,
+      key
+    );
     console.timeEnd('getPlayerCounts');
 
-    const timelineGames = pgcrDetails.filter(pgcr => {
-      return (
-        pgcr.activityDetails.modes.includes(RAID) && pgcr.entries.length > 6
-      );
-    });
+    // modifying the values in this because im naughty
+    playerCountsForModes = mapValues(
+      playerCountsForModes,
+      (playerSet, mode) => {
+        const limit = mode === ALL ? 20 : 10;
+        return mapValues(playerSet, playerList => {
+          return sortBy(playerList, player => {
+            return state.app.sortMode === COUNT
+              ? -player.pgcrs.length
+              : -player.timePlayedTogether;
+          }).slice(0, limit);
+        });
+      }
+    );
 
     const NEW_FRIEND_CUTOFF = new Date();
     const NEW_FRIEND_GAME_THRESHOLD = 3;
     NEW_FRIEND_CUTOFF.setMonth(NEW_FRIEND_CUTOFF.getMonth() - 1);
 
-    const newFriends = playerCountsForModes.all[FIRETEAM].filter(player => {
+    const topPlayersFromAll = sortBy(
+      playerCountsForModes.all[FIRETEAM],
+      player => -player.pgcrs.length
+    );
+
+    const newFriends = topPlayersFromAll.filter(player => {
       const didPlayBeforeCutoff = player.pgcrs.find(entry => {
         const date = new Date(entry.pgcr.period);
         return date < NEW_FRIEND_CUTOFF;
@@ -293,7 +313,7 @@ function mapStateToProps() {
       : newFriends[0];
 
     const callouts = {
-      bestFriend: playerCountsForModes.all[0],
+      bestFriend: topPlayersFromAll[0],
       newFriend: newFriend,
       newFriends
     };
@@ -305,7 +325,6 @@ function mapStateToProps() {
       playerCountsForModes,
       profile: profileSelector(state, ownProps),
       slug: key,
-      timelineGames,
       totalGames: pgcrKeysForPlayer.length,
       loadedGames: allPgcrDetails.length,
       callouts
@@ -317,4 +336,7 @@ const mapDispatchToActions = {
   getDeepProfile
 };
 
-export default connect(mapStateToProps, mapDispatchToActions)(UserPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToActions
+)(UserPage);

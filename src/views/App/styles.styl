@@ -12,12 +12,11 @@
   padding: 15px
   margin: auto
   display: flex
-  align-items: center
-  justify-content: center
 
 .headerMain
   flex: 1 0 auto
   margin-left: 30px
+  text-align: right
 
 .searchInput
   border: none
@@ -33,8 +32,8 @@
 
   &:focus
     outline: 0
-    border: 1px solid rgba(white, .9)
-    background: rgba(white, .15)
+    border: 1px solid rgba(white, .7)
+    background: rgba(white, .12)
 
 .siteName
   margin: 0
@@ -56,3 +55,57 @@
   a
     color: darken(#737373, 50%)
 
+$activeColor = rgba(lighten(#3498db, 50%), .25)
+
+.radio
+  position: relative
+  display: inline-block
+  margin-left: 10px
+
+  input
+    display: inline-block
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    opacity: 0
+    z-index: 3
+    padding: 0
+    margin: 0
+
+    &:checked + .radioBg
+      background: $activeColor
+
+    &:checked + .radioBg + .radioLabel
+      color: white
+
+.radioBg
+  background: rgba($activeColor, 0)
+  border: 1px solid $activeColor
+  border-radius: 100px
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1
+  transition: all 150ms ease-in-out
+
+.radioLabel
+  position: relative
+  z-index: 2
+  font-size: 11px
+  pointer-events: none
+  padding: 4px 8px
+  text-align: center
+  cursor: pointer
+  color: white
+
+.radioStack
+  display: inline-block
+  flex-direction: row
+  margin-top: 10px
+  font-size: 13px
