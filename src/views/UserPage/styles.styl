@@ -1,9 +1,19 @@
 .root
   content: 'root'
+  max-width: 1200px
+  margin: auto
 
-.split
+.grandLayout
+  display: flex
+  margin: 0 -10px
+
+.main
+  flex: 1 0 40%
+
+.rest
+  flex: 1 0 60%
   display: flex
   flex-wrap: wrap
 
-  & > div
-    flex: 1 0 auto
+  > *
+    flex: 1 0 40%

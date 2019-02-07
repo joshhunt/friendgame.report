@@ -36,8 +36,11 @@ class UserPage extends Component {
       totalGames,
       loadedGames,
       callouts,
-      profile
+      profile,
+      sortMode
     } = this.props;
+
+    const { all: allPlayers, ...restPlayerCounts } = playerCountsForModes;
 
     return (
       <div className={s.root}>
@@ -61,18 +64,27 @@ class UserPage extends Component {
           </p>
         )}
 
-        <div className={s.split}>
-          {Object.entries(playerCountsForModes).map(
-            ([mode, groupedPlayers]) => (
-              <div key={mode}>
-                <PlayerList
-                  parentPlayer={profile && profile.profile.data.userInfo}
-                  players={groupedPlayers[FIRETEAM]}
-                  title={MODE_NAMES[mode] || mode}
-                />
-              </div>
-            )
-          )}
+        <div className={s.grandLayout}>
+          <div className={s.main}>
+            <PlayerList
+              parentPlayer={profile && profile.profile.data.userInfo}
+              players={allPlayers[FIRETEAM]}
+              title={MODE_NAMES['all'] || 'all'}
+              activeSortMode={sortMode}
+            />
+          </div>
+
+          <div className={s.rest}>
+            {Object.entries(restPlayerCounts).map(([mode, groupedPlayers]) => (
+              <PlayerList
+                key={mode}
+                parentPlayer={profile && profile.profile.data.userInfo}
+                players={groupedPlayers[FIRETEAM]}
+                title={MODE_NAMES[mode] || mode}
+                activeSortMode={sortMode}
+              />
+            ))}
+          </div>
         </div>
 
         <PlayerList
@@ -275,7 +287,7 @@ function mapStateToProps() {
     playerCountsForModes = mapValues(
       playerCountsForModes,
       (playerSet, mode) => {
-        const limit = mode === ALL ? 20 : 10;
+        const limit = mode === ALL ? 21 : 10;
         return mapValues(playerSet, playerList => {
           return sortBy(playerList, player => {
             return state.app.sortMode === COUNT
@@ -319,6 +331,7 @@ function mapStateToProps() {
     };
 
     return {
+      sortMode: state.app.sortMode,
       isAuthenticated: state.auth.isAuthenticated,
       profiles: state.profiles.profiles,
       pgcrDetails,
