@@ -1,0 +1,51 @@
+.root
+  content: 'root'
+
+.details
+  font-size: 15px
+  max-width: 610px
+  line-height: 1.5
+
+.tableWrapper
+  // width: 0%
+  margin: 0 -20px
+  padding: 0 20px
+  overflow: auto
+
+.table
+  font-size: 15px
+  border-collapse: collapse
+  white-space: nowrap
+
+  thead
+    font-weight: bold
+
+  td
+    padding: 10px 15px
+    border-bottom: 1px solid #E1E1E1
+
+.smallCell
+  width: 1%
+
+
+.activityIcon
+  display: inline-block
+  background: #222222
+  vertical-align: middle
+  margin: 0ch
+  width: 1.5em
+  height: 1.5em
+
+.lastPlayed
+  opacity: .6
+
+.started
+  composes: lastPlayed
+  font-size: .8em
+
+.link
+  color: inherit
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
