@@ -46,11 +46,11 @@ class UserPage extends Component {
         <div className={s.inner}>
           <div className={s.topBit}>
             <h2 className={s.name}>{this.renderName()}</h2>
-            {isLoading && (
-              <div className={s.loading}>
-                Loading... (this might take a while)
-              </div>
-            )}
+            <div className={s.loading}>
+              {isLoading
+                ? 'Loading... (this might take a while)'
+                : `Loaded ${loadedGames} games`}
+            </div>
           </div>
 
           {callouts.newFriend && (
