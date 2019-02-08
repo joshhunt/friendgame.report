@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import FlipMove from 'react-flip-move';
+import cx from 'classnames';
 
 import { pKey } from 'src/lib/destinyUtils';
 import BungieImage from 'src/components/BungieImage';
@@ -18,12 +19,17 @@ function formatDuration(ms) {
     .join(' ');
 }
 
-function Player({ userInfo, children, parentPlayer }) {
+function Player({ userInfo, children, parentPlayer, isSkeleton }) {
   // <Link to={`/${pKey(parentPlayer)}+${userInfo.displayName}`} className={s.player}>
+
   return (
-    <div className={s.player}>
+    <div className={cx(s.player, { [s.isSkeleton]: isSkeleton })}>
       <div className={s.playerWell}>
-        <BungieImage className={s.playerIcon} src={userInfo.iconPath} />
+        {isSkeleton ? (
+          <div className={s.skeletonIcon} />
+        ) : (
+          <BungieImage className={s.playerIcon} src={userInfo.iconPath} />
+        )}
       </div>
       <div className={s.playerMain}>
         <div className={s.playerName}>{userInfo.displayName}</div>
@@ -33,9 +39,29 @@ function Player({ userInfo, children, parentPlayer }) {
   );
 }
 
+const skeletonPlayer = index => ({
+  isSkeleton: true,
+  player: {
+    destinyUserInfo: {
+      displayName: `dummy player ${index}`
+    }
+  }
+});
+
 export default class PlayerList extends Component {
   render() {
-    const { players, title, parentPlayer, activeSortMode } = this.props;
+    const {
+      players,
+      title,
+      parentPlayer,
+      activeSortMode,
+      idealLength
+    } = this.props;
+
+    const list =
+      players && players.length
+        ? players
+        : new Array(idealLength).fill().map((i, n) => skeletonPlayer(n));
 
     return (
       <div className={s.root}>
@@ -49,27 +75,24 @@ export default class PlayerList extends Component {
           leaveAnimation="fade"
           className={s.list}
         >
-          {players &&
-            players.map(player => (
-              <li
-                className={s.listItem}
-                key={player.player.destinyUserInfo.displayName}
+          {list.map(player => (
+            <li
+              className={s.listItem}
+              key={player.player.destinyUserInfo.displayName}
+            >
+              <Player
+                isSkeleton={player.isSkeleton}
+                userInfo={player.player.destinyUserInfo}
+                parentPlayer={parentPlayer}
               >
-                <Player
-                  userInfo={player.player.destinyUserInfo}
-                  parentPlayer={parentPlayer}
-                >
-                  {activeSortMode === COUNT
+                {!player.isSkeleton &&
+                  (activeSortMode === COUNT
                     ? `${player.pgcrs.length} matches`
-                    : formatDuration(player.timePlayedTogether)}
-                </Player>
-              </li>
-            ))}
+                    : formatDuration(player.timePlayedTogether))}
+              </Player>
+            </li>
+          ))}
         </FlipMove>
-
-        {/* {players.length !== sorted.length && ( */}
-        {/*   <div className={s.showAll}>Show all {players.length} players</div> */}
-        {/* )} */}
       </div>
     );
   }

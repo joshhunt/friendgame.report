@@ -5,6 +5,7 @@ import { sortBy, mapValues } from 'lodash';
 import memoizeOne from 'memoize-one';
 
 import PlayerList from 'src/components/PlayerList';
+import LoadingProgress from 'src/components/LoadingProgress';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
@@ -13,12 +14,7 @@ import { profileSelector } from './selectors';
 
 import s from './styles.styl';
 
-const sortByLength = players => players.filter(p => p.pgcrs.length > 1);
-
-const percent = (v, t) => {
-  const p = v / t;
-  return isNaN(p) ? 0 : Math.floor(p * 100);
-};
+const filterPlayers = players => players.filter(p => p.pgcrs.length > 1);
 
 class UserPage extends Component {
   componentDidMount() {
@@ -41,57 +37,57 @@ class UserPage extends Component {
     } = this.props;
 
     const { all: allPlayers, ...restPlayerCounts } = playerCountsForModes;
+    const isLoading = loadedGames !== totalGames;
 
     return (
       <div className={s.root}>
-        <h2>player report for {this.renderName()}</h2>
-        <p>
-          {loadedGames} / {totalGames}
-          <br />
-          {percent(loadedGames, totalGames)}%<br />
-        </p>
+        <LoadingProgress progress={loadedGames} total={totalGames} />
 
-        {callouts.bestFriend && (
-          <p>
-            best friend:{' '}
-            {callouts.bestFriend.player.destinyUserInfo.displayName}
-          </p>
-        )}
-
-        {callouts.newFriend && (
-          <p>
-            new friend: {callouts.newFriend.player.destinyUserInfo.displayName}
-          </p>
-        )}
-
-        <div className={s.grandLayout}>
-          <div className={s.main}>
-            <PlayerList
-              parentPlayer={profile && profile.profile.data.userInfo}
-              players={allPlayers[FIRETEAM]}
-              title={MODE_NAMES['all'] || 'all'}
-              activeSortMode={sortMode}
-            />
+        <div className={s.inner}>
+          <div className={s.topBit}>
+            <h2 className={s.name}>{this.renderName()}</h2>
+            {isLoading && (
+              <div className={s.loading}>
+                Loading... (this might take a while)
+              </div>
+            )}
           </div>
 
-          <div className={s.rest}>
-            {Object.entries(restPlayerCounts).map(([mode, groupedPlayers]) => (
+          {callouts.newFriend && (
+            <p>
+              new friend:{' '}
+              {callouts.newFriend.player.destinyUserInfo.displayName}
+            </p>
+          )}
+
+          <div className={s.grandLayout}>
+            <div className={s.main}>
               <PlayerList
-                key={mode}
                 parentPlayer={profile && profile.profile.data.userInfo}
-                players={groupedPlayers[FIRETEAM]}
-                title={MODE_NAMES[mode] || mode}
+                players={allPlayers[FIRETEAM]}
+                title={MODE_NAMES['all'] || 'all'}
                 activeSortMode={sortMode}
+                highlightFirst
+                idealLength={13}
               />
-            ))}
+            </div>
+
+            <div className={s.rest}>
+              {Object.entries(restPlayerCounts).map(
+                ([mode, groupedPlayers]) => (
+                  <PlayerList
+                    key={mode}
+                    parentPlayer={profile && profile.profile.data.userInfo}
+                    players={groupedPlayers[FIRETEAM]}
+                    title={MODE_NAMES[mode] || mode}
+                    activeSortMode={sortMode}
+                    idealLength={6}
+                  />
+                )
+              )}
+            </div>
           </div>
         </div>
-
-        <PlayerList
-          players={callouts.newFriends}
-          title="New friends"
-          parentPlayer={profile && profile.profile.data.userInfo}
-        />
       </div>
     );
   }
@@ -204,8 +200,8 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
   });
 
   const payload = {
-    [FIRETEAM]: sortByLength(Object.values(players[FIRETEAM])),
-    [BLURBERRY]: sortByLength(Object.values(players[BLURBERRY]))
+    [FIRETEAM]: filterPlayers(Object.values(players[FIRETEAM])),
+    [BLURBERRY]: filterPlayers(Object.values(players[BLURBERRY]))
   };
 
   return payload;
@@ -287,7 +283,7 @@ function mapStateToProps() {
     playerCountsForModes = mapValues(
       playerCountsForModes,
       (playerSet, mode) => {
-        const limit = mode === ALL ? 21 : 10;
+        const limit = mode === ALL ? 13 : 6;
         return mapValues(playerSet, playerList => {
           return sortBy(playerList, player => {
             return state.app.sortMode === COUNT
