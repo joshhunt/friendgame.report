@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import timeOverlap from 'time-overlap';
-import { sortBy, mapValues } from 'lodash';
+import { sortBy, mapValues, isEqual } from 'lodash';
 import memoizeOne from 'memoize-one';
 
 import PlayerList from 'src/components/PlayerList';
@@ -19,6 +19,12 @@ const filterPlayers = players => players.filter(p => p.pgcrs.length > 1);
 class UserPage extends Component {
   componentDidMount() {
     this.props.getDeepProfile(this.props.routeParams);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!isEqual(this.props.routeParams, prevProps.routeParams)) {
+      this.props.getDeepProfile(this.props.routeParams);
+    }
   }
 
   renderName() {

@@ -20,10 +20,11 @@ function formatDuration(ms) {
 }
 
 function Player({ userInfo, children, parentPlayer, isSkeleton }) {
-  // <Link to={`/${pKey(parentPlayer)}+${userInfo.displayName}`} className={s.player}>
-
   return (
-    <div className={cx(s.player, { [s.isSkeleton]: isSkeleton })}>
+    <Link
+      to={!isSkeleton && `/${pKey(parentPlayer)}/${userInfo.displayName}`}
+      className={cx(s.player, { [s.isSkeleton]: isSkeleton })}
+    >
       <div className={s.playerWell}>
         {isSkeleton ? (
           <div className={s.skeletonIcon} />
@@ -35,7 +36,7 @@ function Player({ userInfo, children, parentPlayer, isSkeleton }) {
         <div className={s.playerName}>{userInfo.displayName}</div>
         <div className={s.playerAlt}>{children}</div>
       </div>
-    </div>
+    </Link>
   );
 }
 

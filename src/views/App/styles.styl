@@ -2,110 +2,13 @@
   padding: 0
   margin: 0
 
-.header
-  background: #121D24
-  color: white
-  overflow: auto
-
-.headerInner
-  max-width: 1200px
-  padding: 15px
-  margin: auto
-  display: flex
-
-.headerMain
-  flex: 1 0 auto
-  margin-left: 30px
-  text-align: right
-
-.searchInput
-  border: none
-  border-radius: 3px
-  width: 100%
-  font-size: 18px
-  appearance: none
-  background: rgba(white, .05)
-  padding: 8px 10px
-  color: white
-  transition: 150ms ease-in-out
-  border: 1px solid rgba(white, .05)
-
-  &:focus
-    outline: 0
-    border: 1px solid rgba(white, .4)
-    background: rgba(white, .09)
-
-.siteName
-  margin: 0
-  font-size: 22px
-  font-weight: 600
-  -webkit-font-smoothing: antialiased
-  -moz-osx-font-smoothing: grayscale
-  color: #737e82
-
-  span
-    color: #a6aeb0
-
 .footer
   margin-top: 30px
-  padding: 10px 0
+  margin-bottom: 15px
+  padding: 10px
   font-size: 13px
   color: #737373
+  text-align: center
 
   a
     color: darken(#737373, 50%)
-
-$activeColor = rgba(lighten(#3498db, 50%), .25)
-
-.radio
-  position: relative
-  display: inline-block
-  margin-left: 10px
-
-  input
-    display: inline-block
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    width: 100%
-    height: 100%
-    opacity: 0
-    z-index: 3
-    padding: 0
-    margin: 0
-
-    &:checked + .radioBg
-      background: $activeColor
-
-    &:checked + .radioBg + .radioLabel
-      color: white
-
-.radioBg
-  background: rgba($activeColor, 0)
-  border: 1px solid $activeColor
-  border-radius: 100px
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  bottom: 0
-  z-index: 1
-  transition: all 150ms ease-in-out
-
-.radioLabel
-  position: relative
-  z-index: 2
-  font-size: 11px
-  pointer-events: none
-  padding: 4px 8px
-  text-align: center
-  cursor: pointer
-  color: white
-
-.radioStack
-  display: inline-block
-  flex-direction: row
-  margin-top: 10px
-  font-size: 13px

@@ -8,6 +8,7 @@ import store from './store';
 import App from './views/App';
 import Home from './views/Home';
 import UserPage from './views/UserPage';
+import RelationshipPage from './views/RelationshipPage';
 
 export default class AppRouter extends Component {
   render() {
@@ -16,6 +17,10 @@ export default class AppRouter extends Component {
         <Router history={browserHistory}>
           <Route component={App}>
             <Route path="/" component={Home} />
+            <Route
+              path="/:membershipType/:membershipId/:secondPlayerId"
+              component={RelationshipPage}
+            />
             <Route path="/:membershipType/:membershipId" component={UserPage} />
           </Route>
         </Router>

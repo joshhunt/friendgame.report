@@ -256,4 +256,10 @@ export function getCacheableSearch(searchTerm, membershipType = '-1') {
   );
 }
 
+export function getPlayerSearchAutoComplete(searchTerm, membershipType = '0') {
+  return get(
+    `https://elastic.destinytrialsreport.com/players/${membershipType}/${searchTerm}`
+  );
+}
+
 window.getCacheablePGCRDetails = getCacheablePGCRDetails;

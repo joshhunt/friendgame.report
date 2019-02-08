@@ -1,59 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { setSortMode as setSortModeAction, COUNT, TIME } from 'src/store/app';
+import SearchHeader from 'src/components/SearchHeader';
+
+import { setSortMode as setSortModeAction } from 'src/store/app';
 
 import s from './styles.styl';
 
 function App({ children, sortMode, setSortMode }) {
   return (
     <div className={s.root}>
-      <div className={s.header}>
-        <div className={s.headerInner}>
-          <div className={s.headerName}>
-            <h1 className={s.siteName}>
-              fri<span>endgame</span>.report
-            </h1>
-          </div>
-          <div className={s.headerMain}>
-            <input
-              className={s.searchInput}
-              placeholder="Search for player"
-              type="text"
-            />
-
-            <div className={s.radioStack}>
-              Sort by:
-              <div className={s.radio}>
-                <label>
-                  <input
-                    value={COUNT}
-                    type="radio"
-                    name="sort"
-                    checked={sortMode === COUNT}
-                    onChange={ev => setSortMode(ev.target.value)}
-                  />
-                  <div className={s.radioBg} />
-                  <div className={s.radioLabel}>Matches</div>
-                </label>
-              </div>
-              <div className={s.radio}>
-                <label>
-                  <input
-                    value={TIME}
-                    type="radio"
-                    name="sort"
-                    checked={sortMode === TIME}
-                    onChange={ev => setSortMode(ev.target.value)}
-                  />
-                  <div className={s.radioBg} />
-                  <div className={s.radioLabel}>Duration</div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SearchHeader setSortMode={setSortMode} sortMode={sortMode} />
 
       {children}
 
