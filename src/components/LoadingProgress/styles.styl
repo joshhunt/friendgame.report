@@ -1,0 +1,37 @@
+.root
+  text-align: center
+  position: relative
+  overflow: hidden
+  height: 8px
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  transition: 250ms ease-in-out
+  pointer-events: none
+
+.complete
+  animation: done 500ms 500ms ease-in-out both
+
+
+.fg
+  position: relative
+  z-index: 2
+
+.progressBg
+  transition: 250ms ease-in-out
+  position: absolute
+  left: 0
+  top: 0
+  bottom: 0
+  z-index: 1
+  background: #2ecc71
+  height: 100%
+  box-shadow: 0 2px 8px 0 rgba(black, .08)
+
+@keyframes done
+  from
+    height: 8px
+
+  to
+    height: 0

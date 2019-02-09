@@ -1,0 +1,151 @@
+.tbody
+  content: 'hello'
+
+  [data-depth="0"]
+    td:first-of-type
+      padding-left: 0px
+
+    .heading
+      font-size: 20px
+
+  [data-depth="1"]
+    td:first-of-type
+      padding-left: 10px
+
+    .heading
+      font-size: 18px
+
+  [data-depth="2"]
+    td:first-of-type
+      padding-left: 20px
+
+    .heading
+      font-size: 16px
+
+  [data-depth="3"]
+    td:first-of-type
+      padding-left: 30px
+
+    .heading
+      font-size: 14px
+
+.link
+  color: inherit
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
+.heading
+  composes: link
+  font-weight: bold
+
+.cell
+  color: white
+  text-align: center
+
+.cellCompleted
+  composes: cell
+  background: #2ecc71
+  border-color: #2ecc71 !important
+
+
+.cellIncomplete
+  composes: cell
+  background: #e74c3c
+  border-color: #e74c3c !important
+
+.icon
+  font-size: 20px
+
+.subtlePlayerName
+  font-size: .8em
+  opacity: 0
+  margin-top: 2px
+  transition: 150ms ease-in-out
+
+  .row:hover &
+    opacity: .95
+
+
+.addPlayerTd
+  text-align: right
+
+.addPlayerButton
+  border: none
+  color: lighten(black, 20%)
+  background: none
+  appearance: none
+  font-size: 14px
+  font-family: inherit
+  font-weight: 500
+
+.addPlayerIcon
+  font-size: 16px
+  margin-right: 2px
+
+.addPlayerModal
+  width: 500px
+  max-width: 100%
+  background: white
+  border-radius: 2px
+  padding: 15px
+
+.score
+  font-weight: 400
+  font-size: .9em
+
+.objectives
+  font-size: 0
+  margin-top: 10px
+
+.objective
+  display: flex
+  width: 100%
+  background: rgba(white, .3)
+  text-align: left
+  margin-bottom: 4px
+  max-width: 200px
+
+.checkboxBase
+  _size = 15px
+  display: inline-block
+  font-size: 0
+  line-height: 1
+  flex: 0 0 _size
+  width: _size
+  height: _size
+
+.checkboxTicked
+  composes: checkboxBase
+  background: rgba(white, .8)
+
+.checkboxEmpty
+  composes: checkboxBase
+  border: 1px solid rgba(white, .8)
+
+.objectiveText
+.objectiveProgress
+  font-size: 12px
+  padding-left: 4px
+
+.objectiveText
+  whitespace: no-wrap
+  text-overflow: ellipsis
+  overflow: hidden
+  flex: 1 1 100%
+
+.objectiveProgress
+  display: inline-flex
+  padding-right: 3px
+  align-items: center
+
+// .playerCell
+//   width: 250px
+
+// .table
+//   table-layout: fixed
+
+.slash
+  font-size: 0.8em
+  padding: 0 2px

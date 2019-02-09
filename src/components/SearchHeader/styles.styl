@@ -1,0 +1,139 @@
+.header
+  background: #121D24
+  color: white
+
+.headerInner
+  max-width: 1200px
+  padding: 15px
+  margin: auto
+  display: flex
+
+.headerMain
+  flex: 1 0 auto
+  margin-left: 30px
+  text-align: right
+
+.inputWrapper
+  position: relative
+
+.resultsDropdown
+  position: absolute
+  z-index: 9
+  top: calc(100% - 2px)
+  left: 0
+  right: 0
+  background: black
+  text-align: left
+  background: #1E282F
+  border-radius: 0 0 3px 3px
+  border: 1px solid #2A323A
+  border-top: none
+  animation: fadeInFromAbove 250ms ease-in-out both
+  box-shadow: 0 2px 8px 0 rgba(black, .08)
+  transition: 150ms ease-in-out
+
+  .searchInput:focus + &
+    border-color: #7E8387
+    background: #283038
+
+@keyframes fadeInFromAbove
+  from
+    opacity: 0
+    transform: translateY(-10px)
+
+  to
+    opacity: 1
+    transform: translateY(-0)
+
+.result
+  padding: 8px 10px
+  color: rgba(white, .7)
+  display: block
+  text-decoration: none
+  transition: 50ms ease-in-out
+
+  &:hover
+    color: white
+
+.searchInput
+  border: none
+  border-radius: 3px
+  width: 100%
+  font-size: 18px
+  appearance: none
+  background: rgba(white, .05)
+  padding: 8px 10px
+  color: white
+  transition: 150ms ease-in-out
+  border: 1px solid rgba(white, .05)
+
+  &:focus
+    outline: 0
+    border: 1px solid rgba(white, .4)
+    background: rgba(white, .09)
+
+.siteName
+  margin: 0
+  font-size: 22px
+  font-weight: 600
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  color: #737e82
+
+  span
+    color: #a6aeb0
+
+$activeColor = rgba(lighten(#3498db, 50%), .25)
+
+.radio
+  position: relative
+  display: inline-block
+  margin-left: 10px
+
+  input
+    display: inline-block
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    opacity: 0
+    z-index: 3
+    padding: 0
+    margin: 0
+
+    &:checked + .radioBg
+      background: $activeColor
+
+    &:checked + .radioBg + .radioLabel
+      color: white
+
+.radioBg
+  background: rgba($activeColor, 0)
+  border: 1px solid $activeColor
+  border-radius: 100px
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1
+  transition: all 150ms ease-in-out
+
+.radioLabel
+  position: relative
+  z-index: 2
+  font-size: 11px
+  pointer-events: none
+  padding: 4px 8px
+  text-align: center
+  cursor: pointer
+  color: white
+
+.radioStack
+  display: inline-block
+  flex-direction: row
+  margin-top: 10px
+  font-size: 13px

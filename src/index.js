@@ -1,13 +1,25 @@
+import 'app/lib/autotrack.build';
+import 'app/lib/ls';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import Router from './Router';
-import './autotrack.build';
+import { AppContainer } from 'react-hot-loader';
 
-ReactDOM.render(<Router />, document.getElementById('root'));
+import AppRouter from './AppRouter';
+import './index.styl';
 
+const render = App => {
+  ReactDOM.render(
+    <AppContainer>
+      <App />
+    </AppContainer>,
+    document.getElementById('root')
+  );
+};
+
+render(AppRouter);
+
+// Webpack Hot Module Replacement API
 if (module.hot) {
-  module.hot.accept('./Router', () => {
-    ReactDOM.render(<Router />, document.getElementById('root'));
-  });
+  module.hot.accept('./AppRouter', () => render(AppRouter));
 }

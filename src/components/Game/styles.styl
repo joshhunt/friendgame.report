@@ -1,0 +1,62 @@
+.root
+  display: flex
+
+.main
+  flex: 1 0 auto
+
+.mode
+  font-weight: bold
+
+.sub
+  opacity: .8
+  font-size: .85em
+  margin-top: 2px
+
+.activityIconWrapper
+  float: left
+  background: #1A1A1A
+  border-radius: 3px
+  margin-right: 10px
+  padding: 3px
+
+.activityIcon
+  width: 35px
+  height: 35px
+  display: block
+
+.stat
+  display: inline-block
+
+  & + &
+    margin-left: 30px
+
+.statColumn
+  width: 1%
+
+.statName
+  opacity: .8
+  font-size: .8em
+
+.standing
+  height: 41px
+  width: 5px
+  float: left
+  border-radius: 3px
+  margin-right: 5px
+
+.colorVictory
+  background: #2ecc71
+
+.colorDefeat
+  background: #e74c3c
+
+.standingVictory
+  composes: standing
+  composes: colorVictory
+
+.standingDefeat
+  composes: standing
+  composes: colorDefeat
+
+
+

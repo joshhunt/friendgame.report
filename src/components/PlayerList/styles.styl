@@ -1,0 +1,134 @@
+.root
+  background: white
+  border-radius: 3px
+  box-shadow: 0 2px 8px 0 rgba(black, .08)
+  margin: 10px
+  overflow: hidden
+
+.top
+  background: #F5F5F5
+  padding: 10px
+  display: flex
+
+  h3
+    flex: 1 0 auto
+    margin: 0
+
+.list
+  padding: 0
+  margin: 0
+  counter-reset: section
+  list-style: none
+  padding: 10px 0
+
+.player
+  display: flex
+  color: inherit
+  text-decoration: none
+  transition: all 150ms ease-in-out
+  padding: 10px
+
+  &:before
+    counter-increment: section
+    content: counter(section)
+    display: flex
+    align-items: center
+    justify-content: center
+    margin-right: 10px
+    min-width: 2ch
+
+  &:hover
+    background: rgba(black, .04)
+
+
+.playerIcon
+  display: block
+  width: 45px
+  height: 45px
+  border-radius: 3px
+
+.skeletonIcon
+  composes: playerIcon
+  background: #e2e2e2
+  pointer-events: none
+
+.playerMain
+  flex: 1 1
+  margin-left: 10px
+
+.playerAlt
+  font-size: .8em
+  opacity: .8
+  margin-top: 4px
+
+.playerName
+  .isSkeleton &
+    height: 18px
+    width: 90px
+    background: #e2e2e2
+    font-size: 0
+
+  li:nth-of-type(1) > .isSkeleton & { width: 80px }
+  li:nth-of-type(2) > .isSkeleton & { width: 110px }
+  li:nth-of-type(3) > .isSkeleton & { width: 60px }
+  li:nth-of-type(4) > .isSkeleton & { width: 50px }
+  li:nth-of-type(5) > .isSkeleton & { width: 70px }
+  li:nth-of-type(6) > .isSkeleton & { width: 95px }
+
+.radio
+  position: relative
+  display: inline-block
+
+  & + &
+    margin-top: 5px
+
+  input
+    display: inline-block
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100%
+    height: 100%
+    opacity: 0
+    z-index: 3
+    padding: 0
+    margin: 0
+
+    &:checked + .radioBg
+      background: rgba(#3498db, 1)
+
+    &:checked + .radioBg + .radioLabel
+      color: white
+
+.radioBg
+  background: rgba(#3498db, 0)
+  border: 1px solid #3498db;
+  border-radius: 100px
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1
+  transition: all 150ms ease-in-out
+
+.radioLabel
+  position: relative
+  z-index: 2
+  font-size: 11px
+  pointer-events: none
+  padding: 4px 8px
+  text-align: center
+  cursor: pointer
+  color: #3498db
+
+.radioStack
+  display: flex
+  flex-direction: column
+
+.showAll
+  padding: 10px
+  font-size: 12px
+  text-decoration: underline

@@ -1,0 +1,38 @@
+.root
+  content: 'root'
+  position: relative
+  padding-top: 5px
+
+.inner
+  max-width: 800px
+  margin: auto
+
+.grandLayout
+  display: flex
+  margin: 0 -10px
+
+.main
+  flex: 1 0 40%
+
+.rest
+  flex: 1 0 60%
+  display: flex
+  flex-wrap: wrap
+
+  > *
+    flex: 1 0 40%
+
+.topBit
+  display: flex
+  align-items: flex-end
+  justify-content: space-between
+  margin: 15px 0
+
+.loading
+  margin-left: 15px
+  font-size: 16px
+
+.name
+  margin: 0
+  line-height: 1
+  font-size: 28px
