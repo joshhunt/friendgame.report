@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { isEqual, sortBy } from 'lodash';
 
 import GameList from 'src/components/GameList';
+import Date from 'src/components/Date';
+import Game from 'src/components/Game';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile, getProfile } from 'src/store/profiles';
@@ -43,7 +45,7 @@ class UserPage extends Component {
   }
 
   render() {
-    const { pgcrDetails, profile } = this.props;
+    const { sessions, profile } = this.props;
 
     return (
       <div className={s.root}>
@@ -56,7 +58,7 @@ class UserPage extends Component {
 
           <br />
 
-          <GameList pgcrs={pgcrDetails} ownProfile={profile} />
+          <GameList sessions={sessions} ownProfile={profile} />
         </div>
       </div>
     );
@@ -71,37 +73,40 @@ function mapStateToProps() {
     const secondProfileKey = pKey(secondPlayerProps(ownProps));
     const secondProfile = state.profiles.profiles[secondProfileKey];
 
-    const key = pKey(ownProps.routeParams);
-    const pgcrKeysForPlayer = [].concat(
-      ...Object.values(state.pgcr.histories[key] || {})
-    );
+    const histories = state.pgcr.histories[profileKey] || {};
 
-    const allPgcrDetails = pgcrKeysForPlayer.reduce((acc, pgcrSummary) => {
-      const pgcrId = pgcrSummary.activityDetails.instanceId;
-      const pgcrDetails = state.pgcr.pgcr[pgcrId];
+    const sessions = []
+      .concat(...Object.values(histories))
+      .filter(pgcrSummary => {
+        const pgcrId = pgcrSummary.activityDetails.instanceId;
+        const pgcr = state.pgcr.pgcr[pgcrId];
 
-      pgcrDetails && acc.push(pgcrDetails);
+        if (!pgcr) {
+          return false;
+        }
 
-      return acc;
-    }, []);
+        const isSocialInstance =
+          pgcr.entries[0].player.destinyUserInfo.membershipType === 0;
 
-    const pgcrDetails = allPgcrDetails.filter(pgcr => {
-      const isSocialInstance =
-        pgcr.entries[0].player.destinyUserInfo.membershipType === 0;
+        if (isSocialInstance) {
+          return false;
+        }
 
-      if (isSocialInstance) {
-        return false;
-      }
+        const containsSecondPlayer = !!pgcr.entries.find(entry => {
+          return (
+            entry.player.destinyUserInfo.membershipId ===
+            (secondProfile && secondProfile.profile.data.userInfo.membershipId)
+          );
+        });
 
-      const containsSecondPlayer = !!pgcr.entries.find(entry => {
+        return containsSecondPlayer;
+      })
+      .sort((a, b) => {
         return (
-          entry.player.destinyUserInfo.membershipId ===
-          (secondProfile && secondProfile.profile.data.userInfo.membershipId)
+          Number(b.activityDetails.instanceId) -
+          Number(a.activityDetails.instanceId)
         );
       });
-
-      return containsSecondPlayer;
-    });
 
     return {
       profile,
@@ -110,10 +115,7 @@ function mapStateToProps() {
       secondProfile,
       secondProfileKey,
 
-      pgcrDetails: sortBy(
-        pgcrDetails,
-        p => Number(p.activityDetails.instanceId) * -1
-      )
+      sessions
     };
   };
 }

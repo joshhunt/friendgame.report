@@ -16,6 +16,9 @@ import s from './styles.styl';
 
 const filterPlayers = players => players.filter(p => p.pgcrs.length > 1);
 
+const BIG_LIST = 14;
+const SMALL_LIST = 6;
+
 class UserPage extends Component {
   componentDidMount() {
     this.props.getDeepProfile(this.props.routeParams);
@@ -74,7 +77,7 @@ class UserPage extends Component {
                 title={MODE_NAMES['all'] || 'all'}
                 activeSortMode={sortMode}
                 highlightFirst
-                idealLength={13}
+                idealLength={BIG_LIST}
               />
             </div>
 
@@ -87,7 +90,8 @@ class UserPage extends Component {
                     players={groupedPlayers[FIRETEAM]}
                     title={MODE_NAMES[mode] || mode}
                     activeSortMode={sortMode}
-                    idealLength={6}
+                    idealLength={SMALL_LIST}
+                    small
                   />
                 )
               )}
@@ -289,7 +293,7 @@ function mapStateToProps() {
     playerCountsForModes = mapValues(
       playerCountsForModes,
       (playerSet, mode) => {
-        const limit = mode === ALL ? 13 : 6;
+        const limit = mode === ALL ? BIG_LIST : SMALL_LIST;
         return mapValues(playerSet, playerList => {
           return sortBy(playerList, player => {
             return state.app.sortMode === COUNT

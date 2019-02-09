@@ -5,6 +5,9 @@
   margin: 10px
   overflow: hidden
 
+// .small
+//   margin-bottom: 20px
+
 .top
   background: #F5F5F5
   padding: 10px
@@ -19,14 +22,17 @@
   margin: 0
   counter-reset: section
   list-style: none
+  padding: 10px 0
 
-.listItem
-  padding: 10px
+// .listItem
+//   padding: 10px
 
 .player
   display: flex
   color: inherit
   text-decoration: none
+  transition: all 150ms ease-in-out
+  padding: 10px
 
   &:before
     counter-increment: section
@@ -37,6 +43,10 @@
     margin-right: 10px
     min-width: 2ch
 
+  &:hover
+    background: rgba(black, .04)
+
+
 .playerIcon
   display: block
   width: 45px
@@ -46,6 +56,7 @@
 .skeletonIcon
   composes: playerIcon
   background: #e2e2e2
+  pointer-events: none
 
 .playerMain
   flex: 1 1

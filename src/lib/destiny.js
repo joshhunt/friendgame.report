@@ -7,7 +7,7 @@ const log = require('src/lib/log')('http');
 
 export const db = new Dexie('requestCache');
 
-const CACHE_EVERYTHING = true;
+const CACHE_EVERYTHING = false;
 
 const GET_CONCURRENCY = 10;
 db.version(1).stores({
@@ -205,7 +205,7 @@ export function getRecentActivities(
 }
 
 const COUNT = 250;
-const MAX_PAGE = 2;
+const MAX_PAGE = 1000;
 export function getCharacterPGCRHistory(
   { membershipType, membershipId, characterId },
   page = 0,

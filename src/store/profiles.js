@@ -59,9 +59,13 @@ export function getProfile({ membershipType, membershipId }) {
 export function getDeepProfile({ membershipType, membershipId }) {
   return (dispatch, getState) => {
     dispatch(getProfile({ membershipType, membershipId })).then(profile => {
-
       const promises = Object.keys(profile.characters.data).map(characterId => {
-        return dispatch(getCharacterPGCRHistory(profile.profile.data.userInfo, characterId, { fullHistory: true, fetchPGCRDetails: true }))
+        return dispatch(
+          getCharacterPGCRHistory(profile.profile.data.userInfo, characterId, {
+            fullHistory: true,
+            fetchPGCRDetails: true
+          })
+        );
       });
 
       return Promise.all(promises);

@@ -4,7 +4,7 @@ import Game from 'src/components/Game';
 
 import s from './styles.styl';
 
-export default function GameList({ pgcrs, ownProfile }) {
+export default function GameList({ sessions, ownProfile }) {
   return (
     <div className={s.root}>
       <div className={s.top}>
@@ -12,7 +12,7 @@ export default function GameList({ pgcrs, ownProfile }) {
       </div>
 
       <div className={s.list}>
-        {pgcrs.map((pgcr, index) => {
+        {sessions.map((pgcr, index) => {
           return (
             <Game
               className={s.game}

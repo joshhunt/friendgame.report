@@ -56,7 +56,8 @@ export default class PlayerList extends Component {
       title,
       parentPlayer,
       activeSortMode,
-      idealLength
+      idealLength,
+      small
     } = this.props;
 
     const list =
@@ -65,7 +66,7 @@ export default class PlayerList extends Component {
         : new Array(idealLength).fill().map((i, n) => skeletonPlayer(n));
 
     return (
-      <div className={s.root}>
+      <div className={cx(s.root, { [s.small]: small })}>
         <div className={s.top}>
           <h3 className={s.title}>{title}</h3>
         </div>

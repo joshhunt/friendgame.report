@@ -17,25 +17,38 @@ const makeTimeago = memoize(stamp => {
   return format(date, 'd LLL Y, h:mm aaaa');
 });
 
-function Game({ className, pgcr, standing, modeDef, activityDef }) {
+function Game({ className, pgcr, modeDef, activityDef }) {
   return (
     <div className={cx(className, s.root)}>
-      <div className={STANDING[standing]} />
-
-      <div className={s.activityIconWrapper}>
-        <img
-          alt=""
-          className={s.activityIcon}
-          src={`https://bungie.net${modeDef && modeDef.displayProperties.icon}`}
+      <div className={s.accessory}>
+        <div
+          className={
+            STANDING[pgcr.values.standing && pgcr.values.standing.basic.value]
+          }
         />
+
+        <div className={s.activityIconWrapper}>
+          <img
+            alt=""
+            className={s.activityIcon}
+            src={`https://bungie.net${modeDef &&
+              modeDef.displayProperties.icon}`}
+          />
+        </div>
       </div>
 
-      <div className={s.mode}>{modeDef && modeDef.displayProperties.name}</div>
+      <div className={s.main}>
+        <div className={s.mode}>
+          {modeDef && modeDef.displayProperties.name}
+        </div>
 
-      <div className={s.activity}>
-        {activityDef && activityDef.displayProperties.name}
-        <br />
-        {makeTimeago(pgcr.period)}
+        <div className={s.sub}>
+          {activityDef && activityDef.displayProperties.name}
+        </div>
+      </div>
+
+      <div className={s.accessory}>
+        <div className={s.sub}>{makeTimeago(pgcr.period)}</div>
       </div>
     </div>
   );
@@ -58,16 +71,8 @@ function mapStateToProps(state, { pgcr, ownProfile }) {
   const activityDef =
     DestinyActivityDefinition[pgcr.activityDetails.referenceId];
 
-  const ownEntry = pgcr.entries.find(
-    entry =>
-      entry.player.destinyUserInfo.membershipId ===
-      (ownProfile && ownProfile.profile.data.userInfo.membershipId)
-  );
-  const standing = ownEntry ? ownEntry.standing : undefined;
-
   return {
     modeDef,
-    standing,
     activityDef
   };
 }
