@@ -237,6 +237,14 @@ const MODE_NAMES = {
   [ALL]: 'All activities'
 };
 
+const LIST_LENGTHS = {
+  [CRUCIBLE]: SMALL_LIST,
+  [PVE]: SMALL_LIST,
+  [PVE_COMPETITIVE]: SMALL_LIST,
+  [RAID]: SMALL_LIST,
+  [ALL]: BIG_LIST
+};
+
 function topLevelGetPlayerCounts(pgcrs, playerKey) {
   return {
     all: getPlayerCounts(pgcrs, playerKey),
@@ -293,7 +301,8 @@ function mapStateToProps() {
     playerCountsForModes = mapValues(
       playerCountsForModes,
       (playerSet, mode) => {
-        const limit = mode === ALL ? BIG_LIST : SMALL_LIST;
+        const limit = LIST_LENGTHS[mode] || SMALL_LIST;
+
         return mapValues(playerSet, playerList => {
           return sortBy(playerList, player => {
             return state.app.sortMode === COUNT
