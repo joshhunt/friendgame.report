@@ -29,36 +29,7 @@ class App extends Component {
 
   render() {
     const { memberships, isAuthenticated } = this.props;
-    return (
-      <div className={s.root}>
-        {isAuthenticated ? (
-          <Fragment>
-            <h2>Your linked accounts</h2>
-            {memberships.map(ship => (
-              <Link
-                to={`/${ship.membershipType}/${ship.membershipId}`}
-                key={k(ship.membershipId, ship.membershipType)}
-                className={s.resultPlayer}
-              >
-                <PlatformIcon
-                  membershipType={ship.membershipType}
-                  className={s.platformIcon}
-                />{' '}
-                {ship.displayName}
-              </Link>
-            ))}
-          </Fragment>
-        ) : (
-          <Fragment>
-            <a className={s.authLink} href={AUTH_URL}>
-              Login with Bungie.net to see your linked accounts
-            </a>
-          </Fragment>
-        )}
-
-        <SearchForPlayer className={s.playerSearch} />
-      </div>
-    );
+    return <div className={s.root}>see who you play with the most</div>;
   }
 }
 
@@ -71,7 +42,10 @@ function mapStateToProps(state) {
 
 const mapDispatchToActions = { setAuth, getMembership };
 
-export default connect(mapStateToProps, mapDispatchToActions)(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToActions
+)(App);
 
 // function mapStateToProps(state) {
 //   return {
