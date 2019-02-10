@@ -19,7 +19,14 @@ const makeTimeago = memoize(stamp => {
 
 function Game({ className, pgcr, modeDef, activityDef }) {
   return (
-    <div className={cx(className, s.root)}>
+    <a
+      className={cx(className, s.root)}
+      href={`https://destinytracker.com/d2/pgcr/${
+        pgcr.activityDetails.instanceId
+      }`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <div className={s.accessory}>
         <div
           className={
@@ -50,7 +57,7 @@ function Game({ className, pgcr, modeDef, activityDef }) {
       <div className={s.accessory}>
         <div className={s.sub}>{makeTimeago(pgcr.period)}</div>
       </div>
-    </div>
+    </a>
   );
 }
 

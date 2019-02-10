@@ -1,3 +1,5 @@
+@import '../../common.styl'
+
 .root
   content: 'root'
   position: relative
@@ -37,3 +39,14 @@
   margin: 0
   line-height: 1
   font-size: 28px
+
+
+.firstMetList
+  _color = #2ecc71;
+  box-shadow: 0 2px 8px 0 rgba(_color, .3)
+  border: 1px solid _color
+  margin-bottom: 15px
+
+  > div:first-of-type
+    background: _color
+    color: white

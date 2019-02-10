@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, sortBy } from 'lodash';
+import { isEqual } from 'lodash';
 
 import GameList from 'src/components/GameList';
-import Date from 'src/components/Date';
-import Game from 'src/components/Game';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile, getProfile } from 'src/store/profiles';
@@ -46,6 +44,7 @@ class UserPage extends Component {
 
   render() {
     const { sessions, profile } = this.props;
+    const firstGame = sessions[sessions.length - 1];
 
     return (
       <div className={s.root}>
@@ -58,6 +57,14 @@ class UserPage extends Component {
 
           <br />
 
+          {firstGame && (
+            <GameList
+              className={s.firstMetList}
+              title="First met"
+              sessions={[firstGame]}
+              ownProfile={profile}
+            />
+          )}
           <GameList sessions={sessions} ownProfile={profile} />
         </div>
       </div>

@@ -1,14 +1,15 @@
 import React from 'react';
+import cx from 'classnames';
 
 import Game from 'src/components/Game';
 
 import s from './styles.styl';
 
-export default function GameList({ sessions, ownProfile }) {
+export default function GameList({ className, title, sessions, ownProfile }) {
   return (
-    <div className={s.root}>
+    <div className={cx(s.root, className)}>
       <div className={s.top}>
-        <h3 className={s.title}>Games together</h3>
+        <h3 className={s.title}>{title || 'Games together'}</h3>
       </div>
 
       <div className={s.list}>
