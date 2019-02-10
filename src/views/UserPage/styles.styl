@@ -68,6 +68,14 @@
   _color = #2ecc71;
   box-shadow: 0 2px 8px 0 rgba(_color, .3)
   border: 1px solid _color
+  position: relative
+
+  &:after
+    content: '✨'
+    font-size: 30px
+    position: absolute
+    bottom: 5px
+    right: 10px
 
   > div
     background: _color
@@ -76,11 +84,18 @@
   +fromTablet()
     width: calc(50% - 20px)
 
-
 .crimsonDaysList
   _color = #E83945;
   box-shadow: 0 2px 8px 0 rgba(_color, .3)
   border: 1px solid _color
+  position: relative
+
+  &:after
+    content: '💖'
+    font-size: 30px
+    position: absolute
+    bottom: 5px
+    right: 10px
 
   > div
     background: _color
