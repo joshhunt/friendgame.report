@@ -19,11 +19,17 @@ function formatDuration(ms) {
     .join(' ');
 }
 
-function Player({ userInfo, children, parentPlayer, isSkeleton }) {
+export function Player({
+  className,
+  userInfo,
+  children,
+  parentPlayer,
+  isSkeleton
+}) {
   return (
     <Link
       to={!isSkeleton && `/${pKey(parentPlayer)}/${userInfo.displayName}`}
-      className={cx(s.player, { [s.isSkeleton]: isSkeleton })}
+      className={cx(className, s.player, { [s.isSkeleton]: isSkeleton })}
     >
       <div className={s.playerWell}>
         {isSkeleton ? (
@@ -57,7 +63,10 @@ export default class PlayerList extends Component {
       parentPlayer,
       activeSortMode,
       idealLength,
-      small
+      small,
+      playerClassName,
+      playerChildren,
+      className
     } = this.props;
 
     const list =
@@ -66,7 +75,7 @@ export default class PlayerList extends Component {
         : new Array(idealLength).fill().map((i, n) => skeletonPlayer(n));
 
     return (
-      <div className={cx(s.root, { [s.small]: small })}>
+      <div className={cx(className, s.root, { [s.small]: small })}>
         <div className={s.top}>
           <h3 className={s.title}>{title}</h3>
         </div>
@@ -86,11 +95,15 @@ export default class PlayerList extends Component {
                 isSkeleton={player.isSkeleton}
                 userInfo={player.player.destinyUserInfo}
                 parentPlayer={parentPlayer}
+                className={playerClassName}
               >
-                {!player.isSkeleton &&
-                  (activeSortMode === COUNT
-                    ? `${player.pgcrs.length} matches`
-                    : formatDuration(player.timePlayedTogether))}
+                <PlayerChildren
+                  childrenOverride={playerChildren}
+                  isSkeleton={player.isSkeleton}
+                  activeSortMode={activeSortMode}
+                  numOfMatches={player && player.pgcrs && player.pgcrs.length}
+                  timePlayed={player.timePlayedTogether}
+                />
               </Player>
             </li>
           ))}
@@ -98,4 +111,24 @@ export default class PlayerList extends Component {
       </div>
     );
   }
+}
+
+function PlayerChildren({
+  isSkeleton,
+  childrenOverride,
+  activeSortMode,
+  numOfMatches,
+  timePlayed
+}) {
+  if (isSkeleton) {
+    return null;
+  }
+
+  if (childrenOverride) {
+    return childrenOverride;
+  }
+
+  return activeSortMode === COUNT
+    ? `${numOfMatches} matches`
+    : formatDuration(timePlayed);
 }

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import timeOverlap from 'time-overlap';
-import { sortBy, mapValues, isEqual, get } from 'lodash';
+import { sortBy, mapValues, isEqual, get, pickBy } from 'lodash';
 import memoizeOne from 'memoize-one';
 import { addRecentProfile } from 'src/lib/ls';
 
 import PlayerList from 'src/components/PlayerList';
 import LoadingProgress from 'src/components/LoadingProgress';
+import PrettyDate from 'src/components/Date';
 
 import { pKey } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
@@ -75,6 +76,10 @@ class UserPage extends Component {
       loadingMessage = `Loaded ${loadedGames} games`;
     }
 
+    const newFriendFirstPlayDate =
+      callouts.newFriend &&
+      callouts.newFriend.pgcrs[callouts.newFriend.pgcrs.length - 1].pgcr.period;
+
     return (
       <div className={s.root}>
         <LoadingProgress progress={totalProgress} />
@@ -85,12 +90,37 @@ class UserPage extends Component {
             <div className={s.loading}>{loadingMessage}</div>
           </div>
 
-          {callouts.newFriend && (
-            <p>
-              new friend:{' '}
-              {callouts.newFriend.player.destinyUserInfo.displayName}
-            </p>
-          )}
+          <div className={s.callouts}>
+            {callouts.newFriend && (
+              <PlayerList
+                className={s.newFriendList}
+                title="New friend"
+                activeSortMode={sortMode}
+                idealLength={1}
+                players={[callouts.newFriend]}
+                parentPlayer={profile && profile.profile.data.userInfo}
+                playerClassName={s.noListPlayer}
+                playerChildren={
+                  <span>
+                    {callouts.newFriend.pgcrs.length} matches, first played with{' '}
+                    <PrettyDate date={newFriendFirstPlayDate} />
+                  </span>
+                }
+              />
+            )}
+
+            {callouts.crimsonDaysPlayer && (
+              <PlayerList
+                className={s.crimsonDaysList}
+                title="Crimson Doubles Partner"
+                activeSortMode={sortMode}
+                idealLength={1}
+                players={[callouts.crimsonDaysPlayer]}
+                parentPlayer={profile && profile.profile.data.userInfo}
+                playerClassName={s.noListPlayer}
+              />
+            )}
+          </div>
 
           <div className={s.grandLayout}>
             <div className={s.main}>
@@ -240,8 +270,16 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
   return payload;
 };
 
+const CRIMSON_DAYS_CUTOFF = new Date(2019, 0, 1);
 function filterGamesByMode(pgcrs, mode) {
   return pgcrs.filter(p => {
+    if (mode === CRIMSON_DOUBLES) {
+      const date = new Date(p.period);
+      return (
+        p.activityDetails.modes.includes(mode) && date > CRIMSON_DAYS_CUTOFF
+      );
+    }
+
     return p.activityDetails.modes.includes(mode);
   });
 }
@@ -251,8 +289,10 @@ const PVE = 7;
 const PVE_COMPETITIVE = 64;
 const RAID = 4;
 const ALL = 'all';
+const CRIMSON_DOUBLES = 15;
 
 const MODE_NAMES = {
+  [CRIMSON_DOUBLES]: 'Crimson Doubles',
   [CRUCIBLE]: 'Crucible',
   [PVE]: 'PvE',
   [PVE_COMPETITIVE]: 'Gambit',
@@ -275,6 +315,10 @@ function topLevelGetPlayerCounts(pgcrs, playerKey) {
     [PVE]: getPlayerCounts(filterGamesByMode(pgcrs, PVE), playerKey),
     [PVE_COMPETITIVE]: getPlayerCounts(
       filterGamesByMode(pgcrs, PVE_COMPETITIVE),
+      playerKey
+    ),
+    [CRIMSON_DOUBLES]: getPlayerCounts(
+      filterGamesByMode(pgcrs, CRIMSON_DOUBLES),
       playerKey
     ),
     [RAID]: getPlayerCounts(filterGamesByMode(pgcrs, RAID), playerKey)
@@ -319,6 +363,14 @@ function mapStateToProps() {
     );
     console.timeEnd('getPlayerCounts');
 
+    const topPlayersFromAll = sortBy(
+      playerCountsForModes.all[FIRETEAM],
+      player => -player.pgcrs.length
+    );
+
+    const crimsonDaysPlayer =
+      playerCountsForModes[CRIMSON_DOUBLES][FIRETEAM][0];
+
     // modifying the values in this because im naughty
     playerCountsForModes = mapValues(
       playerCountsForModes,
@@ -335,13 +387,15 @@ function mapStateToProps() {
       }
     );
 
-    const NEW_FRIEND_CUTOFF = new Date();
-    const NEW_FRIEND_GAME_THRESHOLD = 3;
-    NEW_FRIEND_CUTOFF.setMonth(NEW_FRIEND_CUTOFF.getMonth() - 1);
+    playerCountsForModes = pickBy(playerCountsForModes, (value, key) => {
+      return Number(key) !== CRIMSON_DOUBLES;
+    });
 
-    const topPlayersFromAll = sortBy(
-      playerCountsForModes.all[FIRETEAM],
-      player => -player.pgcrs.length
+    const NEW_FRIEND_GAME_THRESHOLD = 3;
+    const NEW_FRIEND_CUTOFF = new Date();
+    const NEW_GAME_MONTHS_CUTOFF = 1;
+    NEW_FRIEND_CUTOFF.setMonth(
+      NEW_FRIEND_CUTOFF.getMonth() - NEW_GAME_MONTHS_CUTOFF
     );
 
     const newFriends = topPlayersFromAll.filter(player => {
@@ -362,7 +416,7 @@ function mapStateToProps() {
       : newFriends[0];
 
     const callouts = {
-      bestFriend: topPlayersFromAll[0],
+      crimsonDaysPlayer,
       newFriend: newFriend,
       newFriends
     };

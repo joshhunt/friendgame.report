@@ -49,3 +49,42 @@
   margin: 0
   line-height: 1
   font-size: 28px
+
+.callouts
+  margin: 0 -10px
+
+  +fromTablet()
+    display: flex
+
+.noListPlayer
+  &:before
+    content: initial
+    display: none
+
+.subTitle
+  margin-bottom: 0
+
+.newFriendList
+  _color = #2ecc71;
+  box-shadow: 0 2px 8px 0 rgba(_color, .3)
+  border: 1px solid _color
+
+  > div
+    background: _color
+    color: white
+
+  +fromTablet()
+    width: calc(50% - 20px)
+
+
+.crimsonDaysList
+  _color = #E83945;
+  box-shadow: 0 2px 8px 0 rgba(_color, .3)
+  border: 1px solid _color
+
+  > div
+    background: _color
+    color: white
+
+  +fromTablet()
+    width: calc(50% - 20px)
