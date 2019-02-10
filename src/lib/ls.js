@@ -2,7 +2,7 @@
 const keys = {
   AUTH: 'auth',
   recentProfiles: 'recentProfiles',
-  displayNameCache: 'displayNameCache',
+  displayNameCache: 'displayNameCache'
 };
 
 let LOCAL_STORAGE;
@@ -108,8 +108,8 @@ export function addRecentProfile(profile) {
   set(keys.recentProfiles, recentProfiles);
 }
 
-export function getRecentProfiles(defaultValue) {
-  return get(keys.recentProfiles, defaultValue);
+export function getRecentProfiles() {
+  return get(keys.recentProfiles, []);
 }
 
 export function removeAuth() {

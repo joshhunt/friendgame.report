@@ -26,21 +26,25 @@ class App extends Component {
         </p>
         <p style={{ marginBottom: 50 }}>Type in a gamertag above to start</p>
 
-        <h3>Recent profiles</h3>
-        <div className={s.recents}>
-          {recentProfiles.map((profile, index) => {
-            return (
-              <Link
-                className={s.recentProfile}
-                key={index}
-                to={`/${pKey(profile)}`}
-              >
-                <PlatformIcon membershipType={profile.membershipType} />{' '}
-                {profile.displayName}
-              </Link>
-            );
-          })}
-        </div>
+        {recentProfiles.length > 0 && (
+          <div>
+            <h3>Recent profiles</h3>
+            <div className={s.recents}>
+              {recentProfiles.map((profile, index) => {
+                return (
+                  <Link
+                    className={s.recentProfile}
+                    key={index}
+                    to={`/${pKey(profile)}`}
+                  >
+                    <PlatformIcon membershipType={profile.membershipType} />{' '}
+                    {profile.displayName}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
