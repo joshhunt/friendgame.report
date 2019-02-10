@@ -19,30 +19,7 @@ const debouncedInput = debounce(cb => {
 const ANIMATION_TIME = 1.5 * 1000;
 
 export default class SearchHeader extends Component {
-  // state = {
-  //   loading: false,
-  //   searchResults: [
-  //     {
-  //       blizzardName: null,
-  //       bnetId: 5949996,
-  //       displayName: 'thisjoshthat',
-  //       lastPlayed: '2017-09-09T16:18:16Z',
-  //       locale: null,
-  //       membershipId: '4611686018469271298',
-  //       membershipType: '2'
-  //     },
-  //     {
-  //       blizzardName: null,
-  //       bnetId: 5949996,
-  //       displayName: 'thisjoshthat',
-  //       lastPlayed: '2017-04-02T05:17:03Z',
-  //       locale: 'en',
-  //       membershipId: '4611686018432128055',
-  //       membershipType: '1'
-  //     }
-  //   ]
-  // };
-
+  s;
   state = {};
 
   onInputChange = ev => {
@@ -131,7 +108,9 @@ export default class SearchHeader extends Component {
         <div className={s.headerInner}>
           <div className={s.headerName}>
             <h1 className={s.siteName}>
-              fri<span>endgame</span>.report
+              <Link className={s.siteNameLink} to="/">
+                fri<span>endgame</span>.report
+              </Link>
             </h1>
           </div>
           <div className={s.headerMain}>

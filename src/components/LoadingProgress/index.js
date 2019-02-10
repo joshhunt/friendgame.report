@@ -3,17 +3,16 @@ import cx from 'classnames';
 
 import s from './styles.styl';
 
-const percent = (v, t) => {
-  const p = v / t;
+const percent = p => {
   return isNaN(p) ? 0 : Math.floor(p * 100);
 };
 
-export default function LoadingProgress({ progress, total }) {
+export default function LoadingProgress({ progress }) {
   return (
-    <div className={cx(s.root, { [s.complete]: progress === total })}>
+    <div className={cx(s.root, { [s.complete]: progress === 1 })}>
       <div
         className={s.progressBg}
-        style={{ width: `${percent(progress, total)}%` }}
+        style={{ width: `${percent(progress)}%` }}
       />
     </div>
   );

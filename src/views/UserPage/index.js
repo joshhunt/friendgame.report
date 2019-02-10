@@ -53,24 +53,36 @@ class UserPage extends Component {
       loadedGames,
       callouts,
       profile,
-      sortMode
+      sortMode,
+      numOfCharacters,
+      numOfLoadedHistories
     } = this.props;
 
     const { all: allPlayers, ...restPlayerCounts } = playerCountsForModes;
-    const isLoading = loadedGames !== totalGames;
+    const characterProgress = numOfLoadedHistories / numOfCharacters;
+    const gamesProgress = loadedGames / totalGames;
+
+    const totalProgress = characterProgress * 0.25 + gamesProgress * 0.75;
+
+    let loadingMessage;
+    if (!profile) {
+      loadingMessage = 'Loading profile';
+    } else if (characterProgress < 1) {
+      loadingMessage = `Loading character histories ${numOfLoadedHistories} / ${numOfCharacters}`;
+    } else if (gamesProgress < 1) {
+      loadingMessage = `Loading game details ${loadedGames} / ${totalGames} (this might take a while)`;
+    } else {
+      loadingMessage = `Loaded ${loadedGames} games`;
+    }
 
     return (
       <div className={s.root}>
-        <LoadingProgress progress={loadedGames} total={totalGames} />
+        <LoadingProgress progress={totalProgress} />
 
         <div className={s.inner}>
           <div className={s.topBit}>
             <h2 className={s.name}>{this.renderName()}</h2>
-            <div className={s.loading}>
-              {isLoading
-                ? 'Loading... (this might take a while)'
-                : `Loaded ${loadedGames} games`}
-            </div>
+            <div className={s.loading}>{loadingMessage}</div>
           </div>
 
           {callouts.newFriend && (
@@ -284,9 +296,8 @@ const memoizedTopLevelGetPlayerCounts = memoizeOne(
 function mapStateToProps() {
   return (state, ownProps) => {
     const key = pKey(ownProps.routeParams);
-    const pgcrKeysForPlayer = [].concat(
-      ...Object.values(state.pgcr.histories[key] || {})
-    );
+    const historiesForProfile = state.pgcr.histories[key] || {};
+    const pgcrKeysForPlayer = [].concat(...Object.values(historiesForProfile));
 
     const allPgcrDetails = pgcrKeysForPlayer.reduce((acc, pgcrSummary) => {
       const pgcrId = pgcrSummary.activityDetails.instanceId;
@@ -356,13 +367,19 @@ function mapStateToProps() {
       newFriends
     };
 
+    const profile = profileSelector(state, ownProps);
+    const numOfCharacters = profile && profile.profile.data.characterIds.length;
+    const numOfLoadedHistories = Object.keys(historiesForProfile).length;
+
     return {
       sortMode: state.app.sortMode,
       isAuthenticated: state.auth.isAuthenticated,
       profiles: state.profiles.profiles,
+      numOfCharacters,
+      numOfLoadedHistories,
       pgcrDetails,
       playerCountsForModes,
-      profile: profileSelector(state, ownProps),
+      profile,
       slug: key,
       totalGames: pgcrKeysForPlayer.length,
       loadedGames: allPgcrDetails.length,

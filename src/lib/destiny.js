@@ -1,5 +1,5 @@
 import { has } from 'lodash';
-import { queue } from 'async';
+import priorityQueue from 'async/priorityQueue';
 import Dexie from 'dexie';
 import { getDisplayNameCache, addToDisplayNameCache } from 'src/lib/ls';
 
@@ -23,11 +23,13 @@ function getWorker({ url, opts }, cb) {
     .catch(err => cb(err));
 }
 
-const getQueue = queue(getWorker, GET_CONCURRENCY);
+const getQueue = priorityQueue(getWorker, GET_CONCURRENCY);
 
 export function get(url, opts) {
+  const priority = opts && opts._immediate ? 1 : 10;
+
   return new Promise((resolve, reject) => {
-    getQueue.push({ url, opts }, (err, result) => {
+    getQueue.push({ url, opts }, priority, (err, result) => {
       err ? reject(err) : resolve(result);
     });
   });
@@ -214,7 +216,8 @@ export function getCharacterPGCRHistory(
   // https://www.bungie.net/Platform/Destiny2/2/Account/4611686018469271298/Character/2305843009269703481/Stats/Activities/?mode=None&count=200&page=0
 
   return getDestiny(
-    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=${COUNT}&page=${page}`
+    `/Destiny2/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/?mode=None&count=${COUNT}&page=${page}`,
+    { _immediate: true }
   ).then(data => {
     if (data.activities) {
       const newAcc = [...acc, ...data.activities];

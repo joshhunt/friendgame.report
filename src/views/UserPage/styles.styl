@@ -1,3 +1,5 @@
+@import '../../common.styl'
+
 .root
   content: 'root'
   position: relative
@@ -5,19 +7,30 @@
 
 .inner
   max-width: 1200px
+  padding: 0 15px
   margin: auto
 
 .grandLayout
-  display: flex
   margin: 0 -10px
+  display: block
+
+  +fromTablet()
+    display: flex
 
 .main
-  flex: 1 0 40%
+  +fromTablet()
+    flex: 1 0 50%
+  +fromDesktop()
+    flex: 1 0 40%
 
 .rest
-  flex: 1 0 60%
-  display: flex
-  flex-wrap: wrap
+  +fromTablet()
+    flex: 1 0 50%
+
+  +fromDesktop()
+    flex: 1 0 60%
+    display: flex
+    flex-wrap: wrap
 
   > *
     flex: 1 0 40%
