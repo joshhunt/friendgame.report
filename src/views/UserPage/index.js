@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import timeOverlap from 'time-overlap';
-import { sortBy, mapValues, isEqual } from 'lodash';
+import { sortBy, mapValues, isEqual, get } from 'lodash';
 import memoizeOne from 'memoize-one';
+import { addRecentProfile } from 'src/lib/ls';
 
 import PlayerList from 'src/components/PlayerList';
 import LoadingProgress from 'src/components/LoadingProgress';
@@ -27,6 +28,16 @@ class UserPage extends Component {
   componentDidUpdate(prevProps) {
     if (!isEqual(this.props.routeParams, prevProps.routeParams)) {
       this.props.getDeepProfile(this.props.routeParams);
+    }
+
+    if (
+      this.props.profile &&
+      !isEqual(
+        get(this.props, 'profile.profile.data.userInfo'),
+        get(prevProps, 'profile.profile.data.userInfo')
+      )
+    ) {
+      addRecentProfile(this.props.profile.profile.data.userInfo);
     }
   }
 

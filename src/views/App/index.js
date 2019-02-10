@@ -15,35 +15,55 @@ function App({ children, sortMode, setSortMode }) {
       {children}
 
       <div className={s.footer}>
-        friendgame.report is made by{' '}
-        <a
-          href="https://twitter.com/joshhunt"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          joshhunt
-        </a>
-        , who also made{' '}
-        <a
-          href="https://destinysets.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Destiny Sets
-        </a>
-        ,{' '}
-        <a href="https://clan.report" target="_blank" rel="noopener noreferrer">
-          clan.report
-        </a>
-        , and the{' '}
-        <a
-          href="https://data.destinysets.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Destiny Data Explorer
-        </a>
-        . All content is owned by their respective owners, most probably Bungie.
+        <p>
+          friendgame.report is made by{' '}
+          <a
+            href="https://twitter.com/joshhunt"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            joshhunt
+          </a>
+          , who also made{' '}
+          <a
+            href="https://destinysets.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Destiny Sets
+          </a>
+          ,{' '}
+          <a
+            href="https://clan.report"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            clan.report
+          </a>
+          , and the{' '}
+          <a
+            href="https://data.destinysets.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Destiny Data Explorer
+          </a>
+          .
+        </p>
+        <p>
+          Player search is provided by{' '}
+          <a
+            href="https://trials.report"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            trials.report
+          </a>{' '}
+          (RIP). Thanks!
+        </p>
+        <p>
+          All content is owned by their respective owners, most probably Bungie.
+        </p>
       </div>
     </div>
   );
