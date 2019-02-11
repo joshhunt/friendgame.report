@@ -9,7 +9,7 @@ import PlayerList from 'src/components/PlayerList';
 import LoadingProgress from 'src/components/LoadingProgress';
 import PrettyDate from 'src/components/Date';
 
-import { pKey } from 'src/lib/destinyUtils';
+import { pKey, profileFromRouteProps } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
 import { COUNT } from 'src/store/app';
 import { profileSelector } from './selectors';
@@ -23,12 +23,12 @@ const SMALL_LIST = 6;
 
 class UserPage extends Component {
   componentDidMount() {
-    this.props.getDeepProfile(this.props.routeParams);
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
-    if (!isEqual(this.props.routeParams, prevProps.routeParams)) {
-      this.props.getDeepProfile(this.props.routeParams);
+    if (!isEqual(this.props.props, prevProps.props)) {
+      this.fetchData();
     }
 
     if (
@@ -41,6 +41,10 @@ class UserPage extends Component {
       addRecentProfile(this.props.profile.profile.data.userInfo);
     }
   }
+
+  fetchData = () => {
+    this.props.getDeepProfile(profileFromRouteProps(this.props));
+  };
 
   renderName() {
     const { profile, slug } = this.props;

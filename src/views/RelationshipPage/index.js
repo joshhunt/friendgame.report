@@ -4,7 +4,7 @@ import { isEqual } from 'lodash';
 
 import GameList from 'src/components/GameList';
 
-import { pKey } from 'src/lib/destinyUtils';
+import { pKey, profileFromRouteProps } from 'src/lib/destinyUtils';
 import { getDeepProfile, getProfile } from 'src/store/profiles';
 
 import s from './styles.styl';
@@ -26,7 +26,7 @@ class UserPage extends Component {
   }
 
   fetch() {
-    this.props.getDeepProfile(this.props.routeParams);
+    this.props.getDeepProfile(profileFromRouteProps(this.props));
     this.props.getProfile(secondPlayerProps(this.props));
   }
 

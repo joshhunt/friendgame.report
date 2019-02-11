@@ -7,17 +7,36 @@ import {
   TITAN,
   WARLOCK,
   NO_CLASS,
-  MEMBERSHIP_TYPE_TO_NAME
+  MEMBERSHIP_TYPE_TO_NAME,
+  PC_BLIZZARD
 } from 'app/lib/destinyEnums';
 import { getLower } from 'src/lib/utils';
 
 export const flagEnum = (state, value) => !!(state & value);
 
+export const profileFromRouteProps = props => {
+  const hash = get(props, 'location.hash');
+  const { membershipType, membershipId } = props.routeParams || {};
+
+  return {
+    membershipType,
+    membershipId: membershipId + (hash || '')
+  };
+};
+
 export const pKey = ({ membershipType, membershipId, displayName }) => {
-  return [
-    MEMBERSHIP_TYPE_TO_NAME[membershipType] || membershipType,
-    displayName || membershipId
-  ].join('/');
+  const membershipTypeToUse =
+    MEMBERSHIP_TYPE_TO_NAME[membershipType] || membershipType;
+
+  const isBattleNet =
+    membershipTypeToUse === MEMBERSHIP_TYPE_TO_NAME[PC_BLIZZARD] ||
+    membershipTypeToUse === PC_BLIZZARD;
+
+  const membershipIdToUse = isBattleNet
+    ? membershipId
+    : displayName || membershipId;
+
+  return [membershipTypeToUse, membershipIdToUse].join('/');
 };
 
 export const enumerateTriumphState = state => ({

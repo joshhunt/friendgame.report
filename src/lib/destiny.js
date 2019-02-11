@@ -135,11 +135,6 @@ function resolveDisplayName(membershipType, displayName) {
   const key = [membershipType, displayName].join('/');
   const membershipLookupCache = getDisplayNameCache();
 
-  console.log({
-    key,
-    membershipLookupCache
-  });
-
   if (membershipLookupCache[key]) {
     return Promise.resolve(membershipLookupCache[key]);
   }

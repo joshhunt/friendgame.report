@@ -26,9 +26,15 @@ export function Player({
   parentPlayer,
   isSkeleton
 }) {
+  const Element = isSkeleton ? 'div' : Link;
+  const secondPlayerUrlName =
+    userInfo.membershipType === 4
+      ? userInfo.membershipId
+      : userInfo.displayName;
+
   return (
-    <Link
-      to={!isSkeleton && `/${pKey(parentPlayer)}/${userInfo.displayName}`}
+    <Element
+      to={!isSkeleton && `/${pKey(parentPlayer)}/${secondPlayerUrlName}`}
       className={cx(className, s.player, { [s.isSkeleton]: isSkeleton })}
     >
       <div className={s.playerWell}>
@@ -42,7 +48,7 @@ export function Player({
         <div className={s.playerName}>{userInfo.displayName}</div>
         <div className={s.playerAlt}>{children}</div>
       </div>
-    </Link>
+    </Element>
   );
 }
 
