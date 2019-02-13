@@ -7,7 +7,7 @@ const log = require('src/lib/log')('http');
 
 export const db = new Dexie('requestCache');
 
-const CACHE_EVERYTHING = false;
+const CACHE_EVERYTHING = !window.location.href.includes('friendgame') && false;
 
 const GET_CONCURRENCY = 10;
 db.version(1).stores({
@@ -37,7 +37,6 @@ export function get(url, opts) {
 
 export function getDestiny(_pathname, opts = {}, postBody) {
   if (CACHE_EVERYTHING && !opts._fromCachedRequest) {
-    console.log('routing through cache: ', _pathname, opts);
     return getCacheableDestiny(_pathname, opts);
   }
 
@@ -160,11 +159,6 @@ const FRIENDLY_MEMBERSHIP_TYPES = {
 export function getProfile({ membershipType, membershipId }, accessToken) {
   const realMembershipType =
     FRIENDLY_MEMBERSHIP_TYPES[membershipType] || membershipType;
-  console.log('getProfile', {
-    membershipType,
-    realMembershipType,
-    membershipId
-  });
 
   if (!Number(membershipId)) {
     return resolveDisplayName(realMembershipType, membershipId).then(

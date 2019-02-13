@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import cx from 'classnames';
 import { debounce, uniqBy } from 'lodash';
 import { Link } from 'react-router';
 import { pKey } from 'src/lib/destinyUtils';
 import { PlatformIcon } from 'src/components/Icon';
+import Toggle from 'src/components/Toggle';
 
-import { COUNT, TIME } from 'src/store/app';
+import { COUNT, TIME, FIRETEAM, BLUEBERRIES } from 'src/store/app';
 import {
   getCacheableSearch,
   getPlayerSearchAutoComplete
@@ -17,6 +19,12 @@ const debouncedInput = debounce(cb => {
 }, 200);
 
 const ANIMATION_TIME = 1.5 * 1000;
+
+const TITLE = [
+  ...'fri'.split(''),
+  ...'endgame'.split('').map(l => [l, true]),
+  ...'.report'.split('')
+];
 
 export default class SearchHeader extends Component {
   s;
@@ -100,7 +108,7 @@ export default class SearchHeader extends Component {
   };
 
   render() {
-    const { setSortMode, sortMode } = this.props;
+    const { setSortMode, sortMode, listMode, setListMode } = this.props;
     const { searchResults, isFocused } = this.state;
 
     return (
@@ -109,7 +117,11 @@ export default class SearchHeader extends Component {
           <div className={s.headerName}>
             <h1 className={s.siteName}>
               <Link className={s.siteNameLink} to="/">
-                fri<span>endgame</span>.report
+                {TITLE.map(([letter, isEndgame], index) => (
+                  <span key={index} className={cx({ [s.endgame]: isEndgame })}>
+                    {letter}
+                  </span>
+                ))}
               </Link>
             </h1>
           </div>
@@ -136,35 +148,29 @@ export default class SearchHeader extends Component {
               )}
             </div>
 
-            <div className={s.radioStack}>
-              Sort by:
-              <div className={s.radio}>
-                <label>
-                  <input
-                    value={COUNT}
-                    type="radio"
-                    name="sort"
-                    checked={sortMode === COUNT}
-                    onChange={ev => setSortMode(ev.target.value)}
-                  />
-                  <div className={s.radioBg} />
-                  <div className={s.radioLabel}>Matches</div>
-                </label>
-              </div>
-              <div className={s.radio}>
-                <label>
-                  <input
-                    value={TIME}
-                    type="radio"
-                    name="sort"
-                    checked={sortMode === TIME}
-                    onChange={ev => setSortMode(ev.target.value)}
-                  />
-                  <div className={s.radioBg} />
-                  <div className={s.radioLabel}>Duration</div>
-                </label>
-              </div>
-            </div>
+            <Toggle
+              className={s.toggle}
+              label="Sort by:"
+              name="sortmode"
+              value={sortMode}
+              choices={[
+                { id: COUNT, label: 'Matches' },
+                { id: TIME, label: 'Duration' }
+              ]}
+              onChange={ev => setSortMode(ev.target.value)}
+            />
+
+            <Toggle
+              className={s.toggle}
+              label="Show:"
+              name="blueberries"
+              value={listMode}
+              choices={[
+                { id: FIRETEAM, label: 'Fireteam' },
+                { id: BLUEBERRIES, label: 'Blueberries' }
+              ]}
+              onChange={ev => setListMode(ev.target.value)}
+            />
           </div>
         </div>
       </div>

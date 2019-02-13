@@ -34,7 +34,11 @@ export function Player({
 
   return (
     <Element
-      to={!isSkeleton && `/${pKey(parentPlayer)}/${secondPlayerUrlName}`}
+      to={
+        !isSkeleton
+          ? `/${pKey(parentPlayer)}/${secondPlayerUrlName}`
+          : undefined
+      }
       className={cx(className, s.player, { [s.isSkeleton]: isSkeleton })}
     >
       <div className={s.playerWell}>
@@ -65,6 +69,7 @@ export default class PlayerList extends Component {
   render() {
     const {
       players,
+      hasLoaded,
       title,
       parentPlayer,
       activeSortMode,
@@ -80,40 +85,48 @@ export default class PlayerList extends Component {
         ? players
         : new Array(idealLength).fill().map((i, n) => skeletonPlayer(n));
 
+    const noData = hasLoaded && !(players && players.length);
+
     return (
       <div className={cx(className, s.root, { [s.small]: small })}>
         <div className={s.top}>
           <h3 className={s.title}>{title}</h3>
         </div>
 
-        <FlipMove
-          typeName="ol"
-          enterAnimation="fade"
-          leaveAnimation="fade"
-          className={s.list}
-        >
-          {list.map(player => (
-            <li
-              className={s.listItem}
-              key={player.player.destinyUserInfo.displayName}
-            >
-              <Player
-                isSkeleton={player.isSkeleton}
-                userInfo={player.player.destinyUserInfo}
-                parentPlayer={parentPlayer}
-                className={playerClassName}
+        {noData ? (
+          <div className={s.noData}>
+            <em>No results to show</em>
+          </div>
+        ) : (
+          <FlipMove
+            typeName="ol"
+            enterAnimation="fade"
+            leaveAnimation="fade"
+            className={s.list}
+          >
+            {list.map(player => (
+              <li
+                className={s.listItem}
+                key={player.player.destinyUserInfo.displayName}
               >
-                <PlayerChildren
-                  childrenOverride={playerChildren}
+                <Player
                   isSkeleton={player.isSkeleton}
-                  activeSortMode={activeSortMode}
-                  numOfMatches={player && player.pgcrs && player.pgcrs.length}
-                  timePlayed={player.timePlayedTogether}
-                />
-              </Player>
-            </li>
-          ))}
-        </FlipMove>
+                  userInfo={player.player.destinyUserInfo}
+                  parentPlayer={parentPlayer}
+                  className={playerClassName}
+                >
+                  <PlayerChildren
+                    childrenOverride={playerChildren}
+                    isSkeleton={player.isSkeleton}
+                    activeSortMode={activeSortMode}
+                    numOfMatches={player && player.pgcrs && player.pgcrs.length}
+                    timePlayed={player.timePlayedTogether}
+                  />
+                </Player>
+              </li>
+            ))}
+          </FlipMove>
+        )}
       </div>
     );
   }
