@@ -1,6 +1,8 @@
+import { get } from 'lodash';
+import immer from 'immer';
+
 import * as destiny from 'src/lib/destiny';
 import { pKey } from 'src/lib/destinyUtils';
-import immer from 'immer';
 import { makePayloadAction } from './utils';
 
 const GET_PLAYER_PGCR_HISTORY_SUCCESS = 'Get player PGCR history - success';
@@ -11,18 +13,34 @@ const GET_PGCR_DETAILS_ERROR = 'Get PGCR details - error';
 const BULK_PGCR_DETAILS = 'Bulk PGCR Details';
 
 const defaultState = {
-  histories: {},
+  history: {},
   pgcr: {}
+};
+
+const ensureCharacterHistory = (draftState, payload, cb) => {
+  draftState.history[payload.key] = draftState.history[payload.key] || {};
+
+  draftState.history[payload.key][payload.characterId] = draftState.history[
+    payload.key
+  ][payload.characterId] || { history: [], errorMessage: null };
+
+  cb(draftState.history[payload.key][payload.characterId]);
+
+  return draftState;
 };
 
 export default function pgcrReducer(state = defaultState, { type, payload }) {
   return immer(state, draft => {
     switch (type) {
       case GET_PLAYER_PGCR_HISTORY_SUCCESS:
-        draft.histories[payload.key] = draft.histories[payload.key] || {};
-        draft.histories[payload.key][payload.characterId] = payload.data;
+        return ensureCharacterHistory(draft, payload, character => {
+          character.history = payload.data;
+        });
 
-        return draft;
+      case GET_PLAYER_PGCR_HISTORY_ERROR:
+        return ensureCharacterHistory(draft, payload, character => {
+          character.errorMessage = payload.errorMessage;
+        });
 
       case GET_PGCR_DETAILS_SUCCESS:
         draft.pgcr[payload.pgcrId] = payload.data;
@@ -52,9 +70,26 @@ const getCharacterPGCRHistorySuccess = (userCharacterInfo, data) => {
   };
 };
 
-const getCharacterPGCRHistoryError = makePayloadAction(
-  GET_PLAYER_PGCR_HISTORY_ERROR
-);
+const getCharacterPGCRHistoryError = (userCharacterInfo, error) => {
+  console.log({ userCharacterInfo, error });
+  const apiMessage = get(error, 'data.Message');
+  const messagePrefix = apiMessage
+    ? 'Bungie API error - '
+    : 'Unexpected error - ';
+  const errorMessage = `${messagePrefix} ${apiMessage ||
+    error.message ||
+    `Really unexpected error - ${error.toString()}`}`;
+
+  return {
+    type: GET_PLAYER_PGCR_HISTORY_ERROR,
+    payload: {
+      key: pKey(userCharacterInfo),
+      characterId: userCharacterInfo.characterId,
+      error,
+      errorMessage
+    }
+  };
+};
 
 const getPGCRDetailsSuccess = makePayloadAction(GET_PGCR_DETAILS_SUCCESS);
 const getPGCRDetailsError = makePayloadAction(GET_PGCR_DETAILS_ERROR);
@@ -119,7 +154,7 @@ export function getCharacterPGCRHistory(userInfo, characterId, opts = {}) {
       })
       .catch(err => {
         console.error('got error!', err);
-        dispatch(getCharacterPGCRHistoryError(err));
+        dispatch(getCharacterPGCRHistoryError(userCharacterInfo, err));
       });
   };
 }

@@ -23,23 +23,62 @@
   +fromTablet()
     margin-left: 30px
 
+$siteNameColour = #737e82
+$siteNameAltColour = #a6aeb0
 .siteName
   margin: 0
   font-size: 22px
   font-weight: 600
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
-  color: #737e82
+  color: $siteNameColour
 
   text-align: center
   margin-bottom: 10px
 
-  span
-    color: #a6aeb0
+  .endgame
+    color: $siteNameAltColour
 
   +fromTablet()
-    margin: 0
+    margin-top: 5px
     text-align: left
+
+  span
+    display: inline-block
+
+  &:hover
+    span
+      animation: whoop 300ms linear both
+
+    delay = 25ms
+    span:nth-of-type(1) { animation-delay: 0ms }
+    span:nth-of-type(2) { animation-delay: 1 * delay }
+    span:nth-of-type(3) { animation-delay: 2 * delay }
+    span:nth-of-type(4) { animation-delay: 3 * delay }
+    span:nth-of-type(5) { animation-delay: 4 * delay }
+    span:nth-of-type(6) { animation-delay: 5 * delay }
+    span:nth-of-type(7) { animation-delay: 6 * delay }
+    span:nth-of-type(8) { animation-delay: 7 * delay }
+    span:nth-of-type(9) { animation-delay: 8 * delay }
+    span:nth-of-type(10) { animation-delay: 9 * delay }
+    span:nth-of-type(11) { animation-delay: 10 * delay }
+    span:nth-of-type(12) { animation-delay: 11 * delay }
+    span:nth-of-type(13) { animation-delay: 12 * delay }
+    span:nth-of-type(14) { animation-delay: 13 * delay }
+    span:nth-of-type(15) { animation-delay: 14 * delay }
+    span:nth-of-type(16) { animation-delay: 15 * delay }
+    span:nth-of-type(17) { animation-delay: 16 * delay }
+
+@keyframes whoop
+  0% { transform: translateY(0) }
+  25% { filter: brightness(1.3) }
+
+  50%
+    transform: translateY(-3px)
+    filter: brightness(1.3)
+
+  75% { filter: brightness(1) }
+  100% { transform: translateY(0) }
 
 .inputWrapper
   position: relative
@@ -100,57 +139,6 @@
     border: 1px solid rgba(white, .4)
     background: rgba(white, .09)
 
-$activeColor = rgba(lighten(#3498db, 50%), .25)
+.toggle + .toggle
+  margin-left: 30px
 
-.radio
-  position: relative
-  display: inline-block
-  margin-left: 10px
-
-  input
-    display: inline-block
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    width: 100%
-    height: 100%
-    opacity: 0
-    z-index: 3
-    padding: 0
-    margin: 0
-
-    &:checked + .radioBg
-      background: $activeColor
-
-    &:checked + .radioBg + .radioLabel
-      color: white
-
-.radioBg
-  background: rgba($activeColor, 0)
-  border: 1px solid $activeColor
-  border-radius: 100px
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  bottom: 0
-  z-index: 1
-  transition: all 150ms ease-in-out
-
-.radioLabel
-  position: relative
-  z-index: 2
-  font-size: 11px
-  pointer-events: none
-  padding: 4px 8px
-  text-align: center
-  cursor: pointer
-  color: white
-
-.radioStack
-  display: inline-block
-  flex-direction: row
-  margin-top: 10px
-  font-size: 13px

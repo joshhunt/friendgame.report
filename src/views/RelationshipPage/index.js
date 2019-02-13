@@ -80,10 +80,15 @@ function mapStateToProps() {
     const secondProfileKey = pKey(secondPlayerProps(ownProps));
     const secondProfile = state.profiles.profiles[secondProfileKey];
 
-    const histories = state.pgcr.histories[profileKey] || {};
+    const historiesPerCharacter = Object.values(
+      state.pgcr.history[profileKey] || {}
+    );
 
-    const sessions = []
-      .concat(...Object.values(histories))
+    const histories = historiesPerCharacter.reduce((acc, characterHistory) => {
+      return acc.concat(characterHistory.history || []);
+    }, []);
+
+    const sessions = histories
       .filter(pgcrSummary => {
         const pgcrId = pgcrSummary.activityDetails.instanceId;
         const pgcr = state.pgcr.pgcr[pgcrId];

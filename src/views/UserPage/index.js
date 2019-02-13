@@ -11,7 +11,7 @@ import PrettyDate from 'src/components/Date';
 
 import { pKey, profileFromRouteProps } from 'src/lib/destinyUtils';
 import { getDeepProfile } from 'src/store/profiles';
-import { COUNT } from 'src/store/app';
+import { COUNT, FIRETEAM, BLUEBERRIES } from 'src/store/app';
 import { profileSelector } from './selectors';
 
 import s from './styles.styl';
@@ -59,15 +59,20 @@ class UserPage extends Component {
       callouts,
       profile,
       sortMode,
+      listMode,
       numOfCharacters,
-      numOfLoadedHistories
+      numOfLoadedHistories,
+      historyError
     } = this.props;
 
     const { all: allPlayers, ...restPlayerCounts } = playerCountsForModes;
     const characterProgress = numOfLoadedHistories / numOfCharacters;
     const gamesProgress = loadedGames / totalGames;
 
-    const totalProgress = characterProgress * 0.25 + gamesProgress * 0.75;
+    const totalProgress =
+      characterProgress !== 1
+        ? characterProgress * 0.1 + gamesProgress * 0.1
+        : characterProgress * 0.25 + gamesProgress * 0.75;
 
     let loadingMessage;
     if (!profile) {
@@ -89,6 +94,13 @@ class UserPage extends Component {
         <LoadingProgress progress={totalProgress} />
 
         <div className={s.inner}>
+          {historyError && (
+            <div className={s.error}>
+              <strong>There was an error loading some of the data:</strong>{' '}
+              {historyError}
+            </div>
+          )}
+
           <div className={s.topBit}>
             <h2 className={s.name}>{this.renderName()}</h2>
             <div className={s.loading}>{loadingMessage}</div>
@@ -130,7 +142,7 @@ class UserPage extends Component {
             <div className={s.main}>
               <PlayerList
                 parentPlayer={profile && profile.profile.data.userInfo}
-                players={allPlayers[FIRETEAM]}
+                players={allPlayers}
                 title={MODE_NAMES['all'] || 'all'}
                 activeSortMode={sortMode}
                 highlightFirst
@@ -139,19 +151,22 @@ class UserPage extends Component {
             </div>
 
             <div className={s.rest}>
-              {Object.entries(restPlayerCounts).map(
-                ([mode, groupedPlayers]) => (
+              {Object.entries(restPlayerCounts)
+                .sort((a, b) => {
+                  return b[1].length - a[1].length;
+                })
+                .map(([mode, groupedPlayers]) => (
                   <PlayerList
-                    key={mode}
+                    key={`${listMode}${mode}`}
+                    hasLoaded={totalProgress === 1}
                     parentPlayer={profile && profile.profile.data.userInfo}
-                    players={groupedPlayers[FIRETEAM]}
+                    players={groupedPlayers}
                     title={MODE_NAMES[mode] || mode}
                     activeSortMode={sortMode}
                     idealLength={SMALL_LIST}
                     small
                   />
-                )
-              )}
+                ))}
             </div>
           </div>
         </div>
@@ -160,21 +175,18 @@ class UserPage extends Component {
   }
 }
 
-const FIRETEAM = 'FIRETEAM';
-const BLURBERRY = 'BLURBERRY';
-
 const getFireteamId = entry => entry.values.fireteamId.basic.value;
 
-const addPlayer = (players, type, playerKey, entry) => {
-  if (!players[type][playerKey]) {
-    players[type][playerKey] = { pgcrs: [], timePlayedTogether: 0 };
+const addPlayer = (players, playerKey, entry) => {
+  if (!players[playerKey]) {
+    players[playerKey] = { pgcrs: [], timePlayedTogether: 0 };
   }
 
-  players[type][playerKey].player = entry.player;
+  players[playerKey].player = entry.player;
   if (entry.timePlayedTogether) {
-    players[type][playerKey].timePlayedTogether += entry.timePlayedTogether;
+    players[playerKey].timePlayedTogether += entry.timePlayedTogether;
   }
-  players[type][playerKey].pgcrs.push(entry);
+  players[playerKey].pgcrs.push(entry);
 };
 
 const getSingleStartEndTimes = (playerEntry, gameStartTime) => {
@@ -194,11 +206,8 @@ const getStartEndTimes = (playerEntry, pgcr, gameStartTime) => {
   return getSingleStartEndTimes(playerEntry, gameStartTime);
 };
 
-const getPlayerCounts = (pgcrList, thisPlayerKey) => {
-  const players = {
-    [FIRETEAM]: {},
-    [BLURBERRY]: {}
-  };
+const getPlayerCounts = (pgcrList, thisPlayerKey, listMode) => {
+  const players = {};
 
   pgcrList.forEach(pgcr => {
     const thisPlayersEntry = pgcr.entries.find(
@@ -237,11 +246,15 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
       const fireteamId = getFireteamId(entry);
       const isInFireteam = fireteamId === thisPlayersFireteamId;
 
-      if (!isInFireteam) {
+      // debugger;
+
+      if (isInFireteam && listMode === BLUEBERRIES) {
         return;
       }
 
-      const listType = isInFireteam ? FIRETEAM : BLURBERRY;
+      if (!isInFireteam && listMode === FIRETEAM) {
+        return;
+      }
 
       const { startTime, endTime } = getStartEndTimes(
         entry,
@@ -257,7 +270,7 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
       const timePlayedTogether =
         endOverlap && startOverlap && endOverlap - startOverlap;
 
-      addPlayer(players, listType, key, {
+      addPlayer(players, key, {
         player: entry.player,
         timePlayedTogether,
         pgcr,
@@ -266,12 +279,7 @@ const getPlayerCounts = (pgcrList, thisPlayerKey) => {
     });
   });
 
-  const payload = {
-    [FIRETEAM]: filterPlayers(Object.values(players[FIRETEAM])),
-    [BLURBERRY]: filterPlayers(Object.values(players[BLURBERRY]))
-  };
-
-  return payload;
+  return filterPlayers(Object.values(players));
 };
 
 const CRIMSON_DAYS_CUTOFF = new Date(2019, 0, 1);
@@ -312,26 +320,32 @@ const LIST_LENGTHS = {
   [ALL]: BIG_LIST
 };
 
-function topLevelGetPlayerCounts(pgcrs, playerKey) {
+function topLevelGetPlayerCounts(pgcrs, playerKey, listMode) {
   return {
-    all: getPlayerCounts(pgcrs, playerKey),
-    [CRUCIBLE]: getPlayerCounts(filterGamesByMode(pgcrs, CRUCIBLE), playerKey),
-    [PVE]: getPlayerCounts(filterGamesByMode(pgcrs, PVE), playerKey),
+    all: getPlayerCounts(pgcrs, playerKey, listMode),
+    [CRUCIBLE]: getPlayerCounts(
+      filterGamesByMode(pgcrs, CRUCIBLE),
+      playerKey,
+      listMode
+    ),
+    [PVE]: getPlayerCounts(filterGamesByMode(pgcrs, PVE), playerKey, listMode),
     [PVE_COMPETITIVE]: getPlayerCounts(
       filterGamesByMode(pgcrs, PVE_COMPETITIVE),
-      playerKey
+      playerKey,
+      listMode
     ),
     [CRIMSON_DOUBLES]: getPlayerCounts(
       filterGamesByMode(pgcrs, CRIMSON_DOUBLES),
-      playerKey
+      playerKey,
+      listMode
     ),
-    [RAID]: getPlayerCounts(filterGamesByMode(pgcrs, RAID), playerKey)
+    [RAID]: getPlayerCounts(filterGamesByMode(pgcrs, RAID), playerKey, listMode)
   };
 }
 
-const makeMemoizeKey = (pgcrs, playerKey) => {
+const makeMemoizeKey = (pgcrs, playerKey, listMode) => {
   const ids = pgcrs.map(p => p.activityDetails.instanceId).join('');
-  return ids + playerKey;
+  return ids + playerKey + listMode;
 };
 
 const memoizedTopLevelGetPlayerCounts = memoizeOne(
@@ -343,11 +357,19 @@ const memoizedTopLevelGetPlayerCounts = memoizeOne(
 
 function mapStateToProps() {
   return (state, ownProps) => {
+    const { listMode, sortMode } = state.app;
     const key = pKey(ownProps.routeParams);
-    const historiesForProfile = state.pgcr.histories[key] || {};
-    const pgcrKeysForPlayer = [].concat(...Object.values(historiesForProfile));
 
-    const allPgcrDetails = pgcrKeysForPlayer.reduce((acc, pgcrSummary) => {
+    const historiesPerCharacter = Object.values(state.pgcr.history[key] || {});
+    const historyError = historiesPerCharacter.reduce((err, ch) => {
+      return err || ch.errorMessage;
+    }, undefined);
+
+    const histories = historiesPerCharacter.reduce((acc, characterHistory) => {
+      return acc.concat(characterHistory.history || []);
+    }, []);
+
+    const allPgcrDetails = histories.reduce((acc, pgcrSummary) => {
       const pgcrId = pgcrSummary.activityDetails.instanceId;
       const pgcrDetails = state.pgcr.pgcr[pgcrId];
 
@@ -363,31 +385,31 @@ function mapStateToProps() {
     console.time('getPlayerCounts');
     let playerCountsForModes = memoizedTopLevelGetPlayerCounts(
       pgcrDetails,
-      key
+      key,
+      listMode
     );
     console.timeEnd('getPlayerCounts');
 
     const topPlayersFromAll = sortBy(
-      playerCountsForModes.all[FIRETEAM],
+      playerCountsForModes.all,
       player => -player.pgcrs.length
     );
 
-    const crimsonDaysPlayer =
-      playerCountsForModes[CRIMSON_DOUBLES][FIRETEAM][0];
+    const crimsonDaysPlayer = playerCountsForModes[CRIMSON_DOUBLES][0];
+
+    // debugger;
 
     // modifying the values in this because im naughty
     playerCountsForModes = mapValues(
       playerCountsForModes,
-      (playerSet, mode) => {
+      (playerList, mode) => {
         const limit = LIST_LENGTHS[mode] || SMALL_LIST;
 
-        return mapValues(playerSet, playerList => {
-          return sortBy(playerList, player => {
-            return state.app.sortMode === COUNT
-              ? -player.pgcrs.length
-              : -player.timePlayedTogether;
-          }).slice(0, limit);
-        });
+        return sortBy(playerList, player => {
+          return sortMode === COUNT
+            ? -player.pgcrs.length
+            : -player.timePlayedTogether;
+        }).slice(0, limit);
       }
     );
 
@@ -427,10 +449,19 @@ function mapStateToProps() {
 
     const profile = profileSelector(state, ownProps);
     const numOfCharacters = profile && profile.profile.data.characterIds.length;
-    const numOfLoadedHistories = Object.keys(historiesForProfile).length;
+    const numOfLoadedHistories = historiesPerCharacter.reduce(
+      (acc, characterHistory) => {
+        return characterHistory.history && characterHistory.history.length
+          ? acc + 1
+          : acc;
+      },
+      0
+    );
 
     return {
-      sortMode: state.app.sortMode,
+      historyError,
+      sortMode,
+      listMode,
       isAuthenticated: state.auth.isAuthenticated,
       profiles: state.profiles.profiles,
       numOfCharacters,
@@ -439,7 +470,7 @@ function mapStateToProps() {
       playerCountsForModes,
       profile,
       slug: key,
-      totalGames: pgcrKeysForPlayer.length,
+      totalGames: histories.length,
       loadedGames: allPgcrDetails.length,
       callouts
     };

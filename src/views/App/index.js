@@ -3,14 +3,22 @@ import { connect } from 'react-redux';
 
 import SearchHeader from 'src/components/SearchHeader';
 
-import { setSortMode as setSortModeAction } from 'src/store/app';
+import {
+  setSortMode as setSortModeAction,
+  setListMode as setListModeAction
+} from 'src/store/app';
 
 import s from './styles.styl';
 
-function App({ children, sortMode, setSortMode }) {
+function App({ children, sortMode, setSortMode, setListMode, listMode }) {
   return (
     <div className={s.root}>
-      <SearchHeader setSortMode={setSortMode} sortMode={sortMode} />
+      <SearchHeader
+        setSortMode={setSortMode}
+        sortMode={sortMode}
+        setListMode={setListMode}
+        listMode={listMode}
+      />
 
       {children}
 
@@ -59,7 +67,7 @@ function App({ children, sortMode, setSortMode }) {
           >
             trials.report
           </a>{' '}
-          (RIP). Thanks!
+          (RIP). Thanks Vlad!
         </p>
         <p>
           All content is owned by their respective owners, most probably Bungie.
@@ -71,11 +79,15 @@ function App({ children, sortMode, setSortMode }) {
 
 function mapStateToProps(state) {
   return {
-    sortMode: state.app.sortMode
+    sortMode: state.app.sortMode,
+    listMode: state.app.listMode
   };
 }
 
-const mapDispatchToActions = { setSortMode: setSortModeAction };
+const mapDispatchToActions = {
+  setSortMode: setSortModeAction,
+  setListMode: setListModeAction
+};
 
 export default connect(
   mapStateToProps,
