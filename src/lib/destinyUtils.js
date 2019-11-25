@@ -30,7 +30,7 @@ export const pKey = ({ membershipType, membershipId, displayName }) => {
 
   const isBattleNet =
     membershipTypeToUse === MEMBERSHIP_TYPE_TO_NAME[PC_BLIZZARD] ||
-    membershipTypeToUse === PC_BLIZZARD;
+    membershipTypeToUse === PC_BLIZZARD || membershipTypeToUse === 3;
 
   const membershipIdToUse = isBattleNet
     ? membershipId
