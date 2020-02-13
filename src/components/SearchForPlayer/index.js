@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { debounce } from 'lodash';
-import { Link } from 'react-router';
+import React, { Component } from "react";
+import { debounce } from "lodash";
+import { Link } from "react-router";
 
-import { getCacheableSearch } from 'src/lib/destiny';
-import { pKey } from 'src/lib/destinyUtils';
-import { addRecentProfile, getRecentProfiles } from 'src/lib/ls';
-import { PlatformIcon } from 'src/components/Icon';
+import { getCacheableSearch } from "src/lib/destiny";
+import { pKey } from "src/lib/destinyUtils";
+import { addRecentProfile, getRecentProfiles } from "src/lib/ls";
+import { PlatformIcon } from "src/components/Icon";
 
-import s from './styles.styl';
+import s from "./styles.styl";
 
 const debouncedInput = debounce(cb => {
   cb();
