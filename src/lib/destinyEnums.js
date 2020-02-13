@@ -3,8 +3,8 @@ export const HUNTER = 1;
 export const WARLOCK = 2;
 export const NO_CLASS = 3;
 
-export const FILTER_SHOW_COLLECTED = 'showCollected';
-export const FILTER_SHOW_PS4_EXCLUSIVES = 'ps4Exclusives';
+export const FILTER_SHOW_COLLECTED = "showCollected";
+export const FILTER_SHOW_PS4_EXCLUSIVES = "ps4Exclusives";
 
 // itemCategoryHashes
 export const CLASS_ITEMS = 49;
@@ -45,6 +45,7 @@ export const COMMON = 3340296461;
 
 export const XBOX = 1;
 export const PLAYSTATION = 2;
+export const PC_STEAM = 3;
 export const PC_BLIZZARD = 4;
 export const TIGERDEMON = 10;
 export const BUNGIENEXT = 254;
@@ -57,21 +58,23 @@ export const STAT_BLACKLIST = [
 ];
 
 export const PLATFORMS = {
-  [XBOX]: 'Xbox',
-  [PLAYSTATION]: 'PlayStation',
-  [PC_BLIZZARD]: 'PC (Battle.net)',
-  [TIGERDEMON]: 'TigerDemon',
-  [BUNGIENEXT]: 'BungieNext'
+  [XBOX]: "Xbox",
+  [PLAYSTATION]: "PlayStation",
+  [PC_BLIZZARD]: "PC (Battle.net)",
+  [PC_STEAM]: "Steam",
+  [TIGERDEMON]: "TigerDemon",
+  [BUNGIENEXT]: "BungieNext"
 };
 
 export const MEMBERSHIP_TYPE_TO_NAME = {
-  [XBOX]: 'xb',
-  [PLAYSTATION]: 'ps',
-  [PC_BLIZZARD]: 'bn'
+  [XBOX]: "xb",
+  [PLAYSTATION]: "ps",
+  [PC_BLIZZARD]: "bn",
+  [PC_STEAM]: "pc"
 };
 
 export const CLASSES = {
-  [WARLOCK]: 'Warlock',
-  [TITAN]: 'Titan',
-  [HUNTER]: 'Hunter'
+  [WARLOCK]: "Warlock",
+  [TITAN]: "Titan",
+  [HUNTER]: "Hunter"
 };

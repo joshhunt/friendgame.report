@@ -1,0 +1,5 @@
+@font-face {
+  font-family: "Destiny Symbols";
+  src: url("./destinySymbols.otf");
+  unicode-range: U+E000-F8FF;
+}
