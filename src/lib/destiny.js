@@ -2,6 +2,7 @@ import { has } from "lodash";
 import priorityQueue from "async/priorityQueue";
 import Dexie from "dexie";
 import { getDisplayNameCache, addToDisplayNameCache } from "src/lib/ls";
+import { NAME_TO_MEMBERSHIP_TYPE } from "./destinyEnums";
 
 const log = require("src/lib/log")("http");
 
@@ -149,17 +150,10 @@ function resolveDisplayName(membershipType, displayName) {
   });
 }
 
-const FRIENDLY_MEMBERSHIP_TYPES = {
-  xb: 1,
-  ps: 2,
-  bn: 4,
-  pc: 3
-};
-
 // https://www.bungie.net/Platform/Destiny2/2/Profile/4611686018469271298/
 export function getProfile({ membershipType, membershipId }, accessToken) {
   const realMembershipType =
-    FRIENDLY_MEMBERSHIP_TYPES[membershipType] || membershipType;
+    NAME_TO_MEMBERSHIP_TYPE[membershipType] || membershipType;
 
   if (!Number(membershipId)) {
     return resolveDisplayName(realMembershipType, membershipId).then(

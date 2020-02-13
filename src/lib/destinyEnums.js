@@ -73,6 +73,15 @@ export const MEMBERSHIP_TYPE_TO_NAME = {
   [PC_STEAM]: "pc"
 };
 
+export const NAME_TO_MEMBERSHIP_TYPE = Object.entries(
+  MEMBERSHIP_TYPE_TO_NAME
+).reduce((acc, [type, name]) => {
+  return {
+    ...acc,
+    [name]: type
+  };
+}, {});
+
 export const CLASSES = {
   [WARLOCK]: "Warlock",
   [TITAN]: "Titan",
