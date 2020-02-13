@@ -1,17 +1,17 @@
-import { has } from 'lodash';
-import priorityQueue from 'async/priorityQueue';
-import Dexie from 'dexie';
-import { getDisplayNameCache, addToDisplayNameCache } from 'src/lib/ls';
+import { has } from "lodash";
+import priorityQueue from "async/priorityQueue";
+import Dexie from "dexie";
+import { getDisplayNameCache, addToDisplayNameCache } from "src/lib/ls";
 
-const log = require('src/lib/log')('http');
+const log = require("src/lib/log")("http");
 
-export const db = new Dexie('requestCache');
+export const db = new Dexie("requestCache");
 
-const CACHE_EVERYTHING = !window.location.href.includes('friendgame') && false;
+const CACHE_EVERYTHING = !window.location.href.includes("friendgame") && false;
 
 const GET_CONCURRENCY = 10;
 db.version(1).stores({
-  requests: '&url, response, date'
+  requests: "&url, response, date"
 });
 
 function getWorker({ url, opts }, cb) {
@@ -40,26 +40,26 @@ export function getDestiny(_pathname, opts = {}, postBody) {
     return getCacheableDestiny(_pathname, opts);
   }
 
-  const host = opts.host || 'https://www.bungie.net';
+  const host = opts.host || "https://www.bungie.net";
   let url = `${host}/Platform${_pathname}`;
-  url = url.replace('/Platform/Platform/', '/Platform/');
+  url = url.replace("/Platform/Platform/", "/Platform/");
 
   const { pathname } = new URL(url);
 
   opts.headers = opts.headers || {};
-  opts.headers['x-api-key'] = process.env.REACT_APP_API_KEY;
+  opts.headers["x-api-key"] = process.env.REACT_APP_API_KEY;
 
   if (opts.accessToken) {
-    opts.headers['Authorization'] = `Bearer ${opts.accessToken}`;
+    opts.headers["Authorization"] = `Bearer ${opts.accessToken}`;
   }
 
   if (postBody) {
-    opts.method = 'POST';
-    if (typeof postBody === 'string') {
-      opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    opts.method = "POST";
+    if (typeof postBody === "string") {
+      opts.headers["Content-Type"] = "application/x-www-form-urlencoded";
       opts.body = postBody;
     } else {
-      opts.headers['Content-Type'] = 'application/json';
+      opts.headers["Content-Type"] = "application/json";
       opts.body = JSON.stringify(postBody);
     }
   }
@@ -69,18 +69,18 @@ export function getDestiny(_pathname, opts = {}, postBody) {
   return get(url, opts).then(resp => {
     log(`RESPONSE: ${pathname}`, resp);
 
-    if (resp.ErrorStatus === 'DestinyAccountNotFound') {
+    if (resp.ErrorStatus === "DestinyAccountNotFound") {
       return null;
     }
 
-    if (has(resp, 'ErrorCode') && resp.ErrorCode !== 1) {
-      const cleanedUrl = url.replace(/\/\d+\//g, '/_/');
+    if (has(resp, "ErrorCode") && resp.ErrorCode !== 1) {
+      const cleanedUrl = url.replace(/\/\d+\//g, "/_/");
       const err = new Error(
-        'Bungie API Error ' +
+        "Bungie API Error " +
           resp.ErrorStatus +
-          ' - ' +
+          " - " +
           resp.Message +
-          '\nURL: ' +
+          "\nURL: " +
           cleanedUrl
       );
 
@@ -110,7 +110,7 @@ export function getCacheableDestiny(pathname, opts) {
 }
 
 export function getCurrentMembership(accessToken) {
-  return getDestiny('/User/GetMembershipsForCurrentUser/', { accessToken });
+  return getDestiny("/User/GetMembershipsForCurrentUser/", { accessToken });
 }
 
 const GROUP_TYPE_CLAN = 1;
@@ -131,7 +131,7 @@ export function getClanMembers(groupId, accessToken) {
 }
 
 function resolveDisplayName(membershipType, displayName) {
-  const key = [membershipType, displayName].join('/');
+  const key = [membershipType, displayName].join("/");
   const membershipLookupCache = getDisplayNameCache();
 
   if (membershipLookupCache[key]) {
@@ -140,7 +140,7 @@ function resolveDisplayName(membershipType, displayName) {
 
   return getCacheableSearch(displayName, membershipType).then(([player]) => {
     if (!player) {
-      throw new Error('Unable to find user');
+      throw new Error("Unable to find user");
     }
 
     const { membershipId } = player;
@@ -152,7 +152,8 @@ function resolveDisplayName(membershipType, displayName) {
 const FRIENDLY_MEMBERSHIP_TYPES = {
   xb: 1,
   ps: 2,
-  bn: 4
+  bn: 4,
+  pc: 3
 };
 
 // https://www.bungie.net/Platform/Destiny2/2/Profile/4611686018469271298/
@@ -235,12 +236,12 @@ export function getCacheablePGCRDetails(pgcrId) {
   return getCacheableDestiny(
     `/Destiny2/Stats/PostGameCarnageReport/${pgcrId}/`,
     {
-      host: 'https://stats.bungie.net'
+      host: "https://stats.bungie.net"
     }
   );
 }
 
-export function getCacheableSearch(searchTerm, membershipType = '-1') {
+export function getCacheableSearch(searchTerm, membershipType = "-1") {
   return getDestiny(
     `/Destiny2/SearchDestinyPlayer/${membershipType}/${encodeURIComponent(
       searchTerm
@@ -248,7 +249,7 @@ export function getCacheableSearch(searchTerm, membershipType = '-1') {
   );
 }
 
-export function getPlayerSearchAutoComplete(searchTerm, membershipType = '0') {
+export function getPlayerSearchAutoComplete(searchTerm, membershipType = "0") {
   return get(
     `https://elastic.destinytrialsreport.com/players/${membershipType}/${searchTerm}`
   );
