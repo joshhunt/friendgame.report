@@ -7,6 +7,7 @@ import { AppContainer } from "react-hot-loader";
 
 import AppRouter from "./AppRouter";
 import "./assets/destiny-symbols/fontFace.css";
+import "./assets/inter-ui/inter.css";
 import "./index.styl";
 
 const render = App => {
