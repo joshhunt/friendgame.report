@@ -26,7 +26,7 @@ const MembershipType = {
   Stadia: 5
 };
 
-export const PlatformIcon = ({ type, ...rest }) => {
+export const PlatformIcon = ({ membershipType, ...rest }) => {
   const iconMap = {
     [MembershipType.Xbox]: "xbox",
     [MembershipType.Playstation]: "playstation",
@@ -35,5 +35,9 @@ export const PlatformIcon = ({ type, ...rest }) => {
     [MembershipType.Stadia]: "google"
   };
 
-  return <Icon brand name={iconMap[type.toString()]} {...rest} />;
+  const type = membershipType.toString
+    ? membershipType.toString()
+    : membershipType;
+
+  return <Icon brand name={iconMap[type]} {...rest} />;
 };
