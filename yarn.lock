@@ -336,66 +336,6 @@
   version "1.0.0"
   resolved "https://codeload.github.com/DestinyItemManager/zip.js/tar.gz/6931dae24f729399100ee7a6fe5dce43007581f0"
 
-"@fortawesome/fontawesome-common-types@^0.1.7":
-  version "0.1.7"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.1.7.tgz#4336c4b06d0b5608ff1215464b66fcf9f4795284"
-  integrity sha512-ego8jRVSHfq/iq4KRZJKQeUAdi3ZjGNrqw4oPN3fNdvTBnLCSntwVCnc37bsAJP9UB8MhrTfPnZYxkv2vpS4pg==
-
-"@fortawesome/fontawesome-common-types@^0.2.8":
-  version "0.2.8"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.8.tgz#8cacd1efd1aa956e1ef173f0abcf2ce1b7a0c66f"
-  integrity sha512-0sU7JDLdEeGQlWBSr5uEE6PZOM15YM1s9rFlpZV+WhNdX2V6Co3Sj0OW5el4F54X1Tw+nfxf4Cc3dUedudaDWg==
-
-"@fortawesome/fontawesome-free-brands@^5.0.13":
-  version "5.0.13"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/fontawesome-free-brands/-/fontawesome-free-brands-5.0.13.tgz#4d15ff4e1e862d5e4a4df3654f8e8acbd47e9c09"
-  integrity sha512-xC/sEPpfcJPvUbud2GyscLCLQlE2DVBYaTHVwuyVGliYBdYejSEYMINU8FN5A0xhO68yCbpCfMlBv6Gqby+jww==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.1.7"
-
-"@fortawesome/fontawesome-svg-core@^1.2.0-14":
-  version "1.2.8"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.8.tgz#b802b7f3d5b9d9d92ae92c18e865df468dcdf561"
-  integrity sha512-cvcMQZ5F8WSNSGMk9uWlkmZNfDzmdsWLRrTMrNwwihHcEmWRlIuSbDt+PQ/rXsnGmJnmLQJLFBT1cse/3swxbg==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.8"
-
-"@fortawesome/free-solid-svg-icons@^5.1.0-11":
-  version "5.5.0"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.5.0.tgz#4d815df4bba076f209eb409bc56d9d830367a7c0"
-  integrity sha512-VawIT2owNP97EwehZmxkvZDhoKwEevU/1HOMkln6kc4OtfE+JKYr6DpyzQnHVWXvz/eFj36QElHNe6zT8gR+Tg==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.8"
-
-"@fortawesome/pro-light-svg-icons@^5.1.0-11":
-  version "5.5.0"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/pro-light-svg-icons/-/pro-light-svg-icons-5.5.0.tgz#bbfafc6c315592bd93bd77d96b22ba5cc054f745"
-  integrity sha512-Ywqf0tZ0nxbshnc2L3FkjP99uO7CYWUn+RaAxSJS2gAivzl64Kd84/JIPFsiUJID4Edn6lYd56pwcq72/kAUcQ==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.8"
-
-"@fortawesome/pro-regular-svg-icons@^5.1.0-11":
-  version "5.5.0"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/pro-regular-svg-icons/-/pro-regular-svg-icons-5.5.0.tgz#2533fb1ea44b6fefbe9eaf5c19104ec48ea60675"
-  integrity sha512-CBZeN+Tytsy53IGssKRUj0OM2VwOq92E9s71ceHuvDY3ik93YkMxcUaGdll+adXu5VbCHBAW5lc7cOqhw4JAJw==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.8"
-
-"@fortawesome/pro-solid-svg-icons@^5.1.0-11":
-  version "5.5.0"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/pro-solid-svg-icons/-/pro-solid-svg-icons-5.5.0.tgz#fccaba199394fa0a200b7a2617ea2b4b3b3c773d"
-  integrity sha512-XIzTlyDHLZFCiSQ7o4uxESvsUOzmtZ7MHwRuPnUerAC+iAF5Ye5lm9KzIiV3k08ZGAaEK1NZICcHXFYtZyNLEw==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.8"
-
-"@fortawesome/react-fontawesome@^0.1.0-11":
-  version "0.1.3"
-  resolved "https://npm.fontawesome.com/7F10CA2F-21F6-4CEE-84B6-D37F1A7FCFF6/@fortawesome/react-fontawesome/-/react-fontawesome-0.1.3.tgz#266b4047892c3d10498af1075d89252f74015b11"
-  integrity sha512-tc689l67rPZ7+ynZVUgOXY80rAt5KxvuH1qjPpJcbyJzJHzk5yhrD993BjsSEdPBLTtPqmvwynsO/XrAQqHbtg==
-  dependencies:
-    humps "^2.0.1"
-    prop-types "^15.5.10"
-
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -5045,11 +4985,6 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
   integrity sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
-
-humps@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/humps/-/humps-2.0.1.tgz#dd02ea6081bd0568dc5d073184463957ba9ef9aa"
-  integrity sha1-3QLqYIG9BWjcXQcxhEY5V7qe+ao=
 
 iconv-lite@0.4, iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.4, iconv-lite@^0.4.5, iconv-lite@~0.4.13:
   version "0.4.24"
@@ -9821,9 +9756,9 @@ tmp@^0.0.33:
     os-tmpdir "~1.0.2"
 
 tmpl@1.0.x:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.4.tgz#23640dd7b42d00433911140820e5cf440e521dd1"
-  integrity sha1-I2QN17QtAEM5ERQIIOXPRA5SHdE=
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
+  integrity sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"
